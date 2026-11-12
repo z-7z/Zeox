@@ -69,6 +69,18 @@ export const platformStatus = [
 
 export const dashboardStatus = platformStatus.slice(0, 3);
 
+export const account = {
+  plan: 'Developer',
+  planDescription: 'Core services with monthly credits',
+  renewal: 'Dec 12, 2026',
+  credits: { used: 760, total: 2000 },
+  usage: [
+    { label: 'Protection operations', value: '412 runs', pct: 68, accent: 'purple' as const },
+    { label: 'License key operations', value: '1,890 keys', pct: 54, accent: 'orange' as const },
+    { label: 'API requests', value: '12,437 calls', pct: 41, accent: 'purple' as const },
+  ],
+};
+
 export const stats = [
   {
     icon: CreditCard,

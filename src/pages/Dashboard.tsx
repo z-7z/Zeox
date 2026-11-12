@@ -11,12 +11,13 @@ import {
 } from 'lucide-react';
 import { Sidebar, type NavItem } from '../components/Sidebar';
 import { DashboardHeader } from '../components/DashboardHeader';
+import { AccountCard } from '../components/AccountCard';
 import { GlassCard } from '../components/GlassCard';
 import { StatCard } from '../components/StatCard';
 import { StatusCard } from '../components/StatusCard';
 import { ActivityItem } from '../components/ActivityItem';
 import { PlaceholderPage } from '../components/PlaceholderPage';
-import { stats, dashboardStatus, activities } from '../data/mock';
+import { stats, dashboardStatus, activities, account } from '../data/mock';
 
 const navItems: NavItem[] = [
   { label: 'Overview', to: '/dashboard', icon: LayoutDashboard, ready: true },
@@ -60,6 +61,43 @@ function Overview() {
         </div>
       </section>
 
+      {/* Account */}
+      <section>
+        <h2 className="mb-4 text-base font-semibold tracking-tight text-white">Account</h2>
+        <div className="grid gap-4 lg:grid-cols-3">
+          <AccountCard
+            plan={account.plan}
+            planDescription={account.planDescription}
+            renewal={account.renewal}
+            credits={account.credits}
+          />
+          <GlassCard className="lg:col-span-2">
+            <div className="p-6">
+              <h3 className="text-sm font-semibold text-white">Usage this cycle</h3>
+              <p className="mt-1 text-xs text-txt-muted">Prototype data · resets Dec 12, 2026</p>
+              <div className="mt-5 space-y-4">
+                {account.usage.map((u) => (
+                  <div key={u.label}>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-txt-secondary">{u.label}</span>
+                      <span className="font-mono text-txt-muted">{u.value}</span>
+                    </div>
+                    <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+                      <div
+                        className={`h-full rounded-full ${
+                          u.accent === 'orange' ? 'bg-brand-orange' : 'bg-brand-purple'
+                        }`}
+                        style={{ width: `${u.pct}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </GlassCard>
+        </div>
+      </section>
+
       {/* Recent activity */}
       <section>
         <div className="mb-4 flex items-end justify-between">
@@ -83,7 +121,7 @@ function Overview() {
         <div className="grid gap-4 sm:grid-cols-3">
           {quickAccess.map((q) => (
             <Link key={q.name} to={q.to}>
-              <GlassCard hover accent="purple" className="group h-full">
+              <GlassCard hover elevated className="group h-full">
                 <div className="flex items-center gap-4 p-5">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-brand-purple/25 bg-brand-purple/[0.09]">
                     <q.icon size={17} strokeWidth={1.75} className="text-brand-lavender" />

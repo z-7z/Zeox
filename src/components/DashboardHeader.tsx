@@ -10,7 +10,7 @@ export function DashboardHeader({ onMenu }: DashboardHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-white/[0.06] bg-ink/70 backdrop-blur-xl">
+    <header className="sticky top-0 z-30 border-b border-white/[0.06] bg-ink-soft">
       <div className="flex h-16 items-center justify-between gap-4 px-5 lg:px-8">
         <div className="min-w-0">
           <button
@@ -52,7 +52,7 @@ export function DashboardHeader({ onMenu }: DashboardHeaderProps) {
             </button>
 
             {menuOpen && (
-              <div className="glass glass-compact absolute right-0 mt-2 w-48 p-1.5">
+              <div className="card absolute right-0 mt-2 w-48 rounded-xl p-1.5">
                 {[
                   { icon: UserRound, label: 'Account' },
                   { icon: Settings, label: 'Settings' },

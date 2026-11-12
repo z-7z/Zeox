@@ -10,6 +10,11 @@ export default {
           surface: '#0A0A0F',
           elevated: '#111116',
         },
+        card: {
+          DEFAULT: '#101014',
+          elevated: '#15141B',
+        },
+        'card-border': '#292333',
         brand: {
           purple: '#8B5CF6',
           violet: '#A855F7',
@@ -31,10 +36,12 @@ export default {
         sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
         mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
+      transitionTimingFunction: {
+        zeox: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      },
       animation: {
         'pulse-dot': 'pulseDot 2.4s ease-in-out infinite',
         'float-slow': 'floatSlow 9s ease-in-out infinite',
-        'sheen': 'sheen 7s ease-in-out infinite',
       },
       keyframes: {
         pulseDot: {
@@ -44,10 +51,6 @@ export default {
         floatSlow: {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-10px)' },
-        },
-        sheen: {
-          '0%, 100%': { opacity: '0.35' },
-          '50%': { opacity: '0.7' },
         },
       },
     },

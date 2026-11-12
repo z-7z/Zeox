@@ -5,25 +5,38 @@ interface GlassCardProps {
   className?: string;
   hover?: boolean;
   compact?: boolean;
-  /** Optional accent glow tinted toward purple or orange. */
+  /** Use the elevated surface (#15141B) instead of the standard one (#101014). */
+  elevated?: boolean;
+  /** Optional subtle top accent tint, applied as a border/edge detail, not a glow. */
   accent?: 'purple' | 'orange' | 'none';
 }
 
-const accentStyles: Record<string, string> = {
-  purple:
-    'before:bg-[radial-gradient(80%_60%_at_50%_0%,rgba(139,92,246,0.10),transparent_70%)]',
-  orange:
-    'before:bg-[radial-gradient(80%_60%_at_50%_0%,rgba(255,116,17,0.08),transparent_70%)]',
-  none: '',
-};
-
-/** Core Liquid Glass surface used across the whole design system. */
-export function GlassCard({ children, className = '', hover = false, compact = false, accent = 'none' }: GlassCardProps) {
+/**
+ * Base card surface of the Zeox design system.
+ * Solid premium surfaces only: #101014 / #15141B on #292333 borders.
+ * No backdrop blur, no frosted glass, no glow, no diffuse shadows.
+ */
+export function GlassCard({
+  children,
+  className = '',
+  hover = false,
+  compact = false,
+  elevated = false,
+  accent = 'none',
+}: GlassCardProps) {
+  const accentClass =
+    accent === 'purple'
+      ? 'border-t-brand-purple/40'
+      : accent === 'orange'
+        ? 'border-t-brand-orange/40'
+        : '';
   return (
     <div
-      className={`glass ${compact ? 'glass-compact' : ''} ${hover ? 'glass-hover' : ''} ${accentStyles[accent]} ${className}`}
+      className={`${elevated ? 'card-elevated' : 'card'} ${compact ? 'rounded-xl' : ''} ${
+        hover ? 'card-hover' : ''
+      } ${accentClass} ${className}`}
     >
-      <div className="relative z-[1] h-full">{children}</div>
+      {children}
     </div>
   );
 }
