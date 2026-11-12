@@ -109,14 +109,29 @@ export class SkeletonDownloader {
     }
 
     const manifests = files.filter((f) => f.role === 'dependency-manifest' && f.content);
-    const deps = manifests.flatMap((m) => extractDependencies(m.content ?? '{}'));
+    const deps = manifests.reduce(
+      (acc, m) => {
+        const extracted = extractDependencies(m.content ?? '{}');
+        return {
+          dependencies: [...acc.dependencies, ...extracted.dependencies],
+          devDependencies: [...acc.devDependencies, ...extracted.devDependencies],
+        };
+      },
+      { dependencies: [] as string[], devDependencies: [] as string[] },
+    );
 
     this.workspace = {
       id: `ws-${source.owner}-${source.repo}-${ref}`.replace(/[^a-zA-Z0-9-]/g, '_'),
       createdAt: Date.now(),
       files: new Map(files.map((f) => [f.path, f])),
     };
-    this.manifest = { source: { ...source, ref }, resolvedRef: ref, files, dependencies: deps.dependencies, devDependencies: deps.devDependencies };
+    this.manifest = {
+      source: { ...source, ref },
+      resolvedRef: ref,
+      files,
+      dependencies: deps.dependencies,
+      devDependencies: deps.devDependencies,
+    };
     this.setState('downloaded', `Downloaded ${files.length} files into temporary workspace "${this.workspace.id}".`);
     return this.manifest;
   }
