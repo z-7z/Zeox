@@ -42,97 +42,103 @@ const features = [
   { icon: ActivityIcon, title: 'Activity Tracking', description: 'See operations and usage at a glance.' },
 ];
 
+const previewStats = [
+  { label: 'Protected Scripts', value: '1,204', delta: '+6.0%' },
+  { label: 'Active Keys', value: '312', delta: '+2.0%' },
+  { label: 'Operations', value: '3,482', delta: '+7.5%' },
+];
+
+const previewBars = [35, 50, 42, 65, 55, 78, 62, 88, 70, 95, 82, 100];
+
 export function Landing() {
   return (
-    <div id="home" className="min-h-screen bg-ink">
+    <div id="home" className="min-h-screen bg-page">
       <NavigationBar />
 
-      {/* ============ HERO ============ */}
-      <section className="relative overflow-hidden pt-32 pb-20 lg:pt-40">
-        <div className="pointer-events-none absolute inset-0 ambient-purple" />
-        <div className="pointer-events-none absolute inset-0 ambient-orange" />
-
-        <div className="relative mx-auto max-w-6xl px-5 lg:px-8">
-          <div className="grid items-center gap-14 lg:grid-cols-2">
-            <div>
-              <span className="inline-flex items-center gap-2 rounded-full border border-brand-orange/25 bg-brand-orange/[0.08] px-3 py-1 text-xs font-medium text-brand-lavender">
-                <span className="status-dot bg-brand-violet animate-pulse-dot" />
-                Developer platform · zeox.xyz
-              </span>
-              <h1 className="mt-6 text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-[3.4rem]">
-                Protect Your Scripts.{' '}
-                <span className="text-gradient">Power Your Development.</span>
-              </h1>
-              <p className="mt-6 max-w-lg text-base leading-relaxed text-txt-secondary">
-                An advanced ecosystem of developer tools, script protection, and license
-                management — designed for modern developers.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-4">
-                <Link to="/dashboard" className="btn-primary">
-                  Get Started
-                  <ArrowRight size={15} />
-                </Link>
-                <a href="#services" className="btn-ghost">
-                  Explore Platform
-                </a>
-              </div>
+      {/* Hero */}
+      <section className="pt-28 pb-20 lg:pt-36">
+        <div className="mx-auto max-w-5xl px-5 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1 text-xs font-medium text-txt-secondary">
+              <span className="status-dot bg-accent-green" />
+              Developer platform · zeox.xyz
+            </span>
+            <h1 className="mt-6 text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-[3.4rem]">
+              Protect Your Scripts. Power Your Development.
+            </h1>
+            <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-txt-secondary">
+              An advanced ecosystem of developer tools, script protection, and license
+              management — designed for modern developers.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <Link to="/dashboard" className="btn-primary">
+                Get Started
+                <ArrowRight size={15} />
+              </Link>
+              <a href="#services" className="btn-ghost">
+                Explore Platform
+              </a>
             </div>
+          </div>
 
-            {/* Floating dashboard preview */}
-            <div className="relative animate-float-slow">
-              <div className="pointer-events-none absolute -inset-8 rounded-full bg-[radial-gradient(50%_50%_at_50%_50%,rgba(255,116,17,0.14),transparent_70%)]" />
-              <GlassCard shineIdle className="relative">
-                <div className="p-5">
-                  <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
-                    <div className="flex items-center gap-2.5">
-                      <ZeoxLogo size={20} className="text-white" />
-                      <span className="text-sm font-medium text-white">Workspace</span>
-                    </div>
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 text-[10px] text-txt-secondary">
-                      <span className="status-dot bg-ok animate-pulse-dot" />
-                      Live
-                    </span>
+          {/* Dashboard preview, framed like the reference */}
+          <div className="mx-auto mt-16 max-w-3xl">
+            <div className="rounded-2xl border border-line bg-panel p-2 shadow-2xl">
+              <div className="rounded-xl bg-page p-4">
+                <div className="flex items-center justify-between border-b border-line-soft pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <ZeoxLogo size={16} className="text-white" />
+                    <span className="text-sm font-medium text-white">Dashboard</span>
                   </div>
-                  <div className="mt-4 grid grid-cols-2 gap-3">
-                    {[
-                      { label: 'Protected Scripts', value: '1,204' },
-                      { label: 'Active Keys', value: '312' },
-                      { label: 'Operations', value: '3,482' },
-                      { label: 'Success Rate', value: '99.6%' },
-                    ].map((s) => (
-                      <div key={s.label} className="rounded-xl border border-white/[0.07] bg-white/[0.03] p-3.5">
-                        <p className="text-[11px] text-txt-muted">{s.label}</p>
-                        <p className="mt-1 text-lg font-semibold tracking-tight text-white">{s.value}</p>
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-card px-2.5 py-1 text-[10px] text-txt-secondary">
+                    <span className="status-dot bg-accent-green" />
+                    Live
+                  </span>
+                </div>
+                <div className="mt-4 grid grid-cols-3 gap-3">
+                  {previewStats.map((s) => (
+                    <div key={s.label} className="card p-3.5">
+                      <div className="flex items-center justify-between">
+                        <p className="text-[11px] text-txt-secondary">{s.label}</p>
+                        <span className="flex items-center gap-1 text-[10px] font-medium text-accent-green">
+                          <span className="status-dot bg-accent-green" />
+                          {s.delta}
+                        </span>
                       </div>
+                      <p className="mt-1.5 text-xl font-semibold tracking-tight text-white">{s.value}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="card mt-3 p-3.5">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[11px] text-txt-secondary">Operations over time</p>
+                    <p className="font-mono text-[10px] text-accent-green">+7.5% vs last month</p>
+                  </div>
+                  <div className="mt-3 flex h-14 items-end gap-1">
+                    {previewBars.map((h, i) => (
+                      <div
+                        key={i}
+                        className={'flex-1 rounded-sm ' + (i === previewBars.length - 1 ? 'bg-txt-primary' : 'bg-line')}
+                        style={{ height: h + '%' }}
+                      />
                     ))}
                   </div>
-                  <div className="mt-3 rounded-xl border border-white/[0.07] bg-white/[0.03] p-3.5">
-                    <div className="flex items-center justify-between">
-                      <p className="text-[11px] text-txt-muted">Protection Engine</p>
-                      <p className="font-mono text-[10px] text-ok">operational</p>
-                    </div>
-                    <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
-                      <div className="h-full w-[86%] rounded-full bg-gradient-to-r from-brand-orangeDeep via-brand-orange to-brand-orangeLight" />
-                    </div>
-                  </div>
                 </div>
-              </GlassCard>
-              <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-wider text-txt-muted">
-                Prototype preview · demonstration data
-              </p>
+              </div>
             </div>
+            <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-wider text-txt-muted">
+              Prototype preview · demonstration data
+            </p>
           </div>
         </div>
       </section>
 
-      {/* ============ PLATFORM STATUS ============ */}
-      <section id="status" className="relative py-14">
-        <div className="mx-auto max-w-6xl px-5 lg:px-8">
+      {/* Platform status */}
+      <section id="status" className="py-14">
+        <div className="mx-auto max-w-5xl px-5 lg:px-8">
           <div className="mb-6 flex items-end justify-between">
             <h2 className="text-xl font-semibold tracking-tight text-white">Platform Status</h2>
-            <span className="font-mono text-[10px] uppercase tracking-wider text-txt-muted">
-              Prototype data
-            </span>
+            <span className="font-mono text-[10px] uppercase tracking-wider text-txt-muted">Prototype data</span>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {platformStatus.map((s) => (
@@ -142,17 +148,16 @@ export function Landing() {
         </div>
       </section>
 
-      {/* ============ SERVICES ============ */}
-      <section id="services" className="relative py-16">
-        <div className="pointer-events-none absolute inset-0 ambient-purple opacity-60" />
-        <div className="relative mx-auto max-w-6xl px-5 lg:px-8">
+      {/* Services */}
+      <section id="services" className="py-16">
+        <div className="mx-auto max-w-5xl px-5 lg:px-8">
           <div className="mx-auto max-w-xl text-center">
             <h2 className="text-3xl font-semibold tracking-tight text-white">Services</h2>
             <p className="mt-3 text-sm leading-relaxed text-txt-secondary">
               A unified platform for protection, licensing, and script management.
             </p>
           </div>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
             {services.map((s) => (
               <ServiceCard key={s.name} {...s} />
             ))}
@@ -160,19 +165,19 @@ export function Landing() {
         </div>
       </section>
 
-      {/* ============ WHY ZEOX ============ */}
+      {/* Why Zeox */}
       <section id="why" className="py-16">
-        <div className="mx-auto max-w-6xl px-5 lg:px-8">
+        <div className="mx-auto max-w-5xl px-5 lg:px-8">
           <h2 className="text-3xl font-semibold tracking-tight text-white">Why Zeox</h2>
           <p className="mt-3 max-w-lg text-sm leading-relaxed text-txt-secondary">
             Built for developers who take their work seriously.
           </p>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
             {whyItems.map((w) => (
-              <GlassCard key={w.title} hover accent="purple" shine>
+              <GlassCard key={w.title} hover>
                 <div className="p-6">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-brand-orange/25 bg-brand-orange/[0.09]">
-                    <w.icon size={17} strokeWidth={1.75} className="text-brand-lavender" />
+                  <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-line bg-panel">
+                    <w.icon size={17} strokeWidth={1.75} className="text-txt-primary" />
                   </span>
                   <h3 className="mt-5 text-base font-semibold text-white">{w.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-txt-secondary">{w.description}</p>
@@ -183,15 +188,15 @@ export function Landing() {
         </div>
       </section>
 
-      {/* ============ PLATFORM FEATURES ============ */}
+      {/* Platform features */}
       <section id="features" className="py-16">
-        <div className="mx-auto max-w-6xl px-5 lg:px-8">
+        <div className="mx-auto max-w-5xl px-5 lg:px-8">
           <h2 className="text-3xl font-semibold tracking-tight text-white">Platform Features</h2>
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((f) => (
-              <GlassCard key={f.title} hover compact shine>
+              <GlassCard key={f.title} hover compact>
                 <div className="p-5">
-                  <f.icon size={18} strokeWidth={1.75} className="text-brand-lavender" />
+                  <f.icon size={18} strokeWidth={1.75} className="text-txt-primary" />
                   <h3 className="mt-4 text-sm font-semibold text-white">{f.title}</h3>
                   <p className="mt-1.5 text-xs leading-relaxed text-txt-secondary">{f.description}</p>
                 </div>
@@ -201,10 +206,10 @@ export function Landing() {
         </div>
       </section>
 
-      {/* ============ DEVELOPER EXPERIENCE ============ */}
+      {/* Developer experience */}
       <section id="developers" className="py-16">
-        <div className="mx-auto max-w-6xl px-5 lg:px-8">
-          <GlassCard accent="orange" shine>
+        <div className="mx-auto max-w-5xl px-5 lg:px-8">
+          <GlassCard>
             <div className="grid items-center gap-8 p-8 lg:grid-cols-2 lg:p-12">
               <div>
                 <h2 className="text-2xl font-semibold tracking-tight text-white lg:text-3xl">
@@ -219,13 +224,13 @@ export function Landing() {
                   <ArrowRight size={15} />
                 </Link>
               </div>
-              <div className="rounded-xl border border-white/[0.07] bg-black/40 p-5 font-mono text-xs leading-6">
+              <div className="rounded-xl border border-line bg-black p-5 font-mono text-xs leading-6">
                 <p className="text-txt-muted">$ zeox protect ./script.lua</p>
-                <p className="text-brand-lavender">✓ obfuscated · 128 KB → 121 KB</p>
+                <p className="text-txt-primary">✓ obfuscated · 128 KB → 121 KB</p>
                 <p className="text-txt-muted">$ zeox keys create --batch 25</p>
-                <p className="text-brand-orangeLight">✓ 25 keys issued</p>
+                <p className="text-txt-primary">✓ 25 keys issued</p>
                 <p className="text-txt-muted">$ zeox status</p>
-                <p className="text-ok">✓ all services operational</p>
+                <p className="text-accent-green">✓ all services operational</p>
                 <p className="mt-2 text-[10px] text-txt-muted">// illustrative prototype output</p>
               </div>
             </div>
@@ -233,17 +238,16 @@ export function Landing() {
         </div>
       </section>
 
-      {/* ============ FINAL CTA ============ */}
-      <section id="pricing" className="relative overflow-hidden py-20">
-        <div className="pointer-events-none absolute inset-0 ambient-purple" />
-        <div className="relative mx-auto max-w-3xl px-5 text-center lg:px-8">
+      {/* Final CTA */}
+      <section id="pricing" className="py-20">
+        <div className="mx-auto max-w-3xl px-5 text-center lg:px-8">
           <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-            Ready to build on <span className="text-gradient">Zeox</span>?
+            Ready to build on Zeox?
           </h2>
           <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-txt-secondary">
             Join the platform and take control of your scripts, keys, and services.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link to="/dashboard" className="btn-primary">
               Get Started
             </Link>

@@ -10,11 +10,11 @@ export function Footer() {
   ];
 
   return (
-    <footer className="border-t border-white/[0.06] bg-ink-soft">
-      <div className="mx-auto max-w-6xl px-5 py-12 lg:px-8">
+    <footer className="border-t border-line-soft bg-panel">
+      <div className="mx-auto max-w-5xl px-5 py-12 lg:px-8">
         <div className="flex flex-col gap-10 md:flex-row md:justify-between">
           <div className="max-w-xs">
-            <ZeoxLockup size={22} />
+            <ZeoxLockup size={20} />
             <p className="mt-4 text-sm leading-relaxed text-txt-muted">
               An advanced ecosystem of developer tools, script protection, and license management.
             </p>
@@ -36,7 +36,7 @@ export function Footer() {
             ))}
           </div>
         </div>
-        <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-white/[0.06] pt-6 sm:flex-row sm:items-center">
+        <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-line-soft pt-6 sm:flex-row sm:items-center">
           <p className="text-xs text-txt-muted">© {year} Zeox. All rights reserved.</p>
           <p className="font-mono text-xs text-txt-muted">zeox.xyz</p>
         </div>

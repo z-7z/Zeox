@@ -1,58 +1,51 @@
-import { Bell, ChevronDown, LogOut, Settings, UserRound } from 'lucide-react';
+import { Bell, ChevronDown, LogOut, Settings, UserRound, Menu } from 'lucide-react';
 import { useState } from 'react';
 
 interface DashboardHeaderProps {
   onMenu: () => void;
 }
 
-/** Dashboard top header with greeting, notifications and account menu (visual only). */
+/** Dashboard top header — page title, notifications and account menu (visual only). */
 export function DashboardHeader({ onMenu }: DashboardHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-white/[0.06] bg-ink/70 backdrop-blur-xl">
-      <div className="flex h-16 items-center justify-between gap-4 px-5 lg:px-8">
-        <div className="min-w-0">
+    <header className="sticky top-0 z-30 border-b border-line-soft bg-page/90 backdrop-blur-md">
+      <div className="flex h-14 items-center justify-between gap-4 px-5 lg:px-6">
+        <div className="flex min-w-0 items-center gap-3">
           <button
-            className="mr-3 flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-txt-secondary lg:hidden"
+            className="flex h-8 w-8 items-center justify-center rounded-md text-txt-secondary hover:bg-card-hover lg:hidden"
             onClick={onMenu}
             aria-label="Open menu"
           >
-            <span className="flex flex-col gap-[3px]">
-              <span className="h-[1.5px] w-4 rounded bg-current" />
-              <span className="h-[1.5px] w-4 rounded bg-current" />
-              <span className="h-[1.5px] w-4 rounded bg-current" />
-            </span>
+            <Menu size={16} />
           </button>
-          <div className="hidden sm:block">
-            <h1 className="text-[15px] font-semibold tracking-tight text-white">Welcome back</h1>
-            <p className="text-xs text-txt-muted">Here's an overview of your Zeox workspace.</p>
-          </div>
+          <h1 className="text-[15px] font-semibold tracking-tight text-white">Dashboard</h1>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
-            className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-txt-secondary transition-colors hover:text-white"
+            className="relative flex h-8 w-8 items-center justify-center rounded-md text-txt-secondary transition-colors hover:bg-card-hover hover:text-white"
             aria-label="Notifications"
           >
-            <Bell size={16} strokeWidth={1.75} />
-            <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-brand-orange" />
+            <Bell size={15} strokeWidth={1.75} />
+            <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-accent-green" />
           </button>
 
           <div className="relative">
             <button
-              className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.04] py-1.5 pl-1.5 pr-3 transition-colors hover:border-white/20"
+              className="flex items-center gap-2 rounded-md py-1 pl-1 pr-2 transition-colors hover:bg-card-hover"
               onClick={() => setMenuOpen(!menuOpen)}
             >
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-brand-orangeDeep to-brand-orangeLight text-[11px] font-bold text-white">
-                ZD
+              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-line text-[11px] font-bold text-white">
+                Z
               </span>
               <span className="hidden text-sm text-txt-secondary sm:block">Zeox Dev</span>
-              <ChevronDown size={14} className="text-txt-muted" />
+              <ChevronDown size={13} className="text-txt-muted" />
             </button>
 
             {menuOpen && (
-              <div className="glass glass-compact absolute right-0 mt-2 w-48 p-1.5">
+              <div className="card absolute right-0 mt-2 w-44 p-1">
                 {[
                   { icon: UserRound, label: 'Account' },
                   { icon: Settings, label: 'Settings' },
@@ -60,7 +53,7 @@ export function DashboardHeader({ onMenu }: DashboardHeaderProps) {
                 ].map((i) => (
                   <button
                     key={i.label}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-txt-secondary transition-colors hover:bg-white/[0.05] hover:text-white"
+                    className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm text-txt-secondary transition-colors hover:bg-card-hover hover:text-white"
                     onClick={() => setMenuOpen(false)}
                   >
                     <i.icon size={14} strokeWidth={1.75} />

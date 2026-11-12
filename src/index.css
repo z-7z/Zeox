@@ -7,124 +7,59 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-ink text-txt-primary antialiased;
+    @apply bg-page text-txt-primary antialiased;
     font-feature-settings: 'cv02', 'cv03', 'cv04';
   }
   ::selection {
-    background: rgba(255, 116, 17, 0.35);
+    background: rgba(255, 255, 255, 0.18);
   }
 }
 
 @layer components {
-  /* ---- Liquid Glass system (orange-only accents) ---- */
-  .glass {
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015) 55%, rgba(255, 116, 17, 0.04));
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(18px) saturate(140%);
-    -webkit-backdrop-filter: blur(18px) saturate(140%);
-    border-radius: 1.25rem;
-    box-shadow:
-      0 1px 0 0 rgba(255, 255, 255, 0.07) inset,
-      0 -1px 0 0 rgba(0, 0, 0, 0.35) inset,
-      0 18px 40px -18px rgba(0, 0, 0, 0.8);
-    transition: border-color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+  /* ---- Flat card system (solid surfaces, no blur) ---- */
+  .card {
+    background: #18181B;
+    border: 1px solid #26262B;
+    border-radius: 0.75rem;
   }
-  .glass::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    background: linear-gradient(115deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0) 28%);
-    opacity: 0.8;
+  .card-hover {
+    transition: background 0.2s ease, border-color 0.2s ease;
   }
-  .glass-hover:hover {
-    border-color: rgba(255, 116, 17, 0.32);
-    box-shadow:
-      0 1px 0 0 rgba(255, 255, 255, 0.09) inset,
-      0 -1px 0 0 rgba(0, 0, 0, 0.35) inset,
-      0 22px 48px -18px rgba(0, 0, 0, 0.85),
-      0 0 34px -10px rgba(255, 116, 17, 0.22);
-    transform: translateY(-2px);
-  }
-  .glass-compact {
-    border-radius: 1rem;
+  .card-hover:hover {
+    background: #1E1E22;
+    border-color: #303036;
   }
 
-  /* ---- Shine sweep effect ---- */
-  .shine::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    z-index: 2;
-    background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.12) 50%, transparent 58%);
-    transform: translateX(-130%);
-    transition: transform 0.9s ease;
-  }
-  .shine:hover::after {
-    transform: translateX(130%);
-  }
-  /* Gentle idle sheen for hero surfaces */
-  .shine-idle::after {
-    animation: shineIdle 6s ease-in-out infinite;
-  }
-  @keyframes shineIdle {
-    0%, 55%, 100% { transform: translateX(-130%); }
-    75% { transform: translateX(130%); }
-  }
-
-  /* Gradient text — orange only */
-  .text-gradient {
-    @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(100deg, #FFC091 0%, #FF963D 38%, #FF7411 100%);
-  }
-
-  /* Buttons */
+  /* ---- Buttons ---- */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white;
-    background-image: linear-gradient(100deg, #E85D04 0%, #FF7411 55%, #FF963D 130%);
-    box-shadow: 0 8px 24px -8px rgba(255, 116, 17, 0.55), 0 1px 0 0 rgba(255, 255, 255, 0.18) inset;
-    transition: filter 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-black;
+    transition: background 0.2s ease, transform 0.15s ease;
   }
   .btn-primary:hover {
-    filter: brightness(1.12);
-    transform: translateY(-1px);
-    box-shadow: 0 12px 30px -8px rgba(255, 116, 17, 0.65), 0 1px 0 0 rgba(255, 255, 255, 0.22) inset;
+    background: #E4E4E7;
   }
   .btn-primary:active {
-    transform: translateY(1px) scale(0.98);
+    transform: translateY(1px);
   }
   .btn-primary:focus-visible {
-    outline: 2px solid #FF963D;
+    outline: 2px solid #FFFFFF;
     outline-offset: 2px;
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-5 py-2.5 text-sm font-medium text-txt-secondary backdrop-blur-md;
-    transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-card px-5 py-2.5 text-sm font-medium text-txt-secondary;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
   }
   .btn-ghost:hover {
-    @apply border-white/20 text-white;
-    background: rgba(255, 255, 255, 0.07);
+    @apply border-[#303036] text-white;
+    background: #1E1E22;
   }
   .btn-ghost:focus-visible {
-    outline: 2px solid #FF963D;
+    outline: 2px solid #A1A1AA;
     outline-offset: 2px;
   }
 
-  /* Status dot */
+  /* ---- Status dot ---- */
   .status-dot {
-    @apply inline-block h-2 w-2 rounded-full;
-  }
-
-  /* Ambient glow helpers — orange only */
-  .ambient-purple {
-    background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(255, 116, 17, 0.13), transparent 70%);
-  }
-  .ambient-orange {
-    background: radial-gradient(ellipse 45% 40% at 80% 20%, rgba(255, 116, 17, 0.08), transparent 70%);
+    @apply inline-block h-1.5 w-1.5 rounded-full;
   }
 }

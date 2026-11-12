@@ -1,31 +1,50 @@
 import { type LucideIcon } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 import { GlassCard } from './GlassCard';
 
 interface StatCardProps {
   icon: LucideIcon;
   title: string;
   value: string;
+  delta: string;
+  deltaDirection?: 'up' | 'down';
   description: string;
-  accent?: 'purple' | 'orange' | 'none';
+  /** Legacy prop, ignored. */
+  accent?: string;
 }
 
-/** Dashboard statistic card with clear visual hierarchy. */
-export function StatCard({ icon: Icon, title, value, description, accent = 'purple' }: StatCardProps) {
-  const iconTint =
-    accent === 'orange'
-      ? 'text-brand-orangeLight border-brand-orange/25 bg-brand-orange/[0.08]'
-      : 'text-brand-lavender border-brand-purple/25 bg-brand-purple/[0.09]';
+/** Dashboard statistic card with delta chip, reference style. */
+export function StatCard({
+  icon: Icon,
+  title,
+  value,
+  delta,
+  deltaDirection = 'up',
+  description,
+}: StatCardProps) {
+  const up = deltaDirection !== 'down';
+  const DeltaIcon = up ? TrendingUp : TrendingDown;
   return (
-    <GlassCard hover accent={accent} shine>
+    <GlassCard hover className="h-full">
       <div className="p-5">
         <div className="flex items-center justify-between">
           <p className="text-[13px] font-medium text-txt-secondary">{title}</p>
-          <span className={`flex h-9 w-9 items-center justify-center rounded-lg border ${iconTint}`}>
-            <Icon size={16} strokeWidth={1.75} />
+          <span
+            className={
+              'inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium ' +
+              (up ? 'bg-accent-green/10 text-accent-green' : 'bg-accent-red/10 text-accent-red')
+            }
+          >
+            <span className="status-dot bg-current" />
+            {delta}
           </span>
         </div>
-        <p className="mt-3 text-3xl font-semibold tracking-tight text-white">{value}</p>
-        <p className="mt-1.5 text-xs text-txt-muted">{description}</p>
+        <p className="mt-2.5 text-3xl font-semibold tracking-tight text-white">{value}</p>
+        <p className="mt-1.5 flex items-center gap-1.5 text-xs text-txt-muted">
+          <DeltaIcon size={12} className={up ? 'text-accent-green' : 'text-accent-red'} />
+          {description}
+        </p>
+        <Icon size={0} className="hidden" aria-hidden />
       </div>
     </GlassCard>
   );
