@@ -21,7 +21,7 @@ export function ActivityItem({ icon: Icon, title, description, timestamp, status
   const s = statusStyles[status];
   return (
     <div className="flex items-center gap-4 rounded-xl px-3 py-3 transition-colors duration-300 hover:bg-white/[0.03]">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-card-border bg-ink-elevated">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.05]">
         <Icon size={15} strokeWidth={1.75} className="text-txt-secondary" />
       </span>
       <div className="min-w-0 flex-1">

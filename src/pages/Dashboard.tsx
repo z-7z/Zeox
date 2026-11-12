@@ -84,9 +84,7 @@ function Overview() {
                     </div>
                     <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
                       <div
-                        className={`h-full rounded-full ${
-                          u.accent === 'orange' ? 'bg-brand-orange' : 'bg-brand-purple'
-                        }`}
+                        className="h-full rounded-full bg-gradient-to-r from-brand-orangeDeep to-brand-orangeLight"
                         style={{ width: `${u.pct}%` }}
                       />
                     </div>
@@ -121,9 +119,9 @@ function Overview() {
         <div className="grid gap-4 sm:grid-cols-3">
           {quickAccess.map((q) => (
             <Link key={q.name} to={q.to}>
-              <GlassCard hover elevated className="group h-full">
+              <GlassCard hover accent="purple" shine className="group h-full">
                 <div className="flex items-center gap-4 p-5">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-brand-purple/25 bg-brand-purple/[0.09]">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-brand-orange/25 bg-brand-orange/[0.09]">
                     <q.icon size={17} strokeWidth={1.75} className="text-brand-lavender" />
                   </span>
                   <div className="min-w-0 flex-1">

@@ -55,7 +55,7 @@ export function Landing() {
         <div className="relative mx-auto max-w-6xl px-5 lg:px-8">
           <div className="grid items-center gap-14 lg:grid-cols-2">
             <div>
-              <span className="inline-flex items-center gap-2 rounded-full border border-brand-purple/25 bg-brand-purple/[0.08] px-3 py-1 text-xs font-medium text-brand-lavender">
+              <span className="inline-flex items-center gap-2 rounded-full border border-brand-orange/25 bg-brand-orange/[0.08] px-3 py-1 text-xs font-medium text-brand-lavender">
                 <span className="status-dot bg-brand-violet animate-pulse-dot" />
                 Developer platform · zeox.xyz
               </span>
@@ -80,14 +80,15 @@ export function Landing() {
 
             {/* Floating dashboard preview */}
             <div className="relative animate-float-slow">
-              <GlassCard elevated className="relative">
+              <div className="pointer-events-none absolute -inset-8 rounded-full bg-[radial-gradient(50%_50%_at_50%_50%,rgba(255,116,17,0.14),transparent_70%)]" />
+              <GlassCard shineIdle className="relative">
                 <div className="p-5">
                   <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
                     <div className="flex items-center gap-2.5">
                       <ZeoxLogo size={20} className="text-white" />
                       <span className="text-sm font-medium text-white">Workspace</span>
                     </div>
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-card-border bg-ink-elevated px-2.5 py-1 text-[10px] text-txt-secondary">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 text-[10px] text-txt-secondary">
                       <span className="status-dot bg-ok animate-pulse-dot" />
                       Live
                     </span>
@@ -99,19 +100,19 @@ export function Landing() {
                       { label: 'Operations', value: '3,482' },
                       { label: 'Success Rate', value: '99.6%' },
                     ].map((s) => (
-                      <div key={s.label} className="rounded-xl border border-card-border bg-ink-elevated p-3.5">
+                      <div key={s.label} className="rounded-xl border border-white/[0.07] bg-white/[0.03] p-3.5">
                         <p className="text-[11px] text-txt-muted">{s.label}</p>
                         <p className="mt-1 text-lg font-semibold tracking-tight text-white">{s.value}</p>
                       </div>
                     ))}
                   </div>
-                  <div className="mt-3 rounded-xl border border-card-border bg-ink-elevated p-3.5">
+                  <div className="mt-3 rounded-xl border border-white/[0.07] bg-white/[0.03] p-3.5">
                     <div className="flex items-center justify-between">
                       <p className="text-[11px] text-txt-muted">Protection Engine</p>
                       <p className="font-mono text-[10px] text-ok">operational</p>
                     </div>
                     <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
-                      <div className="h-full w-[86%] rounded-full bg-gradient-to-r from-brand-purple via-brand-violet to-brand-orange" />
+                      <div className="h-full w-[86%] rounded-full bg-gradient-to-r from-brand-orangeDeep via-brand-orange to-brand-orangeLight" />
                     </div>
                   </div>
                 </div>
@@ -168,9 +169,9 @@ export function Landing() {
           </p>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {whyItems.map((w) => (
-              <GlassCard key={w.title} hover>
+              <GlassCard key={w.title} hover accent="purple" shine>
                 <div className="p-6">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-brand-purple/25 bg-brand-purple/[0.09]">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-brand-orange/25 bg-brand-orange/[0.09]">
                     <w.icon size={17} strokeWidth={1.75} className="text-brand-lavender" />
                   </span>
                   <h3 className="mt-5 text-base font-semibold text-white">{w.title}</h3>
@@ -188,7 +189,7 @@ export function Landing() {
           <h2 className="text-3xl font-semibold tracking-tight text-white">Platform Features</h2>
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((f) => (
-              <GlassCard key={f.title} hover compact>
+              <GlassCard key={f.title} hover compact shine>
                 <div className="p-5">
                   <f.icon size={18} strokeWidth={1.75} className="text-brand-lavender" />
                   <h3 className="mt-4 text-sm font-semibold text-white">{f.title}</h3>
@@ -203,7 +204,7 @@ export function Landing() {
       {/* ============ DEVELOPER EXPERIENCE ============ */}
       <section id="developers" className="py-16">
         <div className="mx-auto max-w-6xl px-5 lg:px-8">
-          <GlassCard elevated>
+          <GlassCard accent="orange" shine>
             <div className="grid items-center gap-8 p-8 lg:grid-cols-2 lg:p-12">
               <div>
                 <h2 className="text-2xl font-semibold tracking-tight text-white lg:text-3xl">
@@ -218,7 +219,7 @@ export function Landing() {
                   <ArrowRight size={15} />
                 </Link>
               </div>
-              <div className="rounded-xl border border-card-border bg-ink p-5 font-mono text-xs leading-6">
+              <div className="rounded-xl border border-white/[0.07] bg-black/40 p-5 font-mono text-xs leading-6">
                 <p className="text-txt-muted">$ zeox protect ./script.lua</p>
                 <p className="text-brand-lavender">✓ obfuscated · 128 KB → 121 KB</p>
                 <p className="text-txt-muted">$ zeox keys create --batch 25</p>

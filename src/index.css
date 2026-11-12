@@ -11,73 +11,107 @@
     font-feature-settings: 'cv02', 'cv03', 'cv04';
   }
   ::selection {
-    background: rgba(139, 92, 246, 0.35);
+    background: rgba(255, 116, 17, 0.35);
   }
 }
 
 @layer components {
-  /* ---- Solid card system (no backdrop blur, no frosted glass) ---- */
-
-  /* Standard card: #101014 with #292333 border */
-  .card {
-    @apply rounded-2xl border bg-card;
-    border-color: var(--card-border);
-    transition: border-color 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-      transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-      background-color 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  /* ---- Liquid Glass system (orange-only accents) ---- */
+  .glass {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015) 55%, rgba(255, 116, 17, 0.04));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border-radius: 1.25rem;
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.07) inset,
+      0 -1px 0 0 rgba(0, 0, 0, 0.35) inset,
+      0 18px 40px -18px rgba(0, 0, 0, 0.8);
+    transition: border-color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
   }
-
-  /* Elevated card: #15141B */
-  .card-elevated {
-    @apply rounded-2xl border bg-card-elevated;
-    border-color: var(--card-border);
-    transition: border-color 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-      transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-      background-color 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  .glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(115deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0) 28%);
+    opacity: 0.8;
   }
-
-  .card-hover:hover {
-    border-color: rgba(139, 92, 246, 0.4);
+  .glass-hover:hover {
+    border-color: rgba(255, 116, 17, 0.32);
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.09) inset,
+      0 -1px 0 0 rgba(0, 0, 0, 0.35) inset,
+      0 22px 48px -18px rgba(0, 0, 0, 0.85),
+      0 0 34px -10px rgba(255, 116, 17, 0.22);
     transform: translateY(-2px);
   }
+  .glass-compact {
+    border-radius: 1rem;
+  }
 
-  /* Gradient text for brand moments only */
+  /* ---- Shine sweep effect ---- */
+  .shine::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 2;
+    background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.12) 50%, transparent 58%);
+    transform: translateX(-130%);
+    transition: transform 0.9s ease;
+  }
+  .shine:hover::after {
+    transform: translateX(130%);
+  }
+  /* Gentle idle sheen for hero surfaces */
+  .shine-idle::after {
+    animation: shineIdle 6s ease-in-out infinite;
+  }
+  @keyframes shineIdle {
+    0%, 55%, 100% { transform: translateX(-130%); }
+    75% { transform: translateX(130%); }
+  }
+
+  /* Gradient text — orange only */
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(100deg, #C4B5FD 0%, #A855F7 38%, #FF7411 100%);
+    background-image: linear-gradient(100deg, #FFC091 0%, #FF963D 38%, #FF7411 100%);
   }
 
   /* Buttons */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white;
-    background-image: linear-gradient(100deg, #7C3AED 0%, #A855F7 55%, #FF7411 130%);
-    transition: filter 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    background-image: linear-gradient(100deg, #E85D04 0%, #FF7411 55%, #FF963D 130%);
+    box-shadow: 0 8px 24px -8px rgba(255, 116, 17, 0.55), 0 1px 0 0 rgba(255, 255, 255, 0.18) inset;
+    transition: filter 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
   }
   .btn-primary:hover {
     filter: brightness(1.12);
     transform: translateY(-1px);
+    box-shadow: 0 12px 30px -8px rgba(255, 116, 17, 0.65), 0 1px 0 0 rgba(255, 255, 255, 0.22) inset;
   }
   .btn-primary:active {
     transform: translateY(1px) scale(0.98);
   }
   .btn-primary:focus-visible {
-    outline: 2px solid #A855F7;
+    outline: 2px solid #FF963D;
     outline-offset: 2px;
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border bg-card px-5 py-2.5 text-sm font-medium text-txt-secondary;
-    border-color: var(--card-border);
-    transition: border-color 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-      color 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-      background-color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-5 py-2.5 text-sm font-medium text-txt-secondary backdrop-blur-md;
+    transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
   }
   .btn-ghost:hover {
     @apply border-white/20 text-white;
-    background-color: #15141B;
+    background: rgba(255, 255, 255, 0.07);
   }
   .btn-ghost:focus-visible {
-    outline: 2px solid #A855F7;
+    outline: 2px solid #FF963D;
     outline-offset: 2px;
   }
 
@@ -86,15 +120,11 @@
     @apply inline-block h-2 w-2 rounded-full;
   }
 
-  /* Subtle ambient lighting for hero sections (background only, never cards) */
+  /* Ambient glow helpers — orange only */
   .ambient-purple {
-    background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(139, 92, 246, 0.12), transparent 70%);
+    background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(255, 116, 17, 0.13), transparent 70%);
   }
   .ambient-orange {
-    background: radial-gradient(ellipse 45% 40% at 80% 20%, rgba(255, 116, 17, 0.06), transparent 70%);
+    background: radial-gradient(ellipse 45% 40% at 80% 20%, rgba(255, 116, 17, 0.08), transparent 70%);
   }
-}
-
-:root {
-  --card-border: #292333;
 }

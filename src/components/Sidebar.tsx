@@ -51,7 +51,7 @@ export function Sidebar({ items, open, onClose }: SidebarProps) {
               }`}
             >
               {active && (
-                <span className="absolute inset-y-2 left-0 w-[2.5px] rounded-full bg-gradient-to-b from-brand-purple to-brand-orange" />
+                <span className="absolute inset-y-2 left-0 w-[2.5px] rounded-full bg-gradient-to-b from-brand-orangeDeep via-brand-orange to-brand-orangeLight" />
               )}
               <Icon
                 size={16}
@@ -70,7 +70,7 @@ export function Sidebar({ items, open, onClose }: SidebarProps) {
       </nav>
 
       <div className="border-t border-white/[0.06] p-4">
-        <div className="card flex items-center gap-2 rounded-xl px-3 py-2.5">
+        <div className="glass glass-compact flex items-center gap-2 px-3 py-2.5">
           <span className="status-dot bg-ok animate-pulse-dot" />
           <p className="text-[11px] text-txt-secondary">All systems operational</p>
         </div>
@@ -81,14 +81,14 @@ export function Sidebar({ items, open, onClose }: SidebarProps) {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-white/[0.06] bg-ink-soft lg:block">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-white/[0.06] bg-ink-soft/80 backdrop-blur-xl lg:block">
         {content}
       </aside>
 
       {/* Mobile drawer */}
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/70" onClick={onClose} />
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
           <aside className="absolute inset-y-0 left-0 w-72 border-r border-white/10 bg-ink-soft">
             {content}
           </aside>

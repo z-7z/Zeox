@@ -15,10 +15,12 @@ export default {
           elevated: '#15141B',
         },
         'card-border': '#292333',
+        // Orange-only brand palette. The "purple/violet/lavender" tokens are
+        // kept as names for compatibility but now resolve to orange tones.
         brand: {
-          purple: '#8B5CF6',
-          violet: '#A855F7',
-          lavender: '#C4B5FD',
+          purple: '#FF7411', // primary accent (was purple) — now primary orange
+          violet: '#FF963D', // secondary accent (was violet) — now light orange
+          lavender: '#FFC091', // soft accent (was lavender) — now pale orange
           orange: '#FF7411',
           orangeLight: '#FF963D',
           orangeDeep: '#E85D04',
@@ -36,12 +38,10 @@ export default {
         sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
         mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
-      transitionTimingFunction: {
-        zeox: 'cubic-bezier(0.22, 1, 0.36, 1)',
-      },
       animation: {
         'pulse-dot': 'pulseDot 2.4s ease-in-out infinite',
         'float-slow': 'floatSlow 9s ease-in-out infinite',
+        'sheen': 'sheen 7s ease-in-out infinite',
       },
       keyframes: {
         pulseDot: {
@@ -51,6 +51,10 @@ export default {
         floatSlow: {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-10px)' },
+        },
+        sheen: {
+          '0%, 100%': { opacity: '0.35' },
+          '50%': { opacity: '0.7' },
         },
       },
     },

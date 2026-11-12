@@ -10,7 +10,7 @@ export function DashboardHeader({ onMenu }: DashboardHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-white/[0.06] bg-ink-soft">
+    <header className="sticky top-0 z-30 border-b border-white/[0.06] bg-ink/70 backdrop-blur-xl">
       <div className="flex h-16 items-center justify-between gap-4 px-5 lg:px-8">
         <div className="min-w-0">
           <button
@@ -44,7 +44,7 @@ export function DashboardHeader({ onMenu }: DashboardHeaderProps) {
               className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.04] py-1.5 pl-1.5 pr-3 transition-colors hover:border-white/20"
               onClick={() => setMenuOpen(!menuOpen)}
             >
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-brand-purple to-brand-orange text-[11px] font-bold text-white">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-brand-orangeDeep to-brand-orangeLight text-[11px] font-bold text-white">
                 ZD
               </span>
               <span className="hidden text-sm text-txt-secondary sm:block">Zeox Dev</span>
@@ -52,7 +52,7 @@ export function DashboardHeader({ onMenu }: DashboardHeaderProps) {
             </button>
 
             {menuOpen && (
-              <div className="card absolute right-0 mt-2 w-48 rounded-xl p-1.5">
+              <div className="glass glass-compact absolute right-0 mt-2 w-48 p-1.5">
                 {[
                   { icon: UserRound, label: 'Account' },
                   { icon: Settings, label: 'Settings' },

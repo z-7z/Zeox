@@ -15,7 +15,7 @@ export function NavigationBar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.06] bg-ink-soft">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.06] bg-ink/70 backdrop-blur-xl">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 lg:px-8">
         <Link to="/" className="shrink-0" aria-label="Zeox home">
           <ZeoxLockup size={24} />
@@ -52,7 +52,7 @@ export function NavigationBar() {
       </nav>
 
       {open && (
-        <div className="border-t border-white/[0.06] bg-ink-soft px-5 pb-5 pt-3 md:hidden">
+        <div className="border-t border-white/[0.06] bg-ink/95 px-5 pb-5 pt-3 md:hidden">
           <div className="flex flex-col gap-1">
             {links.map((l) => (
               <a

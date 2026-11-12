@@ -5,38 +5,43 @@ interface GlassCardProps {
   className?: string;
   hover?: boolean;
   compact?: boolean;
-  /** Use the elevated surface (#15141B) instead of the standard one (#101014). */
-  elevated?: boolean;
-  /** Optional subtle top accent tint, applied as a border/edge detail, not a glow. */
+  /** Optional accent glow tinted toward the brand accent (orange). */
   accent?: 'purple' | 'orange' | 'none';
+  /** Enable the hover shine sweep effect. */
+  shine?: boolean;
+  /** Continuous gentle shine, for hero surfaces. */
+  shineIdle?: boolean;
 }
 
+const accentStyles: Record<string, string> = {
+  purple:
+    'before:bg-[radial-gradient(80%_60%_at_50%_0%,rgba(255,116,17,0.10),transparent_70%)]',
+  orange:
+    'before:bg-[radial-gradient(80%_60%_at_50%_0%,rgba(255,116,17,0.08),transparent_70%)]',
+  none: '',
+};
+
 /**
- * Base card surface of the Zeox design system.
- * Solid premium surfaces only: #101014 / #15141B on #292333 borders.
- * No backdrop blur, no frosted glass, no glow, no diffuse shadows.
+ * Core Liquid Glass surface of the Zeox design system.
+ * Translucent layered glass with backdrop blur, subtle reflections,
+ * and an optional shine sweep. Orange-only accents.
  */
 export function GlassCard({
   children,
   className = '',
   hover = false,
   compact = false,
-  elevated = false,
   accent = 'none',
+  shine = false,
+  shineIdle = false,
 }: GlassCardProps) {
-  const accentClass =
-    accent === 'purple'
-      ? 'border-t-brand-purple/40'
-      : accent === 'orange'
-        ? 'border-t-brand-orange/40'
-        : '';
   return (
     <div
-      className={`${elevated ? 'card-elevated' : 'card'} ${compact ? 'rounded-xl' : ''} ${
-        hover ? 'card-hover' : ''
-      } ${accentClass} ${className}`}
+      className={`glass ${compact ? 'glass-compact' : ''} ${hover ? 'glass-hover' : ''} ${
+        shine ? 'shine' : ''
+      } ${shineIdle ? 'shine-idle' : ''} ${accentStyles[accent]} ${className}`}
     >
-      {children}
+      <div className="relative z-[1] h-full">{children}</div>
     </div>
   );
 }
