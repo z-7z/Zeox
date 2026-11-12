@@ -5,41 +5,90 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
   }
   body {
     @apply bg-page text-txt-primary antialiased;
     font-feature-settings: 'cv02', 'cv03', 'cv04';
+    overflow-x: hidden;
   }
   ::selection {
     background: rgba(255, 255, 255, 0.18);
   }
+  /* Slim dark scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #3F3F46 transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: #3F3F46;
+    border-radius: 8px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
 
 @layer components {
-  /* ---- Flat card system (solid surfaces, no blur) ---- */
+  /* ---- Flat card system (solid surfaces) ---- */
   .card {
+    position: relative;
     background: #18181B;
     border: 1px solid #26262B;
     border-radius: 0.75rem;
+    overflow: hidden;
   }
+
+  /* Subtle top sheen that fades in on hover */
+  .card-hover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120% 60% at 50% 0%, rgba(255, 255, 255, 0.06), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .card-hover:hover::before {
+    opacity: 1;
+  }
+
   .card-hover {
-    transition: background 0.2s ease, border-color 0.2s ease;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.25s ease;
   }
   .card-hover:hover {
     background: #1E1E22;
-    border-color: #303036;
+    border-color: #3F3F46;
+    transform: translateY(-3px);
+    box-shadow:
+      0 10px 30px -8px rgba(0, 0, 0, 0.6),
+      0 0 0 1px rgba(255, 255, 255, 0.03);
+  }
+  .card-hover:active {
+    transform: translateY(-1px);
   }
 
   /* ---- Buttons ---- */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-black;
-    transition: background 0.2s ease, transform 0.15s ease;
+    transition: background 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease;
   }
   .btn-primary:hover {
     background: #E4E4E7;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px -6px rgba(255, 255, 255, 0.15);
   }
   .btn-primary:active {
-    transform: translateY(1px);
+    transform: translateY(0);
+    box-shadow: none;
   }
   .btn-primary:focus-visible {
     outline: 2px solid #FFFFFF;
@@ -47,11 +96,15 @@
   }
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-card px-5 py-2.5 text-sm font-medium text-txt-secondary;
-    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease, transform 0.2s ease;
   }
   .btn-ghost:hover {
-    @apply border-[#303036] text-white;
+    @apply border-[#3F3F46] text-white;
     background: #1E1E22;
+    transform: translateY(-1px);
+  }
+  .btn-ghost:active {
+    transform: translateY(0);
   }
   .btn-ghost:focus-visible {
     outline: 2px solid #A1A1AA;
@@ -61,5 +114,35 @@
   /* ---- Status dot ---- */
   .status-dot {
     @apply inline-block h-1.5 w-1.5 rounded-full;
+  }
+
+  /* ---- Entrance animation for cards ---- */
+  .fade-up {
+    animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-hover,
+  .card-hover:hover,
+  .btn-primary,
+  .btn-primary:hover,
+  .btn-ghost,
+  .btn-ghost:hover {
+    transform: none;
+    transition: none;
+  }
+  .fade-up {
+    animation: none;
   }
 }

@@ -48,15 +48,15 @@ function KeysManagementCard() {
   const [tab, setTab] = useState(0);
   return (
     <GlassCard className="h-full">
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <h3 className="text-sm font-semibold text-white">License Keys</h3>
-        <div className="mt-4 flex gap-6 border-b border-line-soft text-xs">
+        <div className="mt-4 flex gap-4 overflow-x-auto border-b border-line-soft text-xs sm:gap-6">
           {keysManagement.tabs.map((t, i) => (
             <button
               key={t}
               onClick={() => setTab(i)}
               className={
-                '-mb-px border-b-2 pb-2.5 transition-colors ' +
+                '-mb-px shrink-0 border-b-2 pb-2.5 transition-colors ' +
                 (tab === i
                   ? 'border-txt-primary font-medium text-white'
                   : 'border-transparent text-txt-muted hover:text-txt-secondary')
@@ -66,7 +66,7 @@ function KeysManagementCard() {
             </button>
           ))}
         </div>
-        <div className="mt-5 grid grid-cols-2 gap-3">
+        <div className="mt-5 grid grid-cols-1 gap-3 xs:grid-cols-2 sm:grid-cols-2">
           {keysManagement.groups.map((g) => (
             <div key={g.label} className="rounded-lg border border-line-soft bg-panel p-4">
               <div className="h-1 w-8 rounded bg-line" />
@@ -89,7 +89,7 @@ function KeysManagementCard() {
 function UptimeCard() {
   return (
     <GlassCard className="h-full">
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="flex items-start justify-between">
           <div>
             <h3 className="text-sm font-semibold text-white">Service Uptime</h3>
@@ -120,10 +120,10 @@ function UptimeCard() {
 
 function Overview() {
   return (
-    <div className="mx-auto max-w-6xl space-y-6 px-5 py-6 lg:px-6">
+    <div className="mx-auto max-w-6xl space-y-6 px-4 py-5 sm:px-5 sm:py-6 lg:px-6">
       {/* Stat cards */}
-      <section>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="fade-up">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {stats.map((s) => (
             <StatCard key={s.title} {...s} />
           ))}
@@ -131,10 +131,10 @@ function Overview() {
       </section>
 
       {/* Big chart card */}
-      <section>
+      <section className="fade-up" style={{ animationDelay: '60ms' }}>
         <GlassCard>
-          <div className="p-6">
-            <div className="flex items-start justify-between">
+          <div className="p-4 sm:p-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <div className="flex items-center gap-1.5">
                   <h3 className="text-sm font-medium text-txt-secondary">Operations over time</h3>
@@ -142,7 +142,7 @@ function Overview() {
                 </div>
                 <p className="mt-1.5 text-3xl font-semibold tracking-tight text-white">{operationsChart.total}</p>
               </div>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-panel px-2.5 py-1 text-[11px] font-medium text-accent-green">
+              <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-line bg-panel px-2.5 py-1 text-[11px] font-medium text-accent-green">
                 <span className="status-dot bg-accent-green" />
                 {operationsChart.delta}
               </span>
@@ -161,18 +161,18 @@ function Overview() {
       </section>
 
       {/* Keys management + uptime */}
-      <section className="grid gap-4 lg:grid-cols-2">
+      <section className="fade-up grid grid-cols-1 gap-4 lg:grid-cols-2" style={{ animationDelay: '120ms' }}>
         <KeysManagementCard />
         <UptimeCard />
       </section>
 
       {/* Status cards */}
-      <section>
+      <section className="fade-up" style={{ animationDelay: '160ms' }}>
         <div className="mb-4 flex items-end justify-between">
           <h2 className="text-base font-semibold tracking-tight text-white">System Status</h2>
           <span className="font-mono text-[10px] uppercase tracking-wider text-txt-muted">Prototype data</span>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           {dashboardStatus.map((s) => (
             <StatusCard key={s.title} {...s} />
           ))}
@@ -180,9 +180,9 @@ function Overview() {
       </section>
 
       {/* Account */}
-      <section>
+      <section className="fade-up" style={{ animationDelay: '200ms' }}>
         <h2 className="mb-4 text-base font-semibold tracking-tight text-white">Account</h2>
-        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <AccountCard
             plan={account.plan}
             planDescription={account.planDescription}
@@ -190,15 +190,15 @@ function Overview() {
             credits={account.credits}
           />
           <GlassCard className="lg:col-span-2">
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <h3 className="text-sm font-semibold text-white">Usage this cycle</h3>
               <p className="mt-1 text-xs text-txt-muted">Prototype data · resets Dec 12, 2026</p>
               <div className="mt-5 space-y-4">
                 {account.usage.map((u) => (
                   <div key={u.label}>
-                    <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center justify-between gap-3 text-xs">
                       <span className="text-txt-secondary">{u.label}</span>
-                      <span className="font-mono text-txt-muted">{u.value}</span>
+                      <span className="shrink-0 font-mono text-txt-muted">{u.value}</span>
                     </div>
                     <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-line-soft">
                       <div className="h-full rounded-full bg-txt-secondary" style={{ width: u.pct + '%' }} />
@@ -212,7 +212,7 @@ function Overview() {
       </section>
 
       {/* Recent activity */}
-      <section>
+      <section className="fade-up" style={{ animationDelay: '240ms' }}>
         <div className="mb-4 flex items-end justify-between">
           <h2 className="text-base font-semibold tracking-tight text-white">Recent Activity</h2>
           <span className="font-mono text-[10px] uppercase tracking-wider text-txt-muted">Sample data</span>
@@ -227,9 +227,9 @@ function Overview() {
       </section>
 
       {/* Quick access */}
-      <section>
+      <section className="fade-up" style={{ animationDelay: '280ms' }}>
         <h2 className="mb-4 text-base font-semibold tracking-tight text-white">Quick Access</h2>
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {quickAccess.map((q) => (
             <Link key={q.name} to={q.to}>
               <GlassCard hover className="group h-full">

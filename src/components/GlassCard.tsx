@@ -13,7 +13,7 @@ interface GlassCardProps {
 
 /**
  * Core card surface of the Zeox design system.
- * Flat, solid premium surface (no blur, no glow).
+ * Flat, solid premium surface with a soft lift + sheen on hover.
  */
 export function GlassCard({ children, className = '', hover = false, compact = false }: GlassCardProps) {
   return (
