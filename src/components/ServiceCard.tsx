@@ -10,17 +10,26 @@ interface ServiceCardProps {
   onExplore?: () => void;
 }
 
-/** Landing page service card. */
+const statusColor: Record<string, string> = {
+  Available: '#22C55E',
+  Prototype: '#EAB308',
+};
+
+/** Landing page service card with colored icon chip (reference style). */
 export function ServiceCard({ icon: Icon, name, description, status, onExplore }: ServiceCardProps) {
+  const color = statusColor[status] ?? '#71717A';
   return (
     <GlassCard hover className="group h-full">
       <div className="flex h-full flex-col p-6">
         <div className="flex items-center justify-between">
-          <span className="flex h-11 w-11 items-center justify-center rounded-lg border border-line bg-panel">
-            <Icon size={19} strokeWidth={1.75} className="text-txt-primary" />
+          <span
+            className="flex h-11 w-11 items-center justify-center rounded-xl"
+            style={{ background: color + '1A' }}
+          >
+            <Icon size={19} strokeWidth={1.75} style={{ color }} />
           </span>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-panel px-2.5 py-1 text-[11px] font-medium text-txt-secondary">
-            <span className="status-dot bg-accent-green" />
+            <span className="status-dot" style={{ background: color }} />
             {status}
           </span>
         </div>

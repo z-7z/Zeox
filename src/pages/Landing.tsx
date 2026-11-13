@@ -22,33 +22,68 @@ const whyItems = [
     icon: Lock,
     title: 'Serious protection',
     description: 'Purpose-built LuaU obfuscation designed to resist tampering and reverse engineering.',
+    color: '#8B5CF6',
   },
   {
     icon: KeyRound,
     title: 'Full key control',
     description: 'Issue, scope, and revoke license keys from one unified control surface.',
+    color: '#22C55E',
   },
   {
     icon: Gauge,
     title: 'Built for speed',
     description: 'A lightweight pipeline that keeps your workflow fast while staying secure.',
+    color: '#3B82F6',
   },
 ];
 
 const features = [
-  { icon: ShieldCheck, title: 'Script Protection', description: 'Layered defenses for LuaU scripts.' },
-  { icon: Terminal, title: 'Developer Tools', description: 'A growing toolkit for everyday development.' },
-  { icon: LayoutDashboard, title: 'Unified Dashboard', description: 'Every service in one clean workspace.' },
-  { icon: ActivityIcon, title: 'Activity Tracking', description: 'See operations and usage at a glance.' },
+  { icon: ShieldCheck, title: 'Script Protection', description: 'Layered defenses for LuaU scripts.', color: '#8B5CF6' },
+  { icon: Terminal, title: 'Developer Tools', description: 'A growing toolkit for everyday development.', color: '#22C55E' },
+  { icon: LayoutDashboard, title: 'Unified Dashboard', description: 'Every service in one clean workspace.', color: '#EAB308' },
+  { icon: ActivityIcon, title: 'Activity Tracking', description: 'See operations and usage at a glance.', color: '#3B82F6' },
 ];
 
-const previewStats = [
-  { label: 'Protected Scripts', value: '1,204', delta: '+6.0%' },
-  { label: 'Active Keys', value: '312', delta: '+2.0%' },
-  { label: 'Operations', value: '3,482', delta: '+7.5%' },
+const previewUsage = [
+  { label: 'Zeox Protect', pct: 68, color: '#8B5CF6' },
+  { label: 'Zeox Keys', pct: 54, color: '#22C55E' },
+  { label: 'Script Protect', pct: 41, color: '#EAB308' },
+  { label: 'API Requests', pct: 27, color: '#3B82F6' },
 ];
 
-const previewBars = [35, 50, 42, 65, 55, 78, 62, 88, 70, 95, 82, 100];
+const previewCards = [
+  { icon: ShieldCheck, name: 'Zeox Protect', sub: '1,204 operations', color: '#8B5CF6' },
+  { icon: KeyRound, name: 'Zeox Keys', sub: '890 operations', color: '#22C55E' },
+  { icon: FileCode2, name: 'Script Protect', sub: '612 operations', color: '#EAB308' },
+];
+
+const previewRows = [
+  { name: 'main-script.lua', service: 'Zeox Protect', status: 'Done', color: '#8B5CF6' },
+  { name: 'batch-25-keys', service: 'Zeox Keys', status: 'Done', color: '#22C55E' },
+  { name: 'loader-v2.lua', service: 'Script Protect', status: 'Running', color: '#EAB308' },
+];
+
+function FileCode2(props: { size?: number; strokeWidth?: number; style?: React.CSSProperties }) {
+  return (
+    <svg
+      width={props.size ?? 24}
+      height={props.size ?? 24}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={props.strokeWidth ?? 2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={props.style}
+    >
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <path d="M14 2v6h6" />
+      <path d="m9 13-2 2 2 2" />
+      <path d="m13 17 2-2-2-2" />
+    </svg>
+  );
+}
 
 export function Landing() {
   return (
@@ -81,7 +116,7 @@ export function Landing() {
             </div>
           </div>
 
-          {/* Dashboard preview */}
+          {/* Dashboard preview in the reference style */}
           <div className="fade-up mx-auto mt-16 max-w-3xl" style={{ animationDelay: '120ms' }}>
             <div className="rounded-2xl border border-line bg-panel p-2 shadow-2xl">
               <div className="rounded-xl bg-page p-4">
@@ -95,34 +130,59 @@ export function Landing() {
                     Live
                   </span>
                 </div>
-                <div className="mt-4 grid grid-cols-3 gap-3">
-                  {previewStats.map((s) => (
-                    <div key={s.label} className="card p-3.5">
-                      <div className="flex items-center justify-between">
-                        <p className="text-[11px] text-txt-secondary">{s.label}</p>
-                        <span className="flex items-center gap-1 text-[10px] font-medium text-accent-green">
-                          <span className="status-dot bg-accent-green" />
-                          {s.delta}
-                        </span>
-                      </div>
-                      <p className="mt-1.5 text-xl font-semibold tracking-tight text-white">{s.value}</p>
+
+                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {/* Usage mini-card */}
+                  <div className="card p-4">
+                    <p className="text-xs font-medium text-white">Usage</p>
+                    <div className="mt-3 space-y-2.5">
+                      {previewUsage.map((u) => (
+                        <div key={u.label}>
+                          <div className="flex items-center justify-between text-[10px]">
+                            <span className="flex items-center gap-1.5 text-txt-secondary">
+                              <span className="status-dot" style={{ background: u.color }} />
+                              {u.label}
+                            </span>
+                            <span className="font-mono text-txt-muted">{u.pct}%</span>
+                          </div>
+                          <div className="mt-1 h-1 overflow-hidden rounded-full bg-line-soft">
+                            <div className="h-full rounded-full" style={{ width: u.pct + '%', background: u.color }} />
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-                <div className="card mt-3 p-3.5">
-                  <div className="flex items-center justify-between">
-                    <p className="text-[11px] text-txt-secondary">Operations over time</p>
-                    <p className="font-mono text-[10px] text-accent-green">+7.5% vs last month</p>
                   </div>
-                  <div className="mt-3 flex h-14 items-end gap-1">
-                    {previewBars.map((h, i) => (
-                      <div
-                        key={i}
-                        className={'flex-1 rounded-sm ' + (i === previewBars.length - 1 ? 'bg-txt-primary' : 'bg-line')}
-                        style={{ height: h + '%' }}
-                      />
+
+                  {/* Service cards */}
+                  <div className="grid grid-cols-3 gap-2">
+                    {previewCards.map((c) => (
+                      <div key={c.name} className="card flex flex-col items-center justify-center gap-2 p-3">
+                        <span
+                          className="flex h-8 w-8 items-center justify-center rounded-lg"
+                          style={{ background: c.color + '1A' }}
+                        >
+                          <c.icon size={14} strokeWidth={1.75} style={{ color: c.color }} />
+                        </span>
+                        <p className="text-center text-[9px] font-medium leading-tight text-white">{c.name}</p>
+                        <p className="text-center font-mono text-[8px] text-txt-muted">{c.sub}</p>
+                      </div>
                     ))}
                   </div>
+                </div>
+
+                {/* Mini table */}
+                <div className="card mt-3 p-2">
+                  {previewRows.map((r, i) => (
+                    <div key={i} className="flex items-center gap-3 rounded-lg px-2 py-2">
+                      <span className="status-dot" style={{ background: r.color }} />
+                      <span className="flex-1 truncate font-mono text-[10px] text-txt-primary">{r.name}</span>
+                      <span className="hidden text-[10px] text-txt-muted sm:block">{r.service}</span>
+                      <span className={'text-[10px] ' + (r.status === 'Running' ? 'text-accent-blue' : 'text-accent-green')}>
+                        {r.status}
+                      </span>
+                      <span className="rounded-full bg-white px-2 py-0.5 text-[9px] font-semibold text-black">Download</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -176,8 +236,11 @@ export function Landing() {
             {whyItems.map((w) => (
               <GlassCard key={w.title} hover>
                 <div className="p-6">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-panel">
-                    <w.icon size={17} strokeWidth={1.75} className="text-txt-primary" />
+                  <span
+                    className="flex h-10 w-10 items-center justify-center rounded-xl"
+                    style={{ background: w.color + '1A' }}
+                  >
+                    <w.icon size={17} strokeWidth={1.75} style={{ color: w.color }} />
                   </span>
                   <h3 className="mt-5 text-base font-semibold text-white">{w.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-txt-secondary">{w.description}</p>
@@ -196,7 +259,12 @@ export function Landing() {
             {features.map((f) => (
               <GlassCard key={f.title} hover compact>
                 <div className="p-5">
-                  <f.icon size={18} strokeWidth={1.75} className="text-txt-primary" />
+                  <span
+                    className="flex h-9 w-9 items-center justify-center rounded-lg"
+                    style={{ background: f.color + '1A' }}
+                  >
+                    <f.icon size={16} strokeWidth={1.75} style={{ color: f.color }} />
+                  </span>
                   <h3 className="mt-4 text-sm font-semibold text-white">{f.title}</h3>
                   <p className="mt-1.5 text-xs leading-relaxed text-txt-secondary">{f.description}</p>
                 </div>

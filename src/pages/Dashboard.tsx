@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   ShieldCheck,
@@ -136,7 +136,7 @@ function Overview() {
           </div>
         </GlassCard>
 
-        <div className="grid grid-cols-1 gap-4 xs:grid-cols-3 lg:grid-cols-1 xl:grid-cols-1">
+        <div className="grid grid-cols-1 gap-4 xs:grid-cols-3 lg:grid-cols-1">
           {storageCards.map((c) => (
             <GlassCard key={c.name} hover className="group">
               <div className="flex items-center gap-4 p-4 sm:p-5">
