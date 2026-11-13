@@ -8,7 +8,6 @@ import {
   LayoutDashboard,
   ArrowRight,
   Activity as ActivityIcon,
-  FileCode2,
   Zap,
   CheckCircle2,
 } from 'lucide-react';
