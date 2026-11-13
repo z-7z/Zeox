@@ -11,6 +11,7 @@ import {
   Plus,
   Search,
   Settings,
+  Upload,
   Users,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
