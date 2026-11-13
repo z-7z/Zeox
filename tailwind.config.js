@@ -7,15 +7,16 @@ export default {
         xs: '400px',
       },
       colors: {
-        page: '#0A0A0C',
-        panel: '#101013',
+        // OLED palette: true black base, white as the primary accent
+        page: '#000000',
+        panel: '#0A0A0A',
         card: {
-          DEFAULT: '#131316',
-          hover: '#18181C',
+          DEFAULT: '#101012',
+          hover: '#16161A',
         },
         line: {
           DEFAULT: '#232329',
-          soft: '#1C1C21',
+          soft: '#1A1A1E',
         },
         txt: {
           primary: '#FFFFFF',
@@ -24,9 +25,6 @@ export default {
         },
         'accent-green': '#22C55E',
         'accent-red': '#EF4444',
-        'accent-purple': '#8B5CF6',
-        'accent-yellow': '#EAB308',
-        'accent-blue': '#3B82F6',
         // Compatibility aliases (legacy tokens)
         ok: '#22C55E',
         warn: '#FBBF24',

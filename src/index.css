@@ -13,18 +13,18 @@
     overflow-x: hidden;
   }
   ::selection {
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.2);
   }
   * {
     scrollbar-width: thin;
-    scrollbar-color: #3F3F46 transparent;
+    scrollbar-color: #2A2A30 transparent;
   }
   *::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
   *::-webkit-scrollbar-thumb {
-    background: #3F3F46;
+    background: #2A2A30;
     border-radius: 8px;
   }
   *::-webkit-scrollbar-track {
@@ -33,10 +33,10 @@
 }
 
 @layer components {
-  /* ---- Card system: large radius, solid dark surfaces ---- */
+  /* ---- OLED card system: true black base, white accents ---- */
   .card {
     position: relative;
-    background: #131316;
+    background: #101012;
     border: 1px solid #232329;
     border-radius: 1rem;
     overflow: hidden;
@@ -45,7 +45,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(120% 60% at 50% 0%, rgba(255, 255, 255, 0.06), transparent 60%);
+    background: radial-gradient(120% 60% at 50% 0%, rgba(255, 255, 255, 0.07), transparent 60%);
     opacity: 0;
     transition: opacity 0.3s ease;
     pointer-events: none;
@@ -61,18 +61,18 @@
       box-shadow 0.25s ease;
   }
   .card-hover:hover {
-    background: #18181C;
+    background: #16161A;
     border-color: #3A3A44;
     transform: translateY(-3px);
     box-shadow:
-      0 12px 32px -8px rgba(0, 0, 0, 0.65),
-      0 0 0 1px rgba(255, 255, 255, 0.03);
+      0 12px 32px -8px rgba(0, 0, 0, 0.9),
+      0 0 0 1px rgba(255, 255, 255, 0.04);
   }
   .card-hover:active {
     transform: translateY(-1px);
   }
 
-  /* ---- Buttons ---- */
+  /* ---- Buttons: white OLED primary ---- */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-black;
     transition: background 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease;
@@ -80,7 +80,7 @@
   .btn-primary:hover {
     background: #E4E4E7;
     transform: translateY(-1px);
-    box-shadow: 0 8px 24px -6px rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 24px -4px rgba(255, 255, 255, 0.35);
   }
   .btn-primary:active {
     transform: translateY(0);
@@ -96,14 +96,14 @@
   }
   .btn-ghost:hover {
     @apply border-[#3A3A44] text-white;
-    background: #18181C;
+    background: #16161A;
     transform: translateY(-1px);
   }
   .btn-ghost:active {
     transform: translateY(0);
   }
 
-  /* ---- Sidebar nav pill (reference style: white active pill) ---- */
+  /* ---- Sidebar nav pill (white active pill) ---- */
   .nav-pill {
     @apply flex items-center gap-2.5 rounded-full px-3 py-2 text-sm text-txt-secondary;
     transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
@@ -128,7 +128,7 @@
   /* ---- Skeleton loading ---- */
   .skeleton {
     @apply rounded-lg bg-line-soft;
-    background-image: linear-gradient(90deg, #1C1C21 0%, #26262C 40%, #1C1C21 80%);
+    background-image: linear-gradient(90deg, #1A1A1E 0%, #26262C 40%, #1A1A1E 80%);
     background-size: 400px 100%;
     background-repeat: no-repeat;
     animation: shimmer 1.6s linear infinite;
