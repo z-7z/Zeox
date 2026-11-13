@@ -3,45 +3,32 @@ export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
-      screens: {
-        xs: '400px',
-      },
+      screens: { xs: '400px' },
       colors: {
-        // OLED palette: true black base with restrained accents
         page: '#000000',
         panel: '#050507',
-        card: {
-          DEFAULT: '#0B0B0F',
-          hover: '#141419',
-        },
-        line: {
-          DEFAULT: '#24242C',
-          soft: '#1A1A20',
-        },
-        txt: {
-          primary: '#FFFFFF',
-          secondary: '#A1A1AA',
-          muted: '#777681',
-        },
+        card: { DEFAULT: '#0B0B0F', hover: '#141419' },
+        line: { DEFAULT: '#24242C', soft: '#1A1A20' },
+        txt: { primary: '#FFFFFF', secondary: '#A1A1AA', muted: '#777681' },
         neon: {
-          purple: '#A78BFA',
-          blue: '#8DCFE6',
-          cyan: '#8DCFE6',
-          green: '#8DCFE6',
-          yellow: '#E8A7C8',
-          orange: '#F2A56F',
-          red: '#E8A7C8',
+          purple: '#A855F7',
+          blue: '#3B82F6',
+          cyan: '#22D3EE',
+          green: '#22C55E',
+          yellow: '#FACC15',
+          orange: '#FB923C',
+          red: '#EF4444',
         },
-        'accent-green': '#8DCFE6',
-        'accent-red': '#E8A7C8',
-        'accent-purple': '#A78BFA',
-        'accent-yellow': '#E8A7C8',
-        'accent-blue': '#8DCFE6',
-        'accent-orange': '#F2A56F',
-        // Compatibility aliases (legacy tokens)
-          ok: '#8DCFE6',
-          warn: '#F2A56F',
-          err: '#E8A7C8',
+        'accent-purple': '#A855F7',
+        'accent-blue': '#3B82F6',
+        'accent-cyan': '#22D3EE',
+        'accent-green': '#22C55E',
+        'accent-yellow': '#FACC15',
+        'accent-orange': '#FB923C',
+        'accent-red': '#EF4444',
+        ok: '#22C55E',
+        warn: '#FACC15',
+        err: '#EF4444',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
@@ -57,34 +44,13 @@ export default {
         'glow-pulse': 'glowPulse 3.2s ease-in-out infinite',
       },
       keyframes: {
-        pulseDot: {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.4' },
-        },
-        shimmer: {
-          '0%': { backgroundPosition: '-400px 0' },
-          '100%': { backgroundPosition: '400px 0' },
-        },
-        fadeUp: {
-          from: { opacity: '0', transform: 'translateY(12px)' },
-          to: { opacity: '1', transform: 'translateY(0)' },
-        },
-        fadeIn: {
-          from: { opacity: '0' },
-          to: { opacity: '1' },
-        },
-        scaleIn: {
-          from: { opacity: '0', transform: 'scale(0.98)' },
-          to: { opacity: '1', transform: 'scale(1)' },
-        },
-        floatSlow: {
-          '0%, 100%': { transform: 'translateY(0) scale(1)' },
-          '50%': { transform: 'translateY(-24px) scale(1.05)' },
-        },
-        glowPulse: {
-          '0%, 100%': { opacity: '0.5' },
-          '50%': { opacity: '1' },
-        },
+        pulseDot: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0.4' } },
+        shimmer: { '0%': { backgroundPosition: '-400px 0' }, '100%': { backgroundPosition: '400px 0' } },
+        fadeUp: { from: { opacity: '0', transform: 'translateY(12px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
+        fadeIn: { from: { opacity: '0' }, to: { opacity: '1' } },
+        scaleIn: { from: { opacity: '0', transform: 'scale(0.98)' }, to: { opacity: '1', transform: 'scale(1)' } },
+        floatSlow: { '0%, 100%': { transform: 'translateY(0) scale(1)' }, '50%': { transform: 'translateY(-24px) scale(1.05)' } },
+        glowPulse: { '0%, 100%': { opacity: '0.5' }, '50%': { opacity: '1' } },
       },
     },
   },

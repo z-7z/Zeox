@@ -84,46 +84,46 @@ export const operationsChart = {
 /* ---- Overview: usage + donut (restrained OLED accents) ---- */
 
 export const usageServices = [
-  { label: 'Zeox Protect', pct: 68, color: '#A78BFA', amount: '1,204 ops' },
-  { label: 'Zeox Keys', pct: 54, color: '#F2A56F', amount: '890 ops' },
-  { label: 'Script Protect', pct: 41, color: '#E8A7C8', amount: '612 ops' },
-  { label: 'API Requests', pct: 27, color: '#8DCFE6', amount: '776 ops' },
+  { label: 'Zeox Protect', pct: 68, color: '#A855F7', amount: '1,204 ops' },
+  { label: 'Zeox Keys', pct: 54, color: '#FB923C', amount: '890 ops' },
+  { label: 'Script Protect', pct: 41, color: '#FACC15', amount: '612 ops' },
+  { label: 'API Requests', pct: 27, color: '#3B82F6', amount: '776 ops' },
 ];
 
 export const usageDonut = {
   total: '3,482',
   sub: 'total operations',
   segments: [
-    { label: 'Protect', value: 1204, color: '#A78BFA' },
-    { label: 'Keys', value: 890, color: '#F2A56F' },
-    { label: 'Scripts', value: 612, color: '#E8A7C8' },
-    { label: 'API', value: 776, color: '#8DCFE6' },
+    { label: 'Protect', value: 1204, color: '#A855F7' },
+    { label: 'Keys', value: 890, color: '#FB923C' },
+    { label: 'Scripts', value: 612, color: '#FACC15' },
+    { label: 'API', value: 776, color: '#3B82F6' },
   ],
 };
 
 export const storageCards = [
-  { icon: Folder, name: 'Zeox Protect', sub: '1,204 operations', color: '#A78BFA' },
-  { icon: KeyRound, name: 'Zeox Keys', sub: '890 operations', color: '#F2A56F' },
-  { icon: FileCode2, name: 'Script Protect', sub: '612 operations', color: '#E8A7C8' },
+  { icon: Folder, name: 'Zeox Protect', sub: '1,204 operations', color: '#A855F7' },
+  { icon: KeyRound, name: 'Zeox Keys', sub: '890 operations', color: '#FB923C' },
+  { icon: FileCode2, name: 'Script Protect', sub: '612 operations', color: '#FACC15' },
 ];
 
 export const categories = [
-  { icon: ShieldCheck, name: 'Protect', count: '1,204 ops', pct: 68, color: '#A78BFA' },
-  { icon: KeyRound, name: 'Keys', count: '890 ops', pct: 54, color: '#F2A56F' },
-  { icon: FileCode2, name: 'Scripts', count: '612 ops', pct: 41, color: '#E8A7C8' },
-  { icon: Cpu, name: 'Engine', count: '438 ops', pct: 33, color: '#F2A56F' },
-  { icon: Globe, name: 'Others', count: '338 ops', pct: 21, color: '#8DCFE6' },
+  { icon: ShieldCheck, name: 'Protect', count: '1,204 ops', pct: 68, color: '#A855F7' },
+  { icon: KeyRound, name: 'Keys', count: '890 ops', pct: 54, color: '#FB923C' },
+  { icon: FileCode2, name: 'Scripts', count: '612 ops', pct: 41, color: '#FACC15' },
+  { icon: Cpu, name: 'Engine', count: '438 ops', pct: 33, color: '#FB923C' },
+  { icon: Globe, name: 'Others', count: '338 ops', pct: 21, color: '#3B82F6' },
 ];
 
 export const operationsTable = {
   columns: ['#', 'Type', 'Name', 'Service', 'Status', 'Created', ''],
   rows: [
-    { type: 'Protect', name: 'main-script.lua', service: 'Zeox Protect', status: 'Done', created: '12-11-2026', color: '#A78BFA' },
-    { type: 'Keys', name: 'batch-25-keys', service: 'Zeox Keys', status: 'Done', created: '12-11-2026', color: '#F2A56F' },
-    { type: 'Script', name: 'loader-v2.lua', service: 'Script Protect', status: 'Running', created: '11-11-2026', color: '#E8A7C8' },
-    { type: 'Protect', name: 'game-core.lua', service: 'Zeox Protect', status: 'Done', created: '11-11-2026', color: '#A78BFA' },
-    { type: 'API', name: 'sync-report', service: 'API', status: 'Done', created: '10-11-2026', color: '#8DCFE6' },
-    { type: 'Keys', name: 'revoke-expired', service: 'Zeox Keys', status: 'Queued', created: '10-11-2026', color: '#F2A56F' },
+    { type: 'Protect', name: 'main-script.lua', service: 'Zeox Protect', status: 'Done', created: '12-11-2026', color: '#A855F7' },
+    { type: 'Keys', name: 'batch-25-keys', service: 'Zeox Keys', status: 'Done', created: '12-11-2026', color: '#FB923C' },
+    { type: 'Script', name: 'loader-v2.lua', service: 'Script Protect', status: 'Running', created: '11-11-2026', color: '#FACC15' },
+    { type: 'Protect', name: 'game-core.lua', service: 'Zeox Protect', status: 'Done', created: '11-11-2026', color: '#A855F7' },
+    { type: 'API', name: 'sync-report', service: 'API', status: 'Done', created: '10-11-2026', color: '#3B82F6' },
+    { type: 'Keys', name: 'revoke-expired', service: 'Zeox Keys', status: 'Queued', created: '10-11-2026', color: '#FB923C' },
   ],
 };
 
