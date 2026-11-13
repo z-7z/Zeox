@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -54,10 +54,44 @@ function Overview({ searchTerm }: { searchTerm: string }) {
   const [operationRows, setOperationRows] = useState<OperationRow[]>(operationsTable.rows as OperationRow[]);
   const [statusFilter, setStatusFilter] = useState('all');
   const [dialogOpen, setDialogOpen] = useState(false);
+  const dialogRef = useRef<HTMLElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const [newName, setNewName] = useState('');
   const [newService, setNewService] = useState('Zeox Protect');
   const [formError, setFormError] = useState('');
   const [notice, setNotice] = useState('');
+
+  useEffect(() => {
+    if (!dialogOpen) return;
+    const dialog = dialogRef.current;
+    const getFocusable = () => Array.from(dialog?.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href]'
+    ) ?? []);
+    getFocusable()[0]?.focus();
+    const handleDialogKeys = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setDialogOpen(false);
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const focusable = getFocusable();
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (!first || !last) return;
+      if (event.shiftKey && (document.activeElement === first || !dialog?.contains(document.activeElement))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !dialog?.contains(document.activeElement))) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', handleDialogKeys);
+    return () => {
+      document.removeEventListener('keydown', handleDialogKeys);
+      triggerRef.current?.focus();
+    };
+  }, [dialogOpen]);
 
   const filteredOperations = operationRows.filter((row) => {
     const query = searchTerm.trim().toLowerCase();
@@ -102,7 +136,7 @@ function Overview({ searchTerm }: { searchTerm: string }) {
       <div className="fade-up flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold tracking-tight text-white">Overview</h1>
         <div className="flex flex-wrap items-center gap-2">
-          <button onClick={() => setDialogOpen(true)} className="btn-primary !px-3.5 !py-1.5 text-xs">
+          <button ref={triggerRef} onClick={() => setDialogOpen(true)} className="btn-primary !px-3.5 !py-1.5 text-xs">
             <Plus size={13} />
             New Operation
           </button>
@@ -299,9 +333,9 @@ function Overview({ searchTerm }: { searchTerm: string }) {
         <div
           className="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4"
           onClick={() => setDialogOpen(false)}
-          onKeyDown={(event) => { if (event.key === 'Escape') setDialogOpen(false); }}
         >
           <section
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="new-operation-title"
