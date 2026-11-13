@@ -1,5 +1,5 @@
 /**
- * Lightweight SVG charts for the flat dashboard design.
+ * Lightweight SVG charts for the dashboard.
  * Pure SVG + CSS, no chart library dependency.
  */
 
@@ -46,7 +46,7 @@ export function AreaChart({ data, labels, highlightIndex = -1, tooltipLabel, too
   return (
     <div>
       <div className="relative">
-        <svg viewBox={'0 0 ' + W + ' ' + H} className="h-52 w-full" preserveAspectRatio="none" role="img" aria-label="Operations over time chart">
+        <svg viewBox={'0 0 ' + W + ' ' + H} className="h-48 w-full sm:h-52" preserveAspectRatio="none" role="img" aria-label="Operations over time chart">
           <defs>
             <linearGradient id="zeox-area" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.14" />
@@ -54,7 +54,7 @@ export function AreaChart({ data, labels, highlightIndex = -1, tooltipLabel, too
             </linearGradient>
           </defs>
           {[0.25, 0.5, 0.75].map((f) => (
-            <line key={f} x1={0} x2={W} y1={H * f} y2={H * f} stroke="#1F1F24" strokeWidth={1} />
+            <line key={f} x1={0} x2={W} y1={H * f} y2={H * f} stroke="#1C1C21" strokeWidth={1} />
           ))}
           <path d={area} fill="url(#zeox-area)" />
           <path d={line} fill="none" stroke="#D4D4D8" strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
@@ -67,7 +67,7 @@ export function AreaChart({ data, labels, highlightIndex = -1, tooltipLabel, too
         </svg>
         {hp && tooltipValue && (
           <div
-            className="pointer-events-none absolute top-0 flex -translate-x-1/2 items-center gap-2 rounded-md border border-line bg-card px-2.5 py-1.5 shadow-lg"
+            className="pointer-events-none absolute top-0 flex -translate-x-1/2 items-center gap-2 rounded-lg border border-line bg-card px-2.5 py-1.5 shadow-lg"
             style={{ left: 'min(max(' + hlPct + '%, 60px), calc(100% - 60px))' }}
           >
             <span className="status-dot bg-white" />
@@ -81,13 +81,58 @@ export function AreaChart({ data, labels, highlightIndex = -1, tooltipLabel, too
           <span
             key={l + i}
             className={
-              'rounded px-1.5 py-0.5 text-[10px] ' +
+              'rounded-full px-2 py-0.5 text-[10px] ' +
               (i === highlightIndex ? 'bg-white font-medium text-black' : 'text-txt-muted')
             }
           >
             {l}
           </span>
         ))}
+      </div>
+    </div>
+  );
+}
+
+interface DonutProps {
+  segments: { label: string; value: number; color: string }[];
+  total: string;
+  sub: string;
+  size?: number;
+}
+
+export function Donut({ segments, total, sub, size = 160 }: DonutProps) {
+  const sum = segments.reduce((a, s) => a + s.value, 0) || 1;
+  const r = 54;
+  const c = 2 * Math.PI * r;
+  let offset = 0;
+
+  return (
+    <div className="relative shrink-0" style={{ width: size, height: size }}>
+      <svg viewBox="0 0 140 140" className="h-full w-full -rotate-90">
+        <circle cx="70" cy="70" r={r} fill="none" stroke="#1C1C21" strokeWidth="12" />
+        {segments.map((s) => {
+          const len = (s.value / sum) * c;
+          const el = (
+            <circle
+              key={s.label}
+              cx="70"
+              cy="70"
+              r={r}
+              fill="none"
+              stroke={s.color}
+              strokeWidth="12"
+              strokeLinecap="round"
+              strokeDasharray={Math.max(0, len - 4) + ' ' + (c - Math.max(0, len - 4))}
+              strokeDashoffset={-offset}
+            />
+          );
+          offset += len;
+          return el;
+        })}
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <p className="text-lg font-semibold tracking-tight text-white">{total}</p>
+        <p className="text-[10px] text-txt-muted">{sub}</p>
       </div>
     </div>
   );

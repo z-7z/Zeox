@@ -52,23 +52,23 @@ const previewBars = [35, 50, 42, 65, 55, 78, 62, 88, 70, 95, 82, 100];
 
 export function Landing() {
   return (
-    <div id="home" className="min-h-screen bg-page">
+    <div id="home" className="page-enter min-h-screen bg-page">
       <NavigationBar />
 
       {/* Hero */}
       <section className="pt-28 pb-20 lg:pt-36">
         <div className="mx-auto max-w-5xl px-5 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
+          <div className="fade-up mx-auto max-w-2xl text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1 text-xs font-medium text-txt-secondary">
               <span className="status-dot bg-accent-green" />
-              Developer platform · zeox.xyz
+              LuaU encryption &amp; protection platform
             </span>
             <h1 className="mt-6 text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-[3.4rem]">
-              Protect Your Scripts. Power Your Development.
+              Encrypt. Protect. Ship Your Scripts.
             </h1>
             <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-txt-secondary">
-              An advanced ecosystem of developer tools, script protection, and license
-              management — designed for modern developers.
+              Zeox is an advanced ecosystem for LuaU script encryption, protection, and license
+              management — built for Roblox developers who take security seriously.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Link to="/dashboard" className="btn-primary">
@@ -81,14 +81,14 @@ export function Landing() {
             </div>
           </div>
 
-          {/* Dashboard preview, framed like the reference */}
-          <div className="mx-auto mt-16 max-w-3xl">
+          {/* Dashboard preview */}
+          <div className="fade-up mx-auto mt-16 max-w-3xl" style={{ animationDelay: '120ms' }}>
             <div className="rounded-2xl border border-line bg-panel p-2 shadow-2xl">
               <div className="rounded-xl bg-page p-4">
                 <div className="flex items-center justify-between border-b border-line-soft pb-3">
                   <div className="flex items-center gap-2.5">
                     <ZeoxLogo size={16} className="text-white" />
-                    <span className="text-sm font-medium text-white">Dashboard</span>
+                    <span className="text-sm font-medium text-white">Overview</span>
                   </div>
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-card px-2.5 py-1 text-[10px] text-txt-secondary">
                     <span className="status-dot bg-accent-green" />
@@ -176,7 +176,7 @@ export function Landing() {
             {whyItems.map((w) => (
               <GlassCard key={w.title} hover>
                 <div className="p-6">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-line bg-panel">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-panel">
                     <w.icon size={17} strokeWidth={1.75} className="text-txt-primary" />
                   </span>
                   <h3 className="mt-5 text-base font-semibold text-white">{w.title}</h3>
@@ -216,7 +216,7 @@ export function Landing() {
                   Developer Experience, First
                 </h2>
                 <p className="mt-4 text-sm leading-relaxed text-txt-secondary">
-                  Zeox is designed around a clean, predictable workflow: protect a script, manage
+                  Zeox is designed around a clean, predictable workflow: encrypt a script, manage
                   its keys, and monitor everything from a single dashboard. No clutter, no guesswork.
                 </p>
                 <Link to="/dashboard" className="btn-primary mt-7">
@@ -225,8 +225,8 @@ export function Landing() {
                 </Link>
               </div>
               <div className="rounded-xl border border-line bg-black p-5 font-mono text-xs leading-6">
-                <p className="text-txt-muted">$ zeox protect ./script.lua</p>
-                <p className="text-txt-primary">✓ obfuscated · 128 KB → 121 KB</p>
+                <p className="text-txt-muted">$ zeox encrypt ./script.lua</p>
+                <p className="text-txt-primary">✓ encrypted · 128 KB → 121 KB</p>
                 <p className="text-txt-muted">$ zeox keys create --batch 25</p>
                 <p className="text-txt-primary">✓ 25 keys issued</p>
                 <p className="text-txt-muted">$ zeox status</p>

@@ -15,7 +15,6 @@
   ::selection {
     background: rgba(255, 255, 255, 0.18);
   }
-  /* Slim dark scrollbars */
   * {
     scrollbar-width: thin;
     scrollbar-color: #3F3F46 transparent;
@@ -34,16 +33,14 @@
 }
 
 @layer components {
-  /* ---- Flat card system (solid surfaces) ---- */
+  /* ---- Card system: large radius, solid dark surfaces ---- */
   .card {
     position: relative;
-    background: #18181B;
-    border: 1px solid #26262B;
-    border-radius: 0.75rem;
+    background: #131316;
+    border: 1px solid #232329;
+    border-radius: 1rem;
     overflow: hidden;
   }
-
-  /* Subtle top sheen that fades in on hover */
   .card-hover::before {
     content: '';
     position: absolute;
@@ -56,7 +53,6 @@
   .card-hover:hover::before {
     opacity: 1;
   }
-
   .card-hover {
     transition:
       background 0.2s ease,
@@ -65,11 +61,11 @@
       box-shadow 0.25s ease;
   }
   .card-hover:hover {
-    background: #1E1E22;
-    border-color: #3F3F46;
+    background: #18181C;
+    border-color: #3A3A44;
     transform: translateY(-3px);
     box-shadow:
-      0 10px 30px -8px rgba(0, 0, 0, 0.6),
+      0 12px 32px -8px rgba(0, 0, 0, 0.65),
       0 0 0 1px rgba(255, 255, 255, 0.03);
   }
   .card-hover:active {
@@ -78,7 +74,7 @@
 
   /* ---- Buttons ---- */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-black;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-black;
     transition: background 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease;
   }
   .btn-primary:hover {
@@ -95,40 +91,60 @@
     outline-offset: 2px;
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-card px-5 py-2.5 text-sm font-medium text-txt-secondary;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-card px-5 py-2.5 text-sm font-medium text-txt-secondary;
     transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease, transform 0.2s ease;
   }
   .btn-ghost:hover {
-    @apply border-[#3F3F46] text-white;
-    background: #1E1E22;
+    @apply border-[#3A3A44] text-white;
+    background: #18181C;
     transform: translateY(-1px);
   }
   .btn-ghost:active {
     transform: translateY(0);
   }
-  .btn-ghost:focus-visible {
-    outline: 2px solid #A1A1AA;
-    outline-offset: 2px;
+
+  /* ---- Sidebar nav pill (reference style: white active pill) ---- */
+  .nav-pill {
+    @apply flex items-center gap-2.5 rounded-full px-3 py-2 text-sm text-txt-secondary;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+  }
+  .nav-pill:hover {
+    @apply bg-card-hover text-white;
+  }
+  .nav-pill:active {
+    transform: scale(0.98);
+  }
+  .nav-pill-active {
+    @apply bg-white font-medium text-black;
+  }
+  .nav-pill-active:hover {
+    @apply bg-white text-black;
   }
 
-  /* ---- Status dot ---- */
   .status-dot {
     @apply inline-block h-1.5 w-1.5 rounded-full;
   }
 
-  /* ---- Entrance animation for cards ---- */
-  .fade-up {
-    animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* ---- Skeleton loading ---- */
+  .skeleton {
+    @apply rounded-lg bg-line-soft;
+    background-image: linear-gradient(90deg, #1C1C21 0%, #26262C 40%, #1C1C21 80%);
+    background-size: 400px 100%;
+    background-repeat: no-repeat;
+    animation: shimmer 1.6s linear infinite;
   }
-  @keyframes fadeUp {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  @keyframes shimmer {
+    0% { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+
+  /* ---- Page transition ---- */
+  .page-enter {
+    animation: pageIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes pageIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 }
 
@@ -138,11 +154,14 @@
   .btn-primary,
   .btn-primary:hover,
   .btn-ghost,
-  .btn-ghost:hover {
+  .btn-ghost:hover,
+  .nav-pill,
+  .nav-pill:active {
     transform: none;
     transition: none;
   }
-  .fade-up {
+  .page-enter,
+  .skeleton {
     animation: none;
   }
 }

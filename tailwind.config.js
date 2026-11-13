@@ -7,15 +7,15 @@ export default {
         xs: '400px',
       },
       colors: {
-        page: '#09090B',
-        panel: '#111113',
+        page: '#0A0A0C',
+        panel: '#101013',
         card: {
-          DEFAULT: '#18181B',
-          hover: '#1E1E22',
+          DEFAULT: '#131316',
+          hover: '#18181C',
         },
         line: {
-          DEFAULT: '#26262B',
-          soft: '#1F1F24',
+          DEFAULT: '#232329',
+          soft: '#1C1C21',
         },
         txt: {
           primary: '#FFFFFF',
@@ -24,6 +24,9 @@ export default {
         },
         'accent-green': '#22C55E',
         'accent-red': '#EF4444',
+        'accent-purple': '#8B5CF6',
+        'accent-yellow': '#EAB308',
+        'accent-blue': '#3B82F6',
         // Compatibility aliases (legacy tokens)
         ok: '#22C55E',
         warn: '#FBBF24',
@@ -35,11 +38,31 @@ export default {
       },
       animation: {
         'pulse-dot': 'pulseDot 2.4s ease-in-out infinite',
+        shimmer: 'shimmer 1.6s linear infinite',
+        'fade-up': 'fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both',
+        'fade-in': 'fadeIn 0.35s ease both',
+        'scale-in': 'scaleIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both',
       },
       keyframes: {
         pulseDot: {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.4' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-400px 0' },
+          '100%': { backgroundPosition: '400px 0' },
+        },
+        fadeUp: {
+          from: { opacity: '0', transform: 'translateY(12px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        fadeIn: {
+          from: { opacity: '0' },
+          to: { opacity: '1' },
+        },
+        scaleIn: {
+          from: { opacity: '0', transform: 'scale(0.98)' },
+          to: { opacity: '1', transform: 'scale(1)' },
         },
       },
     },

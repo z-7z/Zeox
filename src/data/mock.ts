@@ -2,16 +2,15 @@ import {
   ShieldCheck,
   KeyRound,
   FileCode2,
-  Activity,
-  CreditCard,
-  Cpu,
-  Server,
   Globe,
-  UserRound,
-  Zap,
+  Server,
+  Cpu,
+  Folder,
+  FileText,
+  Film,
+  Music,
+  Archive,
 } from 'lucide-react';
-import type { ActivityStatus } from '../components/ActivityItem';
-import type { StatusLevel } from '../components/StatusCard';
 
 /** All data below is prototype/mock data only — no backend is connected. */
 
@@ -41,33 +40,24 @@ export const platformStatus = [
     icon: Globe,
     title: 'Platform Status',
     state: 'Operational',
-    level: 'operational' as StatusLevel,
+    level: 'operational' as const,
     metadata: 'uptime 99.98% · 30d',
   },
   {
     icon: Server,
     title: 'API Status',
     state: 'Operational',
-    level: 'operational' as StatusLevel,
+    level: 'operational' as const,
     metadata: 'avg latency 42ms · v1',
   },
   {
     icon: Cpu,
     title: 'Protection Engine',
     state: 'Operational',
-    level: 'operational' as StatusLevel,
+    level: 'operational' as const,
     metadata: 'engine build 2.4.1',
   },
-  {
-    icon: Activity,
-    title: 'Active Services',
-    state: '3 of 3 running',
-    level: 'operational' as StatusLevel,
-    metadata: 'last check 30s ago',
-  },
 ];
-
-export const dashboardStatus = platformStatus.slice(0, 3);
 
 export const account = {
   plan: 'Developer',
@@ -81,41 +71,6 @@ export const account = {
   ],
 };
 
-export const stats = [
-  {
-    icon: CreditCard,
-    title: 'Current Plan',
-    value: 'Developer',
-    delta: '2.0%',
-    deltaDirection: 'up' as const,
-    description: 'Renews Dec 12, 2026',
-  },
-  {
-    icon: Zap,
-    title: 'Available Credits',
-    value: '1,240',
-    delta: '4.0%',
-    deltaDirection: 'down' as const,
-    description: 'vs last month · resets monthly',
-  },
-  {
-    icon: Activity,
-    title: 'Total Operations',
-    value: '3,482',
-    delta: '7.5%',
-    deltaDirection: 'up' as const,
-    description: 'vs last month',
-  },
-  {
-    icon: Cpu,
-    title: 'Active Services',
-    value: '3',
-    delta: '0.0%',
-    deltaDirection: 'up' as const,
-    description: 'Enabled on your plan',
-  },
-];
-
 export const operationsChart = {
   total: '30,240',
   delta: '+7.5% vs last month',
@@ -126,11 +81,49 @@ export const operationsChart = {
   tooltipValue: '28,917',
 };
 
-export const keysManagement = {
-  tabs: ['Status', 'Sources', 'Usage'],
-  groups: [
-    { label: 'Active keys', value: '114', sub: 'keys', pct: 64 },
-    { label: 'In rotation', value: '62', sub: 'keys', pct: 38 },
+/* ---- Overview: usage + donut (reference layout) ---- */
+
+export const usageServices = [
+  { label: 'Zeox Protect', pct: 68, color: '#8B5CF6', amount: '1,204 ops' },
+  { label: 'Zeox Keys', pct: 54, color: '#22C55E', amount: '890 ops' },
+  { label: 'Script Protect', pct: 41, color: '#EAB308', amount: '612 ops' },
+  { label: 'API Requests', pct: 27, color: '#3B82F6', amount: '776 ops' },
+];
+
+export const usageDonut = {
+  total: '3,482',
+  sub: 'total operations',
+  segments: [
+    { label: 'Protect', value: 1204, color: '#8B5CF6' },
+    { label: 'Keys', value: 890, color: '#22C55E' },
+    { label: 'Scripts', value: 612, color: '#EAB308' },
+    { label: 'API', value: 776, color: '#3B82F6' },
+  ],
+};
+
+export const storageCards = [
+  { icon: Folder, name: 'Zeox Protect', sub: '1,204 operations', color: '#8B5CF6' },
+  { icon: KeyRound, name: 'Zeox Keys', sub: '890 operations', color: '#22C55E' },
+  { icon: FileCode2, name: 'Script Protect', sub: '612 operations', color: '#EAB308' },
+];
+
+export const categories = [
+  { icon: ShieldCheck, name: 'Protect', count: '1,204 ops', pct: 68, color: '#8B5CF6' },
+  { icon: KeyRound, name: 'Keys', count: '890 ops', pct: 54, color: '#22C55E' },
+  { icon: FileCode2, name: 'Scripts', count: '612 ops', pct: 41, color: '#EAB308' },
+  { icon: Cpu, name: 'Engine', count: '438 ops', pct: 33, color: '#EF4444' },
+  { icon: Globe, name: 'Others', count: '338 ops', pct: 21, color: '#3B82F6' },
+];
+
+export const operationsTable = {
+  columns: ['#', 'Type', 'Name', 'Service', 'Status', 'Created', ''],
+  rows: [
+    { type: 'Protect', name: 'main-script.lua', service: 'Zeox Protect', status: 'Done', created: '12-11-2026', color: '#8B5CF6' },
+    { type: 'Keys', name: 'batch-25-keys', service: 'Zeox Keys', status: 'Done', created: '12-11-2026', color: '#22C55E' },
+    { type: 'Script', name: 'loader-v2.lua', service: 'Script Protect', status: 'Running', created: '11-11-2026', color: '#EAB308' },
+    { type: 'Protect', name: 'game-core.lua', service: 'Zeox Protect', status: 'Done', created: '11-11-2026', color: '#8B5CF6' },
+    { type: 'API', name: 'sync-report', service: 'API', status: 'Done', created: '10-11-2026', color: '#3B82F6' },
+    { type: 'Keys', name: 'revoke-expired', service: 'Zeox Keys', status: 'Queued', created: '10-11-2026', color: '#22C55E' },
   ],
 };
 
@@ -142,46 +135,42 @@ export const uptime = {
   highlight: 3,
 };
 
-export const activities: {
-  icon: typeof ShieldCheck;
-  title: string;
-  description: string;
-  timestamp: string;
-  status: ActivityStatus;
-}[] = [
+export const activities = [
   {
     icon: ShieldCheck,
     title: 'Protection operation completed',
-    description: 'Sample script · 128 KB processed',
+    description: 'main-script.lua · 128 KB processed',
     timestamp: '2m ago',
-    status: 'success',
+    status: 'success' as const,
   },
   {
     icon: KeyRound,
     title: 'License keys generated',
     description: 'Batch of 25 keys · prototype sample',
     timestamp: '18m ago',
-    status: 'success',
+    status: 'success' as const,
   },
   {
-    icon: UserRound,
+    icon: Globe,
     title: 'Account activity',
     description: 'New sign-in from web dashboard',
     timestamp: '1h ago',
-    status: 'success',
+    status: 'success' as const,
   },
   {
     icon: FileCode2,
     title: 'Script Protect session started',
-    description: 'Draft project · sample data',
+    description: 'loader-v2.lua · sample data',
     timestamp: '3h ago',
-    status: 'pending',
+    status: 'pending' as const,
   },
   {
-    icon: Activity,
+    icon: Server,
     title: 'Service usage report',
     description: 'Weekly usage summary available',
     timestamp: '1d ago',
-    status: 'success',
+    status: 'success' as const,
   },
 ];
+
+export { FileText, Film, Music, Archive };
