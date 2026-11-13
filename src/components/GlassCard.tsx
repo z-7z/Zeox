@@ -5,19 +5,12 @@ interface GlassCardProps {
   className?: string;
   hover?: boolean;
   compact?: boolean;
-  /** Legacy props, kept for API compatibility. Ignored in the flat design. */
-  accent?: 'purple' | 'orange' | 'none';
+  accent?: 'cyan' | 'orange' | 'pink' | 'none';
   shine?: boolean;
   shineIdle?: boolean;
 }
 
-/**
- * Core solid card surface of the Zeox design system, with a subtle lift on hover.
- */
+/** Solid OLED surface with a restrained border and optional hover lift. */
 export function GlassCard({ children, className = '', hover = false, compact = false }: GlassCardProps) {
-  return (
-    <div className={'card ' + (hover ? 'card-hover ' : '') + (compact ? 'rounded-lg ' : '') + className}>
-      <div className="h-full">{children}</div>
-    </div>
-  );
+  return <div className={'card ' + (hover ? 'card-hover ' : '') + (compact ? 'rounded-md ' : '') + className}><div className="h-full">{children}</div></div>;
 }

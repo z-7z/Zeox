@@ -1,399 +1,225 @@
 import { Link } from 'react-router-dom';
 import {
-  ShieldCheck,
-  KeyRound,
-  Terminal,
-  Gauge,
-  Lock,
-  LayoutDashboard,
+  Activity,
   ArrowRight,
-  Activity as ActivityIcon,
-  Zap,
-  CheckCircle2,
+  ArrowUpRight,
+  ChevronRight,
+  KeyRound,
+  LockKeyhole,
 } from 'lucide-react';
 import { NavigationBar } from '../components/NavigationBar';
 import { Footer } from '../components/Footer';
-import { GlassCard } from '../components/GlassCard';
 import { ZeoxLogo } from '../components/ZeoxLogo';
-import { services, platformStatus } from '../data/mock';
-import { StatusCard } from '../components/StatusCard';
+import { platformStatus, services } from '../data/mock';
 
-const P = '#A78BFA';
-const G = '#F2A56F';
-const Y = '#E8A7C8';
-const BL = '#8DCFE6';
-const C = '#C4B5FD';
+const accent = {
+  cyan: '#5CD4E6',
+  orange: '#FF9150',
+  pink: '#F2A6C7',
+  green: '#7BD9C2',
+};
 
-const trustStats = [
-  { value: '99.98%', label: 'Platform uptime' },
-  { value: '30,240', label: 'Operations / month' },
-  { value: '< 50ms', label: 'Avg. API latency' },
-  { value: '2.4.1', label: 'Engine build' },
-];
-
-const whyItems = [
-  {
-    icon: Lock,
-    title: 'Military-grade obfuscation',
-    description: 'Layered LuaU encryption engineered to resist tampering, dumping, and reverse engineering.',
-    color: P,
-  },
-  {
-    icon: KeyRound,
-    title: 'Total key control',
-    description: 'Issue, scope, expire, and revoke license keys in seconds from one control surface.',
-    color: G,
-  },
-  {
-    icon: Gauge,
-    title: 'Zero-lag pipeline',
-    description: 'A protection pipeline optimized for speed — secure your scripts without slowing down.',
-    color: C,
-  },
-];
-
-const features = [
-  { icon: ShieldCheck, title: 'Script Protection', description: 'Multi-layer defenses for LuaU scripts.', color: P },
-  { icon: KeyRound, title: 'License System', description: 'Full lifecycle management for keys.', color: G },
-  { icon: Terminal, title: 'Developer Tools', description: 'A growing toolkit for daily work.', color: BL },
-  { icon: LayoutDashboard, title: 'Unified Dashboard', description: 'Every service in one workspace.', color: Y },
-  { icon: ActivityIcon, title: 'Live Activity', description: 'Operations and usage in real time.', color: C },
-  { icon: Zap, title: 'Fast Engine', description: 'Low-latency protection pipeline.', color: '#F2A56F' },
-];
-
-const heroBars = [35, 50, 42, 65, 55, 78, 62, 88, 70, 95, 82, 100];
 const heroUsage = [
-  { label: 'Zeox Protect', pct: 68, color: P },
-  { label: 'Zeox Keys', pct: 54, color: G },
-  { label: 'Script Protect', pct: 41, color: Y },
-  { label: 'API Requests', pct: 27, color: BL },
+  { label: 'Protect', value: '1,204', pct: 68, color: accent.cyan },
+  { label: 'Keys', value: '890', pct: 54, color: accent.orange },
+  { label: 'Scripts', value: '612', pct: 41, color: accent.pink },
 ];
 
-const previewRows = [
-  { name: 'main-script.lua', service: 'Zeox Protect', status: 'Done', color: P },
-  { name: 'batch-25-keys', service: 'Zeox Keys', status: 'Done', color: G },
-  { name: 'loader-v2.lua', service: 'Script Protect', status: 'Running', color: Y },
+const activityRows = [
+  { file: 'main-script.lua', action: 'PROTECT', state: 'DONE', color: accent.cyan },
+  { file: 'batch-25-keys', action: 'KEYS', state: 'DONE', color: accent.orange },
+  { file: 'loader-v2.lua', action: 'SCRIPT', state: 'RUNNING', color: accent.pink },
 ];
 
-const checks = ['Prototype interface', 'Mock data only', 'Built for Roblox LuaU'];
+const steps = [
+  { number: '01', title: 'Protect a build', detail: 'Run a LuaU script through the protection pipeline.', icon: LockKeyhole },
+  { number: '02', title: 'Control access', detail: 'Issue and manage license keys from one workspace.', icon: KeyRound },
+  { number: '03', title: 'Track activity', detail: 'Review operations, status and usage in one view.', icon: Activity },
+];
 
 export function Landing() {
   return (
-    <div id="home" className="page-enter relative min-h-screen overflow-hidden bg-page">
+    <div id="home" className="page-enter min-h-screen bg-page text-txt-primary">
       <NavigationBar />
-
-      {/* Hero */}
-      <section className="relative pt-24 pb-16 lg:pt-32 lg:pb-20">
-        <div className="mx-auto max-w-6xl px-5 lg:px-8">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div className="fade-up max-w-xl text-center lg:text-left">
-            <span
-              className="inline-flex items-center justify-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-medium text-txt-secondary lg:justify-start"
-              style={{
-                borderColor: 'rgba(167, 139, 250, 0.28)',
-                background: 'rgba(167, 139, 250, 0.07)',
-              }}
-            >
-              <span className="status-dot" style={{ background: P }} />
-              LuaU encryption &amp; protection platform
-            </span>
-
-            <h1 className="mt-7 text-4xl font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
-              Script security.
-              <br />
-              <span className="text-accent-purple">
-                Under your control.
-              </span>
-            </h1>
-
-            <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-txt-secondary sm:text-lg lg:mx-0">
-              Protect LuaU scripts, manage license keys, and track each operation from one focused workspace.
-            </p>
-
-            <div className="mt-8 flex flex-wrap justify-center gap-3 lg:justify-start">
-              <Link to="/dashboard" className="btn-primary !px-7 !py-3">
-                Open Dashboard
-                <ArrowRight size={15} />
-              </Link>
-              <a href="#services" className="btn-ghost !px-7 !py-3">
-                See what’s inside
-              </a>
+      <main id="main-content" className="pt-14">
+        <section className="mx-auto max-w-[1320px] px-4 pb-9 pt-8 sm:px-6 sm:pt-12 lg:px-8 lg:pb-12 lg:pt-16">
+          <div className="grid items-stretch gap-7 lg:grid-cols-[0.9fr_1.1fr] lg:gap-10">
+            <div className="fade-up flex flex-col justify-center border-l-2 border-accent-orange pl-5 sm:pl-7">
+              <p className="eyebrow flex items-center gap-2">
+                <span className="status-dot bg-accent-cyan" />
+                LUAU SECURITY / CONTROL DECK
+              </p>
+              <h1 className="mt-5 max-w-xl text-4xl font-semibold leading-[1.08] tracking-tight text-txt-primary sm:text-5xl lg:text-[3.5rem]">
+                Protect every build.
+                <span className="mt-1 block text-accent-cyan">Stay in control.</span>
+              </h1>
+              <p className="mt-5 max-w-lg text-sm leading-6 text-txt-secondary sm:text-base">
+                Protect LuaU scripts, manage license access, and follow each operation from one focused workspace.
+              </p>
+              <div className="mt-7 flex flex-wrap items-center gap-3">
+                <Link to="/dashboard" className="btn-primary">
+                  Open control deck <ArrowRight size={15} />
+                </Link>
+                <a href="#services" className="btn-ghost">
+                  Explore the platform <ChevronRight size={15} />
+                </a>
+              </div>
+              <p className="mt-6 flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-txt-muted">
+                <span className="status-dot bg-accent-orange" />
+                Prototype UI <span className="text-line">/</span> sample data only
+              </p>
             </div>
 
-            <div className="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 lg:justify-start">
-              {checks.map((c) => (
-                <span key={c} className="flex items-center gap-1.5 text-xs text-txt-muted">
-                  <CheckCircle2 size={13} className="text-accent-green" />
-                  {c}
+            <div className="fade-up card min-w-0" style={{ animationDelay: '90ms' }}>
+              <div className="flex items-center justify-between border-b border-line-soft bg-panel px-4 py-3 sm:px-5">
+                <div className="flex items-center gap-2.5">
+                  <ZeoxLogo size={16} className="text-accent-orange" />
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-txt-secondary">Workspace / Overview</span>
+                </div>
+                <span className="inline-flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-wider text-accent-cyan">
+                  <span className="status-dot bg-accent-cyan" /> DEMO
                 </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Dashboard preview */}
-          <div className="fade-up mt-10 w-full lg:mt-0" style={{ animationDelay: '100ms' }}>
-            <div className="card p-2">
-              <div className="rounded-xl bg-page p-4">
-                <div className="flex items-center justify-between border-b border-line-soft pb-3">
-                  <div className="flex items-center gap-2.5">
-                    <ZeoxLogo size={16} className="text-white" />
-                    <span className="text-sm font-medium text-white">Overview</span>
+              </div>
+              <div className="p-4 sm:p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="eyebrow">OPERATIONS MONITOR</p>
+                    <p className="mt-1 text-lg font-medium tracking-tight text-txt-primary">Protection activity</p>
                   </div>
-                  <span
-                    className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px]"
-                    style={{ borderColor: 'rgba(141,207,230,0.28)', color: '#8DCFE6', background: 'rgba(141,207,230,0.06)' }}
-                  >
-                    <span className="status-dot" style={{ background: BL }} />
-                    Sample data
-                  </span>
+                  <span className="rounded-md border border-line px-2 py-1 font-mono text-[9px] text-txt-muted">LAST 30 DAYS</span>
                 </div>
 
-                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div className="card p-4 text-left">
-                    <p className="text-xs font-medium text-white">Usage</p>
-                    <div className="mt-3 space-y-2.5">
-                      {heroUsage.map((u) => (
-                        <div key={u.label}>
-                          <div className="flex items-center justify-between text-[10px]">
-                            <span className="flex items-center gap-1.5 text-txt-secondary">
-                              <span className="status-dot" style={{ background: u.color }} />
-                              {u.label}
-                            </span>
-                            <span className="font-mono text-txt-muted">{u.pct}%</span>
-                          </div>
-                          <div className="mt-1 h-1 overflow-hidden rounded-full bg-line-soft">
-                            <div
-                              className="h-full rounded-full"
-                              style={{ width: u.pct + '%', background: u.color }}
-                            />
-                          </div>
+                <div className="mt-4 grid grid-cols-3 divide-x divide-line-soft border-y border-line-soft py-3">
+                  <div className="px-2 first:pl-0">
+                    <p className="font-mono text-[9px] uppercase text-txt-muted">Operations</p>
+                    <p className="mt-1 text-lg font-medium tracking-tight">3,482</p>
+                  </div>
+                  <div className="px-3">
+                    <p className="font-mono text-[9px] uppercase text-txt-muted">Uptime</p>
+                    <p className="mt-1 text-lg font-medium tracking-tight">99.98%</p>
+                  </div>
+                  <div className="px-3 last:pr-0">
+                    <p className="font-mono text-[9px] uppercase text-txt-muted">Latency</p>
+                    <p className="mt-1 text-lg font-medium tracking-tight">42<span className="ml-1 text-xs text-txt-muted">ms</span></p>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid gap-4 sm:grid-cols-[1fr_0.82fr]">
+                  <div className="space-y-3">
+                    {heroUsage.map((item) => (
+                      <div key={item.label}>
+                        <div className="flex items-center justify-between font-mono text-[10px]">
+                          <span className="flex items-center gap-2 text-txt-secondary"><span className="status-dot" style={{ background: item.color }} />{item.label}</span>
+                          <span className="text-txt-muted">{item.value} <span className="ml-1 text-txt-primary">{item.pct}%</span></span>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="card flex flex-col justify-center p-4">
-                    <div className="flex items-end justify-between">
-                      <div>
-                        <p className="text-[10px] text-txt-muted">Operations over time</p>
-                        <p className="mt-1 text-2xl font-semibold tracking-tight text-white">30,240</p>
+                        <div className="mt-1.5 h-1 overflow-hidden bg-line-soft">
+                          <div className="h-full" style={{ width: item.pct + '%', background: item.color }} />
+                        </div>
                       </div>
-                      <span className="font-mono text-[10px] text-accent-green">+7.5%</span>
-                    </div>
-                    <div className="mt-3 flex h-16 items-end gap-1">
-                      {heroBars.map((h, i) => (
-                        <div
-                          key={i}
-                          className="flex-1 rounded-sm"
-                          style={{
-                            height: h + '%',
-                            background: i === heroBars.length - 1 ? P : 'rgba(255,255,255,0.12)',
-                          }}
-                        />
-                      ))}
-                    </div>
+                    ))}
+                  </div>
+                  <div className="flex min-h-24 items-end gap-1 border-l border-line-soft pl-4">
+                    {[28, 44, 38, 58, 49, 72, 61, 82, 70, 92, 78, 100].map((height, index) => (
+                      <div key={index} className="flex-1" style={{ height: height + '%', minHeight: 8, background: index === 11 ? accent.orange : '#263238' }} />
+                    ))}
                   </div>
                 </div>
 
-                <div className="card mt-3 p-2">
-                  {previewRows.map((r, i) => (
-                    <div key={i} className="flex items-center gap-3 rounded-lg px-2 py-2">
-                      <span className="status-dot" style={{ background: r.color }} />
-                      <span className="flex-1 truncate font-mono text-[10px] text-txt-primary">{r.name}</span>
-                      <span className="hidden text-[10px] text-txt-muted sm:block">{r.service}</span>
-                      <span className={'text-[10px] ' + (r.status === 'Running' ? 'text-accent-blue' : 'text-accent-green')}>
-                        {r.status}
-                      </span>
-                      <span className="rounded-full bg-white px-2 py-0.5 text-[9px] font-semibold text-black">Download</span>
+                <div className="mt-5 border-t border-line-soft pt-2">
+                  {activityRows.map((row) => (
+                    <div key={row.file} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 border-b border-line-soft/70 py-2 last:border-0">
+                      <span className="flex min-w-0 items-center gap-2 font-mono text-[10px] text-txt-secondary"><span className="status-dot" style={{ background: row.color }} /><span className="truncate">{row.file}</span></span>
+                      <span className="font-mono text-[9px] text-txt-muted">{row.action}</span>
+                      <span className="font-mono text-[9px]" style={{ color: row.color }}>{row.state}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
           </div>
+        </section>
 
-          </div>
-          {/* Prototype metrics */}
-          <div className="fade-up mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-4 border-t border-line-soft pt-7 sm:grid-cols-4" style={{ animationDelay: '180ms' }}>
-            {trustStats.map((s) => (
-              <div key={s.label} className="text-center">
-                <p className="text-xl font-semibold tracking-tight text-white sm:text-2xl">{s.value}</p>
-                <p className="mt-1 text-[11px] text-txt-muted">{s.label}</p>
+        <section aria-label="Platform metrics" className="border-y border-line-soft bg-panel/70">
+          <div className="mx-auto grid max-w-[1320px] grid-cols-2 divide-x divide-y divide-line-soft px-4 sm:px-6 md:grid-cols-4 md:divide-y-0 lg:px-8">
+            {[
+              { value: '99.98%', label: 'Platform uptime', color: accent.green },
+              { value: '30,240', label: 'Operations / month', color: accent.cyan },
+              { value: '< 50ms', label: 'Average API latency', color: accent.orange },
+              { value: '2.4.1', label: 'Engine build', color: accent.pink },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center gap-3 px-3 py-4 first:pl-0 md:px-5 md:py-5">
+                <span className="h-5 w-0.5" style={{ background: item.color }} />
+                <div><p className="text-lg font-medium tracking-tight text-txt-primary sm:text-xl">{item.value}</p><p className="mt-0.5 font-mono text-[9px] uppercase tracking-wider text-txt-muted">{item.label}</p></div>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Platform status */}
-      <section id="status" className="relative py-14">
-        <div className="mx-auto max-w-5xl px-5 lg:px-8">
-          <div className="mb-6 flex items-end justify-between">
-            <h2 className="text-xl font-semibold tracking-tight text-white">Platform Status</h2>
-            <span className="font-mono text-[10px] uppercase tracking-wider text-txt-muted">Prototype data</span>
+        <section id="services" className="mx-auto grid max-w-[1320px] gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[0.65fr_1.35fr] lg:px-8 lg:py-14">
+          <div className="max-w-sm">
+            <p className="section-kicker">THE PLATFORM</p>
+            <h2 className="mt-3 text-2xl font-semibold tracking-tight text-txt-primary sm:text-3xl">One console.<br />Three core tools.</h2>
+            <p className="mt-3 text-sm leading-6 text-txt-secondary">A compact workspace for script protection, license keys, and operation monitoring.</p>
+            <Link to="/dashboard" className="mt-5 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-accent-cyan hover:text-txt-primary">
+              View dashboard <ArrowUpRight size={13} />
+            </Link>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {platformStatus.map((s) => (
-              <StatusCard key={s.title} {...s} compact />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Services */}
-      <section id="services" className="py-16">
-        <div className="mx-auto max-w-5xl px-5 lg:px-8">
-          <div className="mx-auto max-w-xl text-center">
-            <h2 className="text-3xl font-semibold tracking-tight text-white">Services</h2>
-            <p className="mt-3 text-sm leading-relaxed text-txt-secondary">
-              A unified platform for protection, licensing, and script management.
-            </p>
-          </div>
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
-            {services.map((s, i) => {
-              const colors = [P, G, Y];
-              const c = colors[i % colors.length];
+          <div className="divide-y divide-line-soft border-y border-line-soft">
+            {services.map((service, index) => {
+              const color = index === 0 ? accent.cyan : index === 1 ? accent.orange : accent.pink;
+              const Icon = service.icon;
               return (
-                <GlassCard key={s.name} hover className="group h-full">
-                  <div className="flex h-full flex-col p-6">
-                    <div className="flex items-center justify-between">
-                      <span className="icon-chip h-11 w-11 rounded-xl" style={{ ['--c' as any]: c }}>
-                        <s.icon size={19} strokeWidth={1.75} />
-                      </span>
-                      <span
-                        className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium"
-                        style={{
-                          borderColor: c + '55',
-                          color: c,
-                          background: c + '12',
-                        }}
-                      >
-                        <span className="status-dot" style={{ background: c }} />
-                        {s.status}
-                      </span>
-                    </div>
-                    <h3 className="mt-5 text-lg font-semibold tracking-tight text-white">{s.name}</h3>
-                    <p className="mt-2 flex-1 text-sm leading-relaxed text-txt-secondary">{s.description}</p>
-                    <Link
-                      to="/dashboard"
-                      className="mt-6 inline-flex w-fit items-center gap-1.5 text-sm font-medium transition-colors"
-                      style={{ color: c }}
-                    >
-                      Explore
-                      <ArrowRight
-                        size={15}
-                        className="transition-transform duration-200 group-hover:translate-x-1"
-                      />
-                    </Link>
-                  </div>
-                </GlassCard>
+                <div key={service.name} className="group grid grid-cols-[2rem_2.25rem_1fr_auto] items-center gap-3 py-4 sm:grid-cols-[2.5rem_2.5rem_1fr_auto] sm:gap-4">
+                  <span className="font-mono text-[10px] text-txt-muted">0{index + 1}</span>
+                  <span className="flex h-9 w-9 items-center justify-center border border-line-soft bg-panel" style={{ color }}><Icon size={16} strokeWidth={1.7} /></span>
+                  <div className="min-w-0"><h3 className="truncate text-sm font-medium text-txt-primary">{service.name}</h3><p className="mt-1 truncate text-xs text-txt-muted">{service.description}</p></div>
+                  <Link to="/dashboard" aria-label={'Open ' + service.name} className="flex h-8 w-8 items-center justify-center border border-line-soft text-txt-muted transition-colors group-hover:border-line group-hover:text-accent-cyan"><ArrowUpRight size={14} /></Link>
+                </div>
               );
             })}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Why Zeox */}
-      <section id="why" className="py-16">
-        <div className="mx-auto max-w-5xl px-5 lg:px-8">
-          <h2 className="text-3xl font-semibold tracking-tight text-white">Why Zeox</h2>
-          <p className="mt-3 max-w-lg text-sm leading-relaxed text-txt-secondary">
-            Built for developers who take their work seriously.
-          </p>
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
-            {whyItems.map((w) => (
-              <GlassCard key={w.title} hover>
-                <div className="p-6">
-                  <span className="icon-chip h-11 w-11 rounded-xl" style={{ ['--c' as any]: w.color }}>
-                    <w.icon size={18} strokeWidth={1.75} />
-                  </span>
-                  <h3 className="mt-5 text-base font-semibold text-white">{w.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-txt-secondary">{w.description}</p>
-                </div>
-              </GlassCard>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Platform features */}
-      <section id="features" className="py-16">
-        <div className="mx-auto max-w-5xl px-5 lg:px-8">
-          <h2 className="text-3xl font-semibold tracking-tight text-white">Platform Features</h2>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((f) => (
-              <GlassCard key={f.title} hover compact>
-                <div className="p-5">
-                  <span className="icon-chip h-10 w-10 rounded-lg" style={{ ['--c' as any]: f.color }}>
-                    <f.icon size={16} strokeWidth={1.75} />
-                  </span>
-                  <h3 className="mt-4 text-sm font-semibold text-white">{f.title}</h3>
-                  <p className="mt-1.5 text-xs leading-relaxed text-txt-secondary">{f.description}</p>
-                </div>
-              </GlassCard>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Developer experience */}
-      <section id="developers" className="py-16">
-        <div className="mx-auto max-w-5xl px-5 lg:px-8">
-          <GlassCard>
-            <div className="grid items-center gap-8 p-8 lg:grid-cols-2 lg:p-12">
-              <div>
-                <h2 className="text-2xl font-semibold tracking-tight text-white lg:text-3xl">
-                  Developer Experience, First
-                </h2>
-                <p className="mt-4 text-sm leading-relaxed text-txt-secondary">
-                  Zeox is designed around a clean, predictable workflow: encrypt a script, manage
-                  its keys, and monitor everything from a single dashboard. No clutter, no guesswork.
-                </p>
-                <Link to="/dashboard" className="btn-primary mt-7">
-                  Open Dashboard
-                  <ArrowRight size={15} />
-                </Link>
-              </div>
-              <div
-                className="rounded-xl border p-5 font-mono text-xs leading-6"
-                style={{ borderColor: 'rgba(141,207,230,0.22)', background: '#050507' }}
-              >
-                <p className="text-txt-muted">$ zeox encrypt ./script.lua</p>
-                <p className="text-white">✓ encrypted · 128 KB → 121 KB</p>
-                <p className="text-txt-muted">$ zeox keys create --batch 25</p>
-                <p className="text-white">✓ 25 keys issued</p>
-                <p className="text-txt-muted">$ zeox status</p>
-                <p className="text-accent-blue">
-                  ✓ sample status: operational
-                </p>
-                <p className="mt-2 text-[10px] text-txt-muted">// illustrative prototype output</p>
-              </div>
+        <section id="status" className="border-y border-line-soft bg-panel/55">
+          <div className="mx-auto max-w-[1320px] px-4 py-9 sm:px-6 lg:px-8 lg:py-11">
+            <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+              <div><p className="section-kicker">SYSTEM STATUS</p><h2 className="mt-2 text-xl font-semibold tracking-tight text-txt-primary">Service health</h2></div>
+              <span className="font-mono text-[9px] uppercase tracking-wider text-txt-muted">Sample status / not live telemetry</span>
             </div>
-          </GlassCard>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section id="pricing" className="relative py-24">
-        <div className="relative mx-auto max-w-3xl px-5 text-center lg:px-8">
-          <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-            Ready to build on <span className="text-accent-purple">Zeox</span>?
-          </h2>
-          <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-txt-secondary">
-            Join the platform and take control of your scripts, keys, and services.
-          </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link to="/dashboard" className="btn-primary">
-              Open Dashboard
-            </Link>
-            <a href="#docs" className="btn-ghost">
-              Documentation
-            </a>
+            <div className="grid gap-0 border-y border-line-soft sm:grid-cols-3 sm:divide-x sm:divide-line-soft">
+              {platformStatus.map((item) => {
+                const Icon = item.icon;
+                const color = item.level === 'operational' ? accent.green : accent.orange;
+                return (
+                  <div key={item.title} className="flex items-start gap-3 border-b border-line-soft px-3 py-4 last:border-0 sm:border-0 sm:px-5 sm:first:pl-0">
+                    <Icon size={15} className="mt-0.5 shrink-0" style={{ color }} />
+                    <div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-3"><p className="truncate text-xs font-medium text-txt-primary">{item.title}</p><span className="flex items-center gap-1.5 font-mono text-[9px] uppercase" style={{ color }}><span className="status-dot" style={{ background: color }} />{item.state}</span></div><p className="mt-1 font-mono text-[9px] text-txt-muted">{item.metadata}</p></div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <div id="docs" />
+        <section id="workflow" className="mx-auto max-w-[1320px] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+          <div className="grid gap-7 lg:grid-cols-[0.65fr_1.35fr]">
+            <div><p className="section-kicker">HOW IT WORKS</p><h2 className="mt-3 text-2xl font-semibold tracking-tight text-txt-primary sm:text-3xl">Built around the work.</h2><p className="mt-3 max-w-sm text-sm leading-6 text-txt-secondary">Move from protected code to managed access without leaving the console.</p></div>
+            <div className="grid gap-0 border-y border-line-soft sm:grid-cols-3 sm:divide-x sm:divide-line-soft">
+              {steps.map((step) => {
+                const Icon = step.icon;
+                return <article key={step.number} className="border-b border-line-soft px-3 py-4 last:border-0 sm:border-0 sm:px-5 sm:first:pl-0"><div className="flex items-center justify-between"><span className="font-mono text-[10px] text-accent-orange">/{step.number}</span><Icon size={15} className="text-txt-muted" /></div><h3 className="mt-4 text-sm font-medium text-txt-primary">{step.title}</h3><p className="mt-1.5 text-xs leading-5 text-txt-muted">{step.detail}</p></article>;
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section id="developers" className="mx-auto max-w-[1320px] px-4 pb-10 sm:px-6 lg:px-8 lg:pb-14">
+          <div className="grid items-center gap-5 border border-line-soft bg-panel px-5 py-6 sm:px-7 lg:grid-cols-[1fr_auto] lg:px-9">
+            <div><p className="section-kicker">READY WHEN YOU ARE</p><h2 className="mt-2 text-xl font-semibold tracking-tight text-txt-primary sm:text-2xl">Take the next build into your own hands.</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-txt-secondary">Open the prototype control deck to explore sample usage, operation search, and export flows.</p></div>
+            <Link to="/dashboard" className="btn-primary w-fit">Open control deck <ArrowRight size={15} /></Link>
+          </div>
+        </section>
+      </main>
       <Footer />
     </div>
   );

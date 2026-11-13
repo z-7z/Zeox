@@ -1,85 +1,54 @@
 # Zeox AI Design Workflow
 
-This document defines the reusable workflow for any AI (or human) changing
-Zeox interfaces. It combines the Skeleton Download System, vendored AI Design
-Skills, and the solid card design system.
+This document defines the reusable workflow for changing Zeox interfaces. It combines the Skeleton Download System, vendored AI Design Skills, and the solid-card design system.
 
-## Workflow (run in order, every time)
+## Workflow
 
-1. **Inspect the current project structure.** Read `README.md`, `src/`, and
-   the component inventory before touching anything. Preserve unrelated
-   working code.
-2. **Understand the existing Zeox design system.** Surfaces, accents, and
-   card roles are defined in `src/index.css` and `tailwind.config.js`.
-3. **Read relevant AI Design Skills.** Vendored skills live in `skills/`.
-   Read `skills/landing-page-design/SKILL.md` before any landing page, page
-   section, or component design work. Use `figma-designer` (external,
-   [elayadesign/ai-design-skills](https://github.com/elayadesign/ai-design-skills))
-   only when Figma work is required. Never apply every skill blindly; never
-   copy skill outputs as ready-made designs.
-4. **Inspect available skeletons when needed.** Use the Skeleton Download
-   System (below) to bring in approved UI skeletons or templates.
-5. **Select suitable design patterns and components.** Match patterns to the
-   actual purpose of each page. Do not reuse one layout everywhere.
-6. **Create the interface using the existing architecture.** Reuse
-   `GlassCard`, `StatCard`, `StatusCard`, `ServiceCard`, `AccountCard`,
-   `ActivityItem`, and the `.card` / `.card-elevated` surfaces.
-7. **Review** visual quality, responsiveness (390px check), accessibility
-   (focus rings, semantic HTML, alt text), and consistency.
-8. **Report the changes made.**
+1. Inspect the current project structure and preserve unrelated working code.
+2. Review the active tokens in `src/index.css` and `tailwind.config.js` before adding colors or surfaces.
+3. Read relevant vendored design skills. Read `skills/landing-page-design/SKILL.md` before landing-page or component design work; adapt its guidance rather than copying a template.
+4. Inspect available skeletons only when a suitable approved skeleton is needed.
+5. Select layout patterns that fit each page; do not repeat the same card grid everywhere.
+6. Reuse shared components where they improve consistency without flattening distinct page roles.
+7. Review visual quality, the 390px layout, keyboard focus, semantics, and reduced-motion behavior.
+8. Summarize shipped changes and validation.
 
 ## Skeleton Download System
 
-Location: `src/lib/skeleton/`. See its JSDoc for the full API.
+Location: `src/lib/skeleton/`.
 
 - Sources: GitHub repositories (`{ kind: 'github', owner, repo, ref?, subdirectory? }`).
-- Flow: `download()` → temp workspace → `inspect()` → `planImport()` →
-  conflict confirmation → `import()` → `cleanup()`.
-- Downloaded skeletons always stay in an isolated temporary workspace,
-  separate from production application code.
-- Folder structures are inspected before import: layouts, components, styles,
-  dependency manifests, configs, assets, and executable files are classified
-  and reported with warnings.
-- Specific components or folders can be selected for import.
-- Conflicts with existing project files are detected in `planImport()`.
-- Existing files are **never** overwritten without an explicit per-file
-  `overwrite` resolution. `skip` and `rename` are the safe defaults.
-- Downloaded files are **never executed** automatically. Executable files are
-  quarantined and listed in `StructureReport.executableFiles`.
-- External dependencies found in skeletons must be reviewed before any
-  package installation. Avoid unnecessary installations.
-- `cleanup()` discards the temp workspace and never touches imported files.
+- Flow: `download()` → temporary workspace → `inspect()` → `planImport()` → resolve conflicts → `import()` → `cleanup()`.
+- Keep downloaded skeletons isolated from production code. Inspect their structure before import, never overwrite an existing file without an explicit resolution, and review dependencies before installing them.
+- Downloaded files are not executed automatically. `cleanup()` only discards the temporary workspace.
 
-## Card design system (solid, no blur)
+## Current design system
 
-Approved surfaces:
+### Surfaces
 
 | Token | Value | Use |
 |---|---|---|
-| Main background | `#000000` | page background |
-| Secondary background | `#050507` | nav bars, sidebar, footer |
-| Standard card | `#101014` | `.card` |
-| Elevated card | `#15141B` | `.card-elevated` |
-| Subtle border | `#292333` | all card borders |
+| Main background | `#000000` | OLED page background |
+| Secondary background | `#06090B` | navigation, sidebar, footer |
+| Standard surface | `#080C0E` | `.card` and panels |
+| Elevated surface | `#0C1215` | hover and raised content |
+| Subtle border | `#1E292E` | card and section boundaries |
 
-Accents: purple `#8B5CF6` dominant, violet `#A855F7`, lavender `#C4B5FD`,
-orange `#FF7411` and `#FF963D` used selectively.
+### Accents
 
-Card roles (each has its own identity, never identical):
+Purple and violet are not part of the current Zeox palette. Use cyan `#5CD4E6` for system/data highlights, orange `#FF9150` for primary actions, and pale rose `#F2A6C7` sparingly for secondary distinctions. Keep main copy soft-neutral `#E6ECEE`; avoid large white blocks and all high-intensity glow.
 
-- **StatCard**: value first, small icon, no decoration. Flat `.card`.
-- **ServiceCard**: icon header, name, description, clear action. `.card-elevated`.
-- **StatusCard**: colored left edge encodes state (green/yellow/red), animated
-  dot, technical metadata.
-- **AccountCard**: plan, renewal, credit usage bar, manage action.
-- **ActivityItem**: rows inside a shared list card, timestamps and status.
+### Surface roles
 
-Banned on cards: backdrop-filter blur, frosted glass, excessive transparency,
-glow, large diffuse shadows, extra glass layers.
+- **Stat strip**: compact values and labels separated by dividers, not one card per value.
+- **Service row**: icon, service name, concise description, and a clear action.
+- **Status row**: one meaningful status marker and concise technical metadata.
+- **Data table**: dense, aligned rows with restrained hover feedback.
+- **Account card**: plan, renewal, credit usage, and manage action when needed.
 
-## Icons
+Avoid backdrop blur, frosted glass, excessive transparency, diffuse shadows, and repeated rounded card grids. Prefer flat black surfaces, thin separators, moderate corner radii, and purposeful use of accent color.
 
-- Lucide first, official brand icons where appropriate, custom SVG only when
-  nothing suitable exists.
-- Every icon must match its actual function. No emojis, no decorative icons
-  that add no meaning.
+## Icons and motion
+
+- Use Lucide icons where their function is clear. Avoid emoji or decorative icons without meaning.
+- Interactive elements need hover, active, and visible focus states. Respect `prefers-reduced-motion` and limit animation to opacity/transform.
