@@ -57,7 +57,7 @@ export function AreaChart({ data, labels, highlightIndex = -1, tooltipLabel, too
             <line key={f} x1={0} x2={W} y1={H * f} y2={H * f} stroke="#1C1C21" strokeWidth={1} />
           ))}
           <path d={area} fill="url(#zeox-area)" />
-          <path d={line} fill="none" stroke="#D4D4D8" strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+          <path d={line} fill="none" stroke="#B8A6F2" strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
           {hp && (
             <>
               <line x1={hp[0]} x2={hp[0]} y1={padY} y2={H} stroke="#3F3F46" strokeWidth={1} strokeDasharray="3 3" vectorEffect="non-scaling-stroke" />
@@ -67,7 +67,7 @@ export function AreaChart({ data, labels, highlightIndex = -1, tooltipLabel, too
         </svg>
         {hp && tooltipValue && (
           <div
-            className="pointer-events-none absolute top-0 flex -translate-x-1/2 items-center gap-2 rounded-lg border border-line bg-card px-2.5 py-1.5 shadow-lg"
+            className="pointer-events-none absolute top-0 flex -translate-x-1/2 items-center gap-2 rounded-lg border border-line bg-card px-2.5 py-1.5"
             style={{ left: 'min(max(' + hlPct + '%, 60px), calc(100% - 60px))' }}
           >
             <span className="status-dot bg-white" />

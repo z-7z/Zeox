@@ -3,14 +3,16 @@ import { useState } from 'react';
 
 interface DashboardHeaderProps {
   onMenu: () => void;
+  searchTerm: string;
+  onSearchChange: (value: string) => void;
 }
 
 /** Top bar: search pill + notifications + account menu. */
-export function DashboardHeader({ onMenu }: DashboardHeaderProps) {
+export function DashboardHeader({ onMenu, searchTerm, onSearchChange }: DashboardHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-line-soft bg-page/90 backdrop-blur-md">
+    <header className="sticky top-0 z-30 border-b border-line-soft bg-page">
       <div className="flex h-14 items-center gap-3 px-4 sm:px-5 lg:px-6">
         <button
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-txt-secondary hover:bg-card-hover lg:hidden"
@@ -23,7 +25,9 @@ export function DashboardHeader({ onMenu }: DashboardHeaderProps) {
         <div className="flex w-full max-w-xs items-center gap-2 rounded-full border border-line bg-card px-3 py-1.5">
           <Search size={13} className="text-txt-muted" />
           <input
-            placeholder="Search..."
+            placeholder="Search operations..."
+            value={searchTerm}
+            onChange={(event) => onSearchChange(event.target.value)}
             className="w-full bg-transparent text-xs text-txt-primary placeholder:text-txt-muted focus:outline-none"
             aria-label="Search"
           />

@@ -18,11 +18,11 @@ import { ZeoxLogo } from '../components/ZeoxLogo';
 import { services, platformStatus } from '../data/mock';
 import { StatusCard } from '../components/StatusCard';
 
-const P = '#A855F7';
-const G = '#22C55E';
-const Y = '#FACC15';
-const BL = '#3B82F6';
-const C = '#22D3EE';
+const P = '#A78BFA';
+const G = '#F2A56F';
+const Y = '#E8A7C8';
+const BL = '#8DCFE6';
+const C = '#C4B5FD';
 
 const trustStats = [
   { value: '99.98%', label: 'Platform uptime' },
@@ -58,7 +58,7 @@ const features = [
   { icon: Terminal, title: 'Developer Tools', description: 'A growing toolkit for daily work.', color: BL },
   { icon: LayoutDashboard, title: 'Unified Dashboard', description: 'Every service in one workspace.', color: Y },
   { icon: ActivityIcon, title: 'Live Activity', description: 'Operations and usage in real time.', color: C },
-  { icon: Zap, title: 'Fast Engine', description: 'Low-latency protection pipeline.', color: '#FB923C' },
+  { icon: Zap, title: 'Fast Engine', description: 'Low-latency protection pipeline.', color: '#F2A56F' },
 ];
 
 const heroBars = [35, 50, 42, 65, 55, 78, 62, 88, 70, 95, 82, 100];
@@ -75,7 +75,7 @@ const previewRows = [
   { name: 'loader-v2.lua', service: 'Script Protect', status: 'Running', color: Y },
 ];
 
-const checks = ['No backend setup', 'Prototype-ready', 'Built for Roblox LuaU'];
+const checks = ['Prototype interface', 'Mock data only', 'Built for Roblox LuaU'];
 
 export function Landing() {
   return (
@@ -83,51 +83,44 @@ export function Landing() {
       <NavigationBar />
 
       {/* Hero */}
-      <section className="relative pt-32 pb-24 lg:pt-40">
-        {/* Background: grid + glowing orbs */}
-        <div className="bg-grid absolute inset-0" />
-        <div className="orb animate-float-slow left-[8%] top-[12%] h-72 w-72" style={{ background: 'rgba(168, 85, 247, 0.22)' }} />
-        <div className="orb animate-float-slow right-[6%] top-[30%] h-80 w-80" style={{ background: 'rgba(59, 130, 246, 0.18)', animationDelay: '2s' }} />
-        <div className="orb animate-float-slow bottom-[0%] left-[35%] h-64 w-64" style={{ background: 'rgba(34, 211, 238, 0.12)', animationDelay: '4s' }} />
-
-        <div className="relative mx-auto max-w-5xl px-5 lg:px-8">
-          <div className="fade-up mx-auto max-w-3xl text-center">
+      <section className="relative pt-24 pb-16 lg:pt-32 lg:pb-20">
+        <div className="mx-auto max-w-6xl px-5 lg:px-8">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+          <div className="fade-up max-w-xl text-center lg:text-left">
             <span
-              className="inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-medium text-txt-secondary"
+              className="inline-flex items-center justify-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-medium text-txt-secondary lg:justify-start"
               style={{
-                borderColor: 'rgba(168, 85, 247, 0.4)',
-                background: 'rgba(168, 85, 247, 0.08)',
-                boxShadow: '0 0 24px -6px rgba(168, 85, 247, 0.5)',
+                borderColor: 'rgba(167, 139, 250, 0.28)',
+                background: 'rgba(167, 139, 250, 0.07)',
               }}
             >
-              <span className="status-dot animate-glow-pulse" style={{ background: P, boxShadow: '0 0 8px ' + P }} />
+              <span className="status-dot" style={{ background: P }} />
               LuaU encryption &amp; protection platform
             </span>
 
-            <h1 className="mt-7 text-4xl font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.6rem]">
-              Encrypt. Protect.
+            <h1 className="mt-7 text-4xl font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
+              Script security.
               <br />
-              <span className="glow-text" style={{ ['--c' as any]: P, color: '#D8B4FE' }}>
-                Ship Your Scripts.
+              <span className="text-accent-purple">
+                Under your control.
               </span>
             </h1>
 
-            <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-txt-secondary sm:text-lg">
-              Zeox is an advanced ecosystem for LuaU script encryption, protection, and license
-              management — built for Roblox developers who take security seriously.
+            <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-txt-secondary sm:text-lg lg:mx-0">
+              Protect LuaU scripts, manage license keys, and track each operation from one focused workspace.
             </p>
 
-            <div className="mt-9 flex flex-wrap justify-center gap-3">
+            <div className="mt-8 flex flex-wrap justify-center gap-3 lg:justify-start">
               <Link to="/dashboard" className="btn-primary !px-7 !py-3">
-                Get Started Free
+                Open Dashboard
                 <ArrowRight size={15} />
               </Link>
               <a href="#services" className="btn-ghost !px-7 !py-3">
-                Explore Platform
+                See what’s inside
               </a>
             </div>
 
-            <div className="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2">
+            <div className="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 lg:justify-start">
               {checks.map((c) => (
                 <span key={c} className="flex items-center gap-1.5 text-xs text-txt-muted">
                   <CheckCircle2 size={13} className="text-accent-green" />
@@ -137,16 +130,9 @@ export function Landing() {
             </div>
           </div>
 
-          {/* Dashboard preview with glow frame */}
-          <div
-            className="fade-up mx-auto mt-20 max-w-3xl rounded-2xl p-[1px]"
-            style={{
-              animationDelay: '140ms',
-              background: 'linear-gradient(135deg, rgba(168,85,247,0.6), rgba(59,130,246,0.35), rgba(34,211,238,0.45))',
-              boxShadow: '0 0 60px -12px rgba(168, 85, 247, 0.45), 0 0 90px -20px rgba(59, 130, 246, 0.3)',
-            }}
-          >
-            <div className="rounded-2xl bg-panel p-2">
+          {/* Dashboard preview */}
+          <div className="fade-up mt-10 w-full lg:mt-0" style={{ animationDelay: '100ms' }}>
+            <div className="card p-2">
               <div className="rounded-xl bg-page p-4">
                 <div className="flex items-center justify-between border-b border-line-soft pb-3">
                   <div className="flex items-center gap-2.5">
@@ -155,10 +141,10 @@ export function Landing() {
                   </div>
                   <span
                     className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px]"
-                    style={{ borderColor: 'rgba(34,197,94,0.4)', color: '#4ADE80', background: 'rgba(34,197,94,0.08)' }}
+                    style={{ borderColor: 'rgba(141,207,230,0.28)', color: '#8DCFE6', background: 'rgba(141,207,230,0.06)' }}
                   >
-                    <span className="status-dot animate-glow-pulse" style={{ background: G, boxShadow: '0 0 8px ' + G }} />
-                    All systems live
+                    <span className="status-dot" style={{ background: BL }} />
+                    Sample data
                   </span>
                 </div>
 
@@ -170,7 +156,7 @@ export function Landing() {
                         <div key={u.label}>
                           <div className="flex items-center justify-between text-[10px]">
                             <span className="flex items-center gap-1.5 text-txt-secondary">
-                              <span className="status-dot" style={{ background: u.color, boxShadow: '0 0 6px ' + u.color }} />
+                              <span className="status-dot" style={{ background: u.color }} />
                               {u.label}
                             </span>
                             <span className="font-mono text-txt-muted">{u.pct}%</span>
@@ -178,7 +164,7 @@ export function Landing() {
                           <div className="mt-1 h-1 overflow-hidden rounded-full bg-line-soft">
                             <div
                               className="h-full rounded-full"
-                              style={{ width: u.pct + '%', background: u.color, boxShadow: '0 0 8px ' + u.color }}
+                              style={{ width: u.pct + '%', background: u.color }}
                             />
                           </div>
                         </div>
@@ -202,7 +188,6 @@ export function Landing() {
                           style={{
                             height: h + '%',
                             background: i === heroBars.length - 1 ? P : 'rgba(255,255,255,0.12)',
-                            boxShadow: i === heroBars.length - 1 ? '0 0 10px ' + P : 'none',
                           }}
                         />
                       ))}
@@ -213,7 +198,7 @@ export function Landing() {
                 <div className="card mt-3 p-2">
                   {previewRows.map((r, i) => (
                     <div key={i} className="flex items-center gap-3 rounded-lg px-2 py-2">
-                      <span className="status-dot" style={{ background: r.color, boxShadow: '0 0 6px ' + r.color }} />
+                      <span className="status-dot" style={{ background: r.color }} />
                       <span className="flex-1 truncate font-mono text-[10px] text-txt-primary">{r.name}</span>
                       <span className="hidden text-[10px] text-txt-muted sm:block">{r.service}</span>
                       <span className={'text-[10px] ' + (r.status === 'Running' ? 'text-accent-blue' : 'text-accent-green')}>
@@ -227,8 +212,9 @@ export function Landing() {
             </div>
           </div>
 
-          {/* Trust stats */}
-          <div className="fade-up mx-auto mt-14 grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4" style={{ animationDelay: '220ms' }}>
+          </div>
+          {/* Prototype metrics */}
+          <div className="fade-up mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-4 border-t border-line-soft pt-7 sm:grid-cols-4" style={{ animationDelay: '180ms' }}>
             {trustStats.map((s) => (
               <div key={s.label} className="text-center">
                 <p className="text-xl font-semibold tracking-tight text-white sm:text-2xl">{s.value}</p>
@@ -279,11 +265,10 @@ export function Landing() {
                         style={{
                           borderColor: c + '55',
                           color: c,
-                          background: c + '14',
-                          boxShadow: '0 0 14px -4px ' + c + '88',
+                          background: c + '12',
                         }}
                       >
-                        <span className="status-dot" style={{ background: c, boxShadow: '0 0 6px ' + c }} />
+                        <span className="status-dot" style={{ background: c }} />
                         {s.status}
                       </span>
                     </div>
@@ -371,15 +356,15 @@ export function Landing() {
               </div>
               <div
                 className="rounded-xl border p-5 font-mono text-xs leading-6"
-                style={{ borderColor: 'rgba(34,197,94,0.3)', background: '#050505', boxShadow: 'inset 0 0 40px -20px rgba(34,197,94,0.4)' }}
+                style={{ borderColor: 'rgba(141,207,230,0.22)', background: '#050507' }}
               >
                 <p className="text-txt-muted">$ zeox encrypt ./script.lua</p>
                 <p className="text-white">✓ encrypted · 128 KB → 121 KB</p>
                 <p className="text-txt-muted">$ zeox keys create --batch 25</p>
                 <p className="text-white">✓ 25 keys issued</p>
                 <p className="text-txt-muted">$ zeox status</p>
-                <p className="glow-text text-accent-green" style={{ ['--c' as any]: G }}>
-                  ✓ all services operational
+                <p className="text-accent-blue">
+                  ✓ sample status: operational
                 </p>
                 <p className="mt-2 text-[10px] text-txt-muted">// illustrative prototype output</p>
               </div>
@@ -390,17 +375,16 @@ export function Landing() {
 
       {/* Final CTA */}
       <section id="pricing" className="relative py-24">
-        <div className="orb left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2" style={{ background: 'rgba(168, 85, 247, 0.16)' }} />
         <div className="relative mx-auto max-w-3xl px-5 text-center lg:px-8">
           <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-            Ready to build on <span className="glow-text" style={{ ['--c' as any]: P, color: '#D8B4FE' }}>Zeox</span>?
+            Ready to build on <span className="text-accent-purple">Zeox</span>?
           </h2>
           <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-txt-secondary">
             Join the platform and take control of your scripts, keys, and services.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link to="/dashboard" className="btn-primary">
-              Get Started
+              Open Dashboard
             </Link>
             <a href="#docs" className="btn-ghost">
               Documentation

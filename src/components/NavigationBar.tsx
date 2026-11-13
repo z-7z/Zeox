@@ -15,7 +15,7 @@ export function NavigationBar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-line-soft bg-page/90 backdrop-blur-md">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-line-soft bg-page">
       <nav className="mx-auto flex h-14 max-w-5xl items-center justify-between px-5 lg:px-8">
         <Link to="/" className="shrink-0" aria-label="Zeox home">
           <ZeoxLockup size={22} />
