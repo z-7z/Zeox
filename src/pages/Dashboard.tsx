@@ -40,7 +40,7 @@ const navItems: NavItem[] = [
 
 const statusStyle: Record<string, { dot: string; text: string }> = {
   Done: { dot: 'bg-accent-green', text: 'text-accent-green' },
-  Running: { dot: 'bg-accent-blue animate-pulse-dot', text: 'text-accent-blue' },
+  Running: { dot: 'bg-white animate-pulse-dot', text: 'text-white' },
   Queued: { dot: 'bg-txt-muted', text: 'text-txt-muted' },
 };
 
@@ -142,7 +142,7 @@ function Overview() {
               <div className="flex items-center gap-4 p-4 sm:p-5">
                 <span
                   className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
-                  style={{ background: c.color + '1A' }}
+                  style={{ background: 'rgba(255, 255, 255, 0.08)' }}
                 >
                   <c.icon size={18} strokeWidth={1.75} style={{ color: c.color }} />
                 </span>
@@ -172,7 +172,7 @@ function Overview() {
               <div className="flex items-center gap-3 p-3.5">
                 <span
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
-                  style={{ background: c.color + '1A' }}
+                  style={{ background: 'rgba(255, 255, 255, 0.08)' }}
                 >
                   <c.icon size={15} strokeWidth={1.75} style={{ color: c.color }} />
                 </span>
