@@ -114,7 +114,7 @@ function Overview() {
                   <div key={s.label}>
                     <div className="flex items-center justify-between text-xs">
                       <span className="flex items-center gap-2 text-txt-secondary">
-                        <span className="status-dot" style={{ background: s.color }} />
+                        <span className="status-dot" style={{ background: s.color, boxShadow: '0 0 6px ' + s.color }} />
                         {s.label}
                       </span>
                       <span className="flex items-center gap-2">
@@ -125,7 +125,7 @@ function Overview() {
                     <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-line-soft">
                       <div
                         className="h-full rounded-full transition-all duration-700"
-                        style={{ width: s.pct + '%', background: s.color }}
+                        style={{ width: s.pct + '%', background: s.color, boxShadow: '0 0 8px ' + s.color }}
                       />
                     </div>
                   </div>
@@ -140,11 +140,8 @@ function Overview() {
           {storageCards.map((c) => (
             <GlassCard key={c.name} hover className="group">
               <div className="flex items-center gap-4 p-4 sm:p-5">
-                <span
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
-                  style={{ background: c.color + '1F' }}
-                >
-                  <c.icon size={18} strokeWidth={1.75} style={{ color: c.color }} />
+                <span className="icon-chip h-11 w-11 rounded-xl" style={{ ['--c' as any]: c.color }}>
+                  <c.icon size={18} strokeWidth={1.75} />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-white">{c.name}</p>
@@ -170,11 +167,8 @@ function Overview() {
           {categories.map((c) => (
             <GlassCard key={c.name} hover compact className="group">
               <div className="flex items-center gap-3 p-3.5">
-                <span
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
-                  style={{ background: c.color + '1F' }}
-                >
-                  <c.icon size={15} strokeWidth={1.75} style={{ color: c.color }} />
+                <span className="icon-chip h-9 w-9 rounded-lg" style={{ ['--c' as any]: c.color }}>
+                  <c.icon size={15} strokeWidth={1.75} />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-xs font-medium text-white">{c.name}</p>
@@ -196,8 +190,11 @@ function Overview() {
                 <h3 className="text-sm font-medium text-txt-secondary">Operations over time</h3>
                 <p className="mt-1.5 text-3xl font-semibold tracking-tight text-white">{operationsChart.total}</p>
               </div>
-              <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-line bg-panel px-2.5 py-1 text-[11px] font-medium text-accent-green">
-                <span className="status-dot bg-accent-green" />
+              <span
+                className="inline-flex w-fit items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium"
+                style={{ borderColor: 'rgba(34,197,94,0.4)', color: '#4ADE80', background: 'rgba(34,197,94,0.08)' }}
+              >
+                <span className="status-dot animate-glow-pulse" style={{ background: '#22C55E', boxShadow: '0 0 8px #22C55E' }} />
                 {operationsChart.delta}
               </span>
             </div>
@@ -240,7 +237,7 @@ function Overview() {
                       <td className="px-4 py-3 text-txt-muted">{i + 1}</td>
                       <td className="px-4 py-3">
                         <span className="flex items-center gap-2 text-txt-secondary">
-                          <span className="status-dot" style={{ background: r.color }} />
+                          <span className="status-dot" style={{ background: r.color, boxShadow: '0 0 6px ' + r.color }} />
                           {r.type}
                         </span>
                       </td>

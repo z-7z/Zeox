@@ -7,7 +7,7 @@ export default {
         xs: '400px',
       },
       colors: {
-        // OLED palette: true black base, vivid accents tuned for OLED
+        // OLED palette: true black base + glowing neon accents
         page: '#000000',
         panel: '#0A0A0A',
         card: {
@@ -23,11 +23,20 @@ export default {
           secondary: '#A1A1AA',
           muted: '#71717A',
         },
+        neon: {
+          purple: '#A855F7',
+          blue: '#3B82F6',
+          cyan: '#22D3EE',
+          green: '#22C55E',
+          yellow: '#FACC15',
+          orange: '#FB923C',
+          red: '#EF4444',
+        },
         'accent-green': '#22C55E',
         'accent-red': '#EF4444',
-        'accent-purple': '#A78BFA',
+        'accent-purple': '#A855F7',
         'accent-yellow': '#FACC15',
-        'accent-blue': '#60A5FA',
+        'accent-blue': '#3B82F6',
         'accent-orange': '#FB923C',
         // Compatibility aliases (legacy tokens)
         ok: '#22C55E',
@@ -44,6 +53,8 @@ export default {
         'fade-up': 'fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both',
         'fade-in': 'fadeIn 0.35s ease both',
         'scale-in': 'scaleIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both',
+        'float-slow': 'floatSlow 9s ease-in-out infinite',
+        'glow-pulse': 'glowPulse 3.2s ease-in-out infinite',
       },
       keyframes: {
         pulseDot: {
@@ -65,6 +76,14 @@ export default {
         scaleIn: {
           from: { opacity: '0', transform: 'scale(0.98)' },
           to: { opacity: '1', transform: 'scale(1)' },
+        },
+        floatSlow: {
+          '0%, 100%': { transform: 'translateY(0) scale(1)' },
+          '50%': { transform: 'translateY(-24px) scale(1.05)' },
+        },
+        glowPulse: {
+          '0%, 100%': { opacity: '0.5' },
+          '50%': { opacity: '1' },
         },
       },
     },

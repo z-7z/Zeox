@@ -9,59 +9,65 @@ import {
   ArrowRight,
   Activity as ActivityIcon,
   FileCode2,
+  Zap,
+  CheckCircle2,
 } from 'lucide-react';
 import { NavigationBar } from '../components/NavigationBar';
 import { Footer } from '../components/Footer';
 import { GlassCard } from '../components/GlassCard';
-import { ServiceCard } from '../components/ServiceCard';
-import { StatusCard } from '../components/StatusCard';
 import { ZeoxLogo } from '../components/ZeoxLogo';
 import { services, platformStatus } from '../data/mock';
+import { StatusCard } from '../components/StatusCard';
 
-const P = '#A78BFA';
+const P = '#A855F7';
 const G = '#22C55E';
 const Y = '#FACC15';
-const BL = '#60A5FA';
+const BL = '#3B82F6';
+const C = '#22D3EE';
+
+const trustStats = [
+  { value: '99.98%', label: 'Platform uptime' },
+  { value: '30,240', label: 'Operations / month' },
+  { value: '< 50ms', label: 'Avg. API latency' },
+  { value: '2.4.1', label: 'Engine build' },
+];
 
 const whyItems = [
   {
     icon: Lock,
-    title: 'Serious protection',
-    description: 'Purpose-built LuaU obfuscation designed to resist tampering and reverse engineering.',
+    title: 'Military-grade obfuscation',
+    description: 'Layered LuaU encryption engineered to resist tampering, dumping, and reverse engineering.',
     color: P,
   },
   {
     icon: KeyRound,
-    title: 'Full key control',
-    description: 'Issue, scope, and revoke license keys from one unified control surface.',
+    title: 'Total key control',
+    description: 'Issue, scope, expire, and revoke license keys in seconds from one control surface.',
     color: G,
   },
   {
     icon: Gauge,
-    title: 'Built for speed',
-    description: 'A lightweight pipeline that keeps your workflow fast while staying secure.',
-    color: BL,
+    title: 'Zero-lag pipeline',
+    description: 'A protection pipeline optimized for speed — secure your scripts without slowing down.',
+    color: C,
   },
 ];
 
 const features = [
-  { icon: ShieldCheck, title: 'Script Protection', description: 'Layered defenses for LuaU scripts.', color: P },
-  { icon: Terminal, title: 'Developer Tools', description: 'A growing toolkit for everyday development.', color: G },
-  { icon: LayoutDashboard, title: 'Unified Dashboard', description: 'Every service in one clean workspace.', color: Y },
-  { icon: ActivityIcon, title: 'Activity Tracking', description: 'See operations and usage at a glance.', color: BL },
+  { icon: ShieldCheck, title: 'Script Protection', description: 'Multi-layer defenses for LuaU scripts.', color: P },
+  { icon: KeyRound, title: 'License System', description: 'Full lifecycle management for keys.', color: G },
+  { icon: Terminal, title: 'Developer Tools', description: 'A growing toolkit for daily work.', color: BL },
+  { icon: LayoutDashboard, title: 'Unified Dashboard', description: 'Every service in one workspace.', color: Y },
+  { icon: ActivityIcon, title: 'Live Activity', description: 'Operations and usage in real time.', color: C },
+  { icon: Zap, title: 'Fast Engine', description: 'Low-latency protection pipeline.', color: '#FB923C' },
 ];
 
-const previewUsage = [
+const heroBars = [35, 50, 42, 65, 55, 78, 62, 88, 70, 95, 82, 100];
+const heroUsage = [
   { label: 'Zeox Protect', pct: 68, color: P },
   { label: 'Zeox Keys', pct: 54, color: G },
   { label: 'Script Protect', pct: 41, color: Y },
   { label: 'API Requests', pct: 27, color: BL },
-];
-
-const previewCards = [
-  { icon: ShieldCheck, name: 'Zeox Protect', sub: '1,204 operations', color: P },
-  { icon: KeyRound, name: 'Zeox Keys', sub: '890 operations', color: G },
-  { icon: FileCode2, name: 'Script Protect', sub: '612 operations', color: Y },
 ];
 
 const previewRows = [
@@ -70,96 +76,145 @@ const previewRows = [
   { name: 'loader-v2.lua', service: 'Script Protect', status: 'Running', color: Y },
 ];
 
+const checks = ['No backend setup', 'Prototype-ready', 'Built for Roblox LuaU'];
+
 export function Landing() {
   return (
-    <div id="home" className="page-enter min-h-screen bg-page">
+    <div id="home" className="page-enter relative min-h-screen overflow-hidden bg-page">
       <NavigationBar />
 
       {/* Hero */}
-      <section className="pt-28 pb-20 lg:pt-36">
-        <div className="mx-auto max-w-5xl px-5 lg:px-8">
-          <div className="fade-up mx-auto max-w-2xl text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1 text-xs font-medium text-txt-secondary">
-              <span className="status-dot bg-accent-green" />
+      <section className="relative pt-32 pb-24 lg:pt-40">
+        {/* Background: grid + glowing orbs */}
+        <div className="bg-grid absolute inset-0" />
+        <div className="orb animate-float-slow left-[8%] top-[12%] h-72 w-72" style={{ background: 'rgba(168, 85, 247, 0.22)' }} />
+        <div className="orb animate-float-slow right-[6%] top-[30%] h-80 w-80" style={{ background: 'rgba(59, 130, 246, 0.18)', animationDelay: '2s' }} />
+        <div className="orb animate-float-slow bottom-[0%] left-[35%] h-64 w-64" style={{ background: 'rgba(34, 211, 238, 0.12)', animationDelay: '4s' }} />
+
+        <div className="relative mx-auto max-w-5xl px-5 lg:px-8">
+          <div className="fade-up mx-auto max-w-3xl text-center">
+            <span
+              className="inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-medium text-txt-secondary"
+              style={{
+                borderColor: 'rgba(168, 85, 247, 0.4)',
+                background: 'rgba(168, 85, 247, 0.08)',
+                boxShadow: '0 0 24px -6px rgba(168, 85, 247, 0.5)',
+              }}
+            >
+              <span className="status-dot animate-glow-pulse" style={{ background: P, boxShadow: '0 0 8px ' + P }} />
               LuaU encryption &amp; protection platform
             </span>
-            <h1 className="mt-6 text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-[3.4rem]">
-              Encrypt. Protect. Ship Your Scripts.
+
+            <h1 className="mt-7 text-4xl font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.6rem]">
+              Encrypt. Protect.
+              <br />
+              <span className="glow-text" style={{ ['--c' as any]: P, color: '#D8B4FE' }}>
+                Ship Your Scripts.
+              </span>
             </h1>
-            <p className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-txt-secondary">
+
+            <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-txt-secondary sm:text-lg">
               Zeox is an advanced ecosystem for LuaU script encryption, protection, and license
               management — built for Roblox developers who take security seriously.
             </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <Link to="/dashboard" className="btn-primary">
-                Get Started
+
+            <div className="mt-9 flex flex-wrap justify-center gap-3">
+              <Link to="/dashboard" className="btn-primary !px-7 !py-3">
+                Get Started Free
                 <ArrowRight size={15} />
               </Link>
-              <a href="#services" className="btn-ghost">
+              <a href="#services" className="btn-ghost !px-7 !py-3">
                 Explore Platform
               </a>
             </div>
+
+            <div className="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2">
+              {checks.map((c) => (
+                <span key={c} className="flex items-center gap-1.5 text-xs text-txt-muted">
+                  <CheckCircle2 size={13} className="text-accent-green" />
+                  {c}
+                </span>
+              ))}
+            </div>
           </div>
 
-          {/* Dashboard preview in the reference style */}
-          <div className="fade-up mx-auto mt-16 max-w-3xl" style={{ animationDelay: '120ms' }}>
-            <div className="rounded-2xl border border-line bg-panel p-2 shadow-2xl">
+          {/* Dashboard preview with glow frame */}
+          <div
+            className="fade-up mx-auto mt-20 max-w-3xl rounded-2xl p-[1px]"
+            style={{
+              animationDelay: '140ms',
+              background: 'linear-gradient(135deg, rgba(168,85,247,0.6), rgba(59,130,246,0.35), rgba(34,211,238,0.45))',
+              boxShadow: '0 0 60px -12px rgba(168, 85, 247, 0.45), 0 0 90px -20px rgba(59, 130, 246, 0.3)',
+            }}
+          >
+            <div className="rounded-2xl bg-panel p-2">
               <div className="rounded-xl bg-page p-4">
                 <div className="flex items-center justify-between border-b border-line-soft pb-3">
                   <div className="flex items-center gap-2.5">
                     <ZeoxLogo size={16} className="text-white" />
                     <span className="text-sm font-medium text-white">Overview</span>
                   </div>
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-card px-2.5 py-1 text-[10px] text-txt-secondary">
-                    <span className="status-dot bg-accent-green" />
-                    Live
+                  <span
+                    className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px]"
+                    style={{ borderColor: 'rgba(34,197,94,0.4)', color: '#4ADE80', background: 'rgba(34,197,94,0.08)' }}
+                  >
+                    <span className="status-dot animate-glow-pulse" style={{ background: G, boxShadow: '0 0 8px ' + G }} />
+                    All systems live
                   </span>
                 </div>
 
                 <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  {/* Usage mini-card */}
-                  <div className="card p-4">
+                  <div className="card p-4 text-left">
                     <p className="text-xs font-medium text-white">Usage</p>
                     <div className="mt-3 space-y-2.5">
-                      {previewUsage.map((u) => (
+                      {heroUsage.map((u) => (
                         <div key={u.label}>
                           <div className="flex items-center justify-between text-[10px]">
                             <span className="flex items-center gap-1.5 text-txt-secondary">
-                              <span className="status-dot" style={{ background: u.color }} />
+                              <span className="status-dot" style={{ background: u.color, boxShadow: '0 0 6px ' + u.color }} />
                               {u.label}
                             </span>
                             <span className="font-mono text-txt-muted">{u.pct}%</span>
                           </div>
                           <div className="mt-1 h-1 overflow-hidden rounded-full bg-line-soft">
-                            <div className="h-full rounded-full" style={{ width: u.pct + '%', background: u.color }} />
+                            <div
+                              className="h-full rounded-full"
+                              style={{ width: u.pct + '%', background: u.color, boxShadow: '0 0 8px ' + u.color }}
+                            />
                           </div>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  {/* Service cards */}
-                  <div className="grid grid-cols-3 gap-2">
-                    {previewCards.map((c) => (
-                      <div key={c.name} className="card flex flex-col items-center justify-center gap-2 p-3">
-                        <span
-                          className="flex h-8 w-8 items-center justify-center rounded-lg"
-                          style={{ background: c.color + '1F' }}
-                        >
-                          <c.icon size={14} strokeWidth={1.75} style={{ color: c.color }} />
-                        </span>
-                        <p className="text-center text-[9px] font-medium leading-tight text-white">{c.name}</p>
-                        <p className="text-center font-mono text-[8px] text-txt-muted">{c.sub}</p>
+                  <div className="card flex flex-col justify-center p-4">
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <p className="text-[10px] text-txt-muted">Operations over time</p>
+                        <p className="mt-1 text-2xl font-semibold tracking-tight text-white">30,240</p>
                       </div>
-                    ))}
+                      <span className="font-mono text-[10px] text-accent-green">+7.5%</span>
+                    </div>
+                    <div className="mt-3 flex h-16 items-end gap-1">
+                      {heroBars.map((h, i) => (
+                        <div
+                          key={i}
+                          className="flex-1 rounded-sm"
+                          style={{
+                            height: h + '%',
+                            background: i === heroBars.length - 1 ? P : 'rgba(255,255,255,0.12)',
+                            boxShadow: i === heroBars.length - 1 ? '0 0 10px ' + P : 'none',
+                          }}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                {/* Mini table */}
                 <div className="card mt-3 p-2">
                   {previewRows.map((r, i) => (
                     <div key={i} className="flex items-center gap-3 rounded-lg px-2 py-2">
-                      <span className="status-dot" style={{ background: r.color }} />
+                      <span className="status-dot" style={{ background: r.color, boxShadow: '0 0 6px ' + r.color }} />
                       <span className="flex-1 truncate font-mono text-[10px] text-txt-primary">{r.name}</span>
                       <span className="hidden text-[10px] text-txt-muted sm:block">{r.service}</span>
                       <span className={'text-[10px] ' + (r.status === 'Running' ? 'text-accent-blue' : 'text-accent-green')}>
@@ -171,15 +226,22 @@ export function Landing() {
                 </div>
               </div>
             </div>
-            <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-wider text-txt-muted">
-              Prototype preview · demonstration data
-            </p>
+          </div>
+
+          {/* Trust stats */}
+          <div className="fade-up mx-auto mt-14 grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4" style={{ animationDelay: '220ms' }}>
+            {trustStats.map((s) => (
+              <div key={s.label} className="text-center">
+                <p className="text-xl font-semibold tracking-tight text-white sm:text-2xl">{s.value}</p>
+                <p className="mt-1 text-[11px] text-txt-muted">{s.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Platform status */}
-      <section id="status" className="py-14">
+      <section id="status" className="relative py-14">
         <div className="mx-auto max-w-5xl px-5 lg:px-8">
           <div className="mb-6 flex items-end justify-between">
             <h2 className="text-xl font-semibold tracking-tight text-white">Platform Status</h2>
@@ -203,9 +265,46 @@ export function Landing() {
             </p>
           </div>
           <div className="mt-10 grid gap-4 md:grid-cols-3">
-            {services.map((s) => (
-              <ServiceCard key={s.name} {...s} />
-            ))}
+            {services.map((s, i) => {
+              const colors = [P, G, Y];
+              const c = colors[i % colors.length];
+              return (
+                <GlassCard key={s.name} hover className="group h-full">
+                  <div className="flex h-full flex-col p-6">
+                    <div className="flex items-center justify-between">
+                      <span className="icon-chip h-11 w-11 rounded-xl" style={{ ['--c' as any]: c }}>
+                        <s.icon size={19} strokeWidth={1.75} />
+                      </span>
+                      <span
+                        className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium"
+                        style={{
+                          borderColor: c + '55',
+                          color: c,
+                          background: c + '14',
+                          boxShadow: '0 0 14px -4px ' + c + '88',
+                        }}
+                      >
+                        <span className="status-dot" style={{ background: c, boxShadow: '0 0 6px ' + c }} />
+                        {s.status}
+                      </span>
+                    </div>
+                    <h3 className="mt-5 text-lg font-semibold tracking-tight text-white">{s.name}</h3>
+                    <p className="mt-2 flex-1 text-sm leading-relaxed text-txt-secondary">{s.description}</p>
+                    <Link
+                      to="/dashboard"
+                      className="mt-6 inline-flex w-fit items-center gap-1.5 text-sm font-medium transition-colors"
+                      style={{ color: c }}
+                    >
+                      Explore
+                      <ArrowRight
+                        size={15}
+                        className="transition-transform duration-200 group-hover:translate-x-1"
+                      />
+                    </Link>
+                  </div>
+                </GlassCard>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -221,11 +320,8 @@ export function Landing() {
             {whyItems.map((w) => (
               <GlassCard key={w.title} hover>
                 <div className="p-6">
-                  <span
-                    className="flex h-10 w-10 items-center justify-center rounded-xl"
-                    style={{ background: w.color + '1F' }}
-                  >
-                    <w.icon size={17} strokeWidth={1.75} style={{ color: w.color }} />
+                  <span className="icon-chip h-11 w-11 rounded-xl" style={{ ['--c' as any]: w.color }}>
+                    <w.icon size={18} strokeWidth={1.75} />
                   </span>
                   <h3 className="mt-5 text-base font-semibold text-white">{w.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-txt-secondary">{w.description}</p>
@@ -240,15 +336,12 @@ export function Landing() {
       <section id="features" className="py-16">
         <div className="mx-auto max-w-5xl px-5 lg:px-8">
           <h2 className="text-3xl font-semibold tracking-tight text-white">Platform Features</h2>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
               <GlassCard key={f.title} hover compact>
                 <div className="p-5">
-                  <span
-                    className="flex h-9 w-9 items-center justify-center rounded-lg"
-                    style={{ background: f.color + '1F' }}
-                  >
-                    <f.icon size={16} strokeWidth={1.75} style={{ color: f.color }} />
+                  <span className="icon-chip h-10 w-10 rounded-lg" style={{ ['--c' as any]: f.color }}>
+                    <f.icon size={16} strokeWidth={1.75} />
                   </span>
                   <h3 className="mt-4 text-sm font-semibold text-white">{f.title}</h3>
                   <p className="mt-1.5 text-xs leading-relaxed text-txt-secondary">{f.description}</p>
@@ -277,13 +370,18 @@ export function Landing() {
                   <ArrowRight size={15} />
                 </Link>
               </div>
-              <div className="rounded-xl border border-line bg-black p-5 font-mono text-xs leading-6">
+              <div
+                className="rounded-xl border p-5 font-mono text-xs leading-6"
+                style={{ borderColor: 'rgba(34,197,94,0.3)', background: '#050505', boxShadow: 'inset 0 0 40px -20px rgba(34,197,94,0.4)' }}
+              >
                 <p className="text-txt-muted">$ zeox encrypt ./script.lua</p>
-                <p className="text-txt-primary">✓ encrypted · 128 KB → 121 KB</p>
+                <p className="text-white">✓ encrypted · 128 KB → 121 KB</p>
                 <p className="text-txt-muted">$ zeox keys create --batch 25</p>
-                <p className="text-txt-primary">✓ 25 keys issued</p>
+                <p className="text-white">✓ 25 keys issued</p>
                 <p className="text-txt-muted">$ zeox status</p>
-                <p className="text-accent-green">✓ all services operational</p>
+                <p className="glow-text text-accent-green" style={{ ['--c' as any]: G }}>
+                  ✓ all services operational
+                </p>
                 <p className="mt-2 text-[10px] text-txt-muted">// illustrative prototype output</p>
               </div>
             </div>
@@ -292,10 +390,11 @@ export function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section id="pricing" className="py-20">
-        <div className="mx-auto max-w-3xl px-5 text-center lg:px-8">
+      <section id="pricing" className="relative py-24">
+        <div className="orb left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2" style={{ background: 'rgba(168, 85, 247, 0.16)' }} />
+        <div className="relative mx-auto max-w-3xl px-5 text-center lg:px-8">
           <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-            Ready to build on Zeox?
+            Ready to build on <span className="glow-text" style={{ ['--c' as any]: P, color: '#D8B4FE' }}>Zeox</span>?
           </h2>
           <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-txt-secondary">
             Join the platform and take control of your scripts, keys, and services.

@@ -13,7 +13,7 @@
     overflow-x: hidden;
   }
   ::selection {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(168, 85, 247, 0.35);
   }
   * {
     scrollbar-width: thin;
@@ -33,7 +33,7 @@
 }
 
 @layer components {
-  /* ---- OLED card system: true black base, white accents ---- */
+  /* ---- OLED card system ---- */
   .card {
     position: relative;
     background: #101012;
@@ -72,7 +72,50 @@
     transform: translateY(-1px);
   }
 
-  /* ---- Buttons: white OLED primary ---- */
+  /* ---- Glowing icon chip: set --c to the neon color ---- */
+  .icon-chip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: color-mix(in srgb, var(--c) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--c) 35%, transparent);
+    box-shadow:
+      0 0 20px -4px color-mix(in srgb, var(--c) 55%, transparent),
+      inset 0 0 12px -6px color-mix(in srgb, var(--c) 60%, transparent);
+    color: var(--c);
+    transition: box-shadow 0.3s ease, transform 0.25s ease;
+  }
+  .icon-chip:hover {
+    box-shadow:
+      0 0 30px -2px color-mix(in srgb, var(--c) 75%, transparent),
+      inset 0 0 16px -4px color-mix(in srgb, var(--c) 70%, transparent);
+    transform: translateY(-2px);
+  }
+
+  /* ---- Glowing text ---- */
+  .glow-text {
+    text-shadow:
+      0 0 18px color-mix(in srgb, var(--c, #A855F7) 70%, transparent),
+      0 0 46px color-mix(in srgb, var(--c, #A855F7) 40%, transparent);
+  }
+
+  /* ---- Hero background: grid + glowing orbs ---- */
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 75%);
+  }
+  .orb {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(90px);
+    pointer-events: none;
+  }
+
+  /* ---- Buttons ---- */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-black;
     transition: background 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease;
@@ -80,7 +123,7 @@
   .btn-primary:hover {
     background: #E4E4E7;
     transform: translateY(-1px);
-    box-shadow: 0 0 24px -4px rgba(255, 255, 255, 0.35);
+    box-shadow: 0 0 28px -4px rgba(255, 255, 255, 0.5);
   }
   .btn-primary:active {
     transform: translateY(0);
@@ -92,12 +135,13 @@
   }
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-card px-5 py-2.5 text-sm font-medium text-txt-secondary;
-    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   }
   .btn-ghost:hover {
-    @apply border-[#3A3A44] text-white;
+    @apply border-neon-purple/60 text-white;
     background: #16161A;
     transform: translateY(-1px);
+    box-shadow: 0 0 22px -6px rgba(168, 85, 247, 0.5);
   }
   .btn-ghost:active {
     transform: translateY(0);
@@ -156,12 +200,17 @@
   .btn-ghost,
   .btn-ghost:hover,
   .nav-pill,
-  .nav-pill:active {
+  .nav-pill:active,
+  .icon-chip,
+  .icon-chip:hover {
     transform: none;
     transition: none;
   }
   .page-enter,
-  .skeleton {
+  .skeleton,
+  .orb,
+  .animate-glow-pulse,
+  .animate-float-slow {
     animation: none;
   }
 }
