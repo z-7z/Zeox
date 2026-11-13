@@ -12,11 +12,11 @@ interface ServiceCardProps {
 }
 
 const statusColor: Record<string, string> = {
-  Available: '#22C55E',
-  Prototype: '#FACC15',
+  Available: '#8DCFE6',
+  Prototype: '#F2A56F',
 };
 
-/** Landing page service card with glowing icon chip. */
+/** Landing page service card using Zeox's restrained accent palette. */
 export function ServiceCard({ icon: Icon, name, description, status, onExplore }: ServiceCardProps) {
   const color = statusColor[status] ?? '#71717A';
   return (
@@ -31,11 +31,10 @@ export function ServiceCard({ icon: Icon, name, description, status, onExplore }
             style={{
               borderColor: color + '55',
               color,
-              background: color + '14',
-              boxShadow: '0 0 14px -4px ' + color + '88',
+              background: color + '12',
             }}
           >
-            <span className="status-dot" style={{ background: color, boxShadow: '0 0 6px ' + color }} />
+            <span className="status-dot" style={{ background: color }} />
             {status}
           </span>
         </div>

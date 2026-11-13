@@ -13,13 +13,13 @@ interface StatusCardProps {
 }
 
 const levelStyles: Record<StatusLevel, { color: string; text: string }> = {
-  operational: { color: '#22C55E', text: 'text-accent-green' },
-  warning: { color: '#FACC15', text: 'text-accent-yellow' },
-  error: { color: '#EF4444', text: 'text-accent-red' },
+  operational: { color: '#8DCFE6', text: 'text-accent-green' },
+  warning: { color: '#F2A56F', text: 'text-accent-orange' },
+  error: { color: '#E8A7C8', text: 'text-accent-red' },
   prototype: { color: '#71717A', text: 'text-txt-secondary' },
 };
 
-/** Compact status container with glowing status dot. */
+/** Compact status container with a restrained status marker. */
 export function StatusCard({ icon: Icon, title, state, level, metadata, compact = false }: StatusCardProps) {
   const s = levelStyles[level];
   return (
@@ -32,7 +32,7 @@ export function StatusCard({ icon: Icon, title, state, level, metadata, compact 
           <div className="flex items-center gap-2">
             <span
               className={'status-dot ' + (level === 'prototype' ? '' : 'animate-glow-pulse')}
-              style={{ background: s.color, boxShadow: '0 0 8px ' + s.color }}
+              style={{ background: s.color }}
             />
             <p className="truncate text-[13px] font-medium text-txt-primary">{title}</p>
           </div>
