@@ -7,7 +7,7 @@ export default {
         xs: '400px',
       },
       colors: {
-        // OLED palette: true black base, white as the primary accent
+        // OLED palette: true black base, vivid accents tuned for OLED
         page: '#000000',
         panel: '#0A0A0A',
         card: {
@@ -25,6 +25,10 @@ export default {
         },
         'accent-green': '#22C55E',
         'accent-red': '#EF4444',
+        'accent-purple': '#A78BFA',
+        'accent-yellow': '#FACC15',
+        'accent-blue': '#60A5FA',
+        'accent-orange': '#FB923C',
         // Compatibility aliases (legacy tokens)
         ok: '#22C55E',
         warn: '#FBBF24',

@@ -18,56 +18,56 @@ import { StatusCard } from '../components/StatusCard';
 import { ZeoxLogo } from '../components/ZeoxLogo';
 import { services, platformStatus } from '../data/mock';
 
-const W = '#FFFFFF';
-const W2 = '#D4D4D8';
-const W3 = '#A1A1AA';
-const W4 = '#71717A';
+const P = '#A78BFA';
+const G = '#22C55E';
+const Y = '#FACC15';
+const BL = '#60A5FA';
 
 const whyItems = [
   {
     icon: Lock,
     title: 'Serious protection',
     description: 'Purpose-built LuaU obfuscation designed to resist tampering and reverse engineering.',
-    color: W,
+    color: P,
   },
   {
     icon: KeyRound,
     title: 'Full key control',
     description: 'Issue, scope, and revoke license keys from one unified control surface.',
-    color: W2,
+    color: G,
   },
   {
     icon: Gauge,
     title: 'Built for speed',
     description: 'A lightweight pipeline that keeps your workflow fast while staying secure.',
-    color: W3,
+    color: BL,
   },
 ];
 
 const features = [
-  { icon: ShieldCheck, title: 'Script Protection', description: 'Layered defenses for LuaU scripts.', color: W },
-  { icon: Terminal, title: 'Developer Tools', description: 'A growing toolkit for everyday development.', color: W2 },
-  { icon: LayoutDashboard, title: 'Unified Dashboard', description: 'Every service in one clean workspace.', color: W3 },
-  { icon: ActivityIcon, title: 'Activity Tracking', description: 'See operations and usage at a glance.', color: W4 },
+  { icon: ShieldCheck, title: 'Script Protection', description: 'Layered defenses for LuaU scripts.', color: P },
+  { icon: Terminal, title: 'Developer Tools', description: 'A growing toolkit for everyday development.', color: G },
+  { icon: LayoutDashboard, title: 'Unified Dashboard', description: 'Every service in one clean workspace.', color: Y },
+  { icon: ActivityIcon, title: 'Activity Tracking', description: 'See operations and usage at a glance.', color: BL },
 ];
 
 const previewUsage = [
-  { label: 'Zeox Protect', pct: 68, color: W },
-  { label: 'Zeox Keys', pct: 54, color: W2 },
-  { label: 'Script Protect', pct: 41, color: W3 },
-  { label: 'API Requests', pct: 27, color: W4 },
+  { label: 'Zeox Protect', pct: 68, color: P },
+  { label: 'Zeox Keys', pct: 54, color: G },
+  { label: 'Script Protect', pct: 41, color: Y },
+  { label: 'API Requests', pct: 27, color: BL },
 ];
 
 const previewCards = [
-  { icon: ShieldCheck, name: 'Zeox Protect', sub: '1,204 operations', color: W },
-  { icon: KeyRound, name: 'Zeox Keys', sub: '890 operations', color: W2 },
-  { icon: FileCode2, name: 'Script Protect', sub: '612 operations', color: W3 },
+  { icon: ShieldCheck, name: 'Zeox Protect', sub: '1,204 operations', color: P },
+  { icon: KeyRound, name: 'Zeox Keys', sub: '890 operations', color: G },
+  { icon: FileCode2, name: 'Script Protect', sub: '612 operations', color: Y },
 ];
 
 const previewRows = [
-  { name: 'main-script.lua', service: 'Zeox Protect', status: 'Done', color: W },
-  { name: 'batch-25-keys', service: 'Zeox Keys', status: 'Done', color: W2 },
-  { name: 'loader-v2.lua', service: 'Script Protect', status: 'Running', color: W3 },
+  { name: 'main-script.lua', service: 'Zeox Protect', status: 'Done', color: P },
+  { name: 'batch-25-keys', service: 'Zeox Keys', status: 'Done', color: G },
+  { name: 'loader-v2.lua', service: 'Script Protect', status: 'Running', color: Y },
 ];
 
 export function Landing() {
@@ -80,7 +80,7 @@ export function Landing() {
         <div className="mx-auto max-w-5xl px-5 lg:px-8">
           <div className="fade-up mx-auto max-w-2xl text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1 text-xs font-medium text-txt-secondary">
-              <span className="status-dot bg-white" />
+              <span className="status-dot bg-accent-green" />
               LuaU encryption &amp; protection platform
             </span>
             <h1 className="mt-6 text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-[3.4rem]">
@@ -111,7 +111,7 @@ export function Landing() {
                     <span className="text-sm font-medium text-white">Overview</span>
                   </div>
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-card px-2.5 py-1 text-[10px] text-txt-secondary">
-                    <span className="status-dot bg-white" />
+                    <span className="status-dot bg-accent-green" />
                     Live
                   </span>
                 </div>
@@ -144,7 +144,7 @@ export function Landing() {
                       <div key={c.name} className="card flex flex-col items-center justify-center gap-2 p-3">
                         <span
                           className="flex h-8 w-8 items-center justify-center rounded-lg"
-                          style={{ background: 'rgba(255, 255, 255, 0.08)' }}
+                          style={{ background: c.color + '1F' }}
                         >
                           <c.icon size={14} strokeWidth={1.75} style={{ color: c.color }} />
                         </span>
@@ -162,7 +162,7 @@ export function Landing() {
                       <span className="status-dot" style={{ background: r.color }} />
                       <span className="flex-1 truncate font-mono text-[10px] text-txt-primary">{r.name}</span>
                       <span className="hidden text-[10px] text-txt-muted sm:block">{r.service}</span>
-                      <span className={'text-[10px] ' + (r.status === 'Running' ? 'text-txt-secondary' : 'text-white')}>
+                      <span className={'text-[10px] ' + (r.status === 'Running' ? 'text-accent-blue' : 'text-accent-green')}>
                         {r.status}
                       </span>
                       <span className="rounded-full bg-white px-2 py-0.5 text-[9px] font-semibold text-black">Download</span>
@@ -223,7 +223,7 @@ export function Landing() {
                 <div className="p-6">
                   <span
                     className="flex h-10 w-10 items-center justify-center rounded-xl"
-                    style={{ background: 'rgba(255, 255, 255, 0.08)' }}
+                    style={{ background: w.color + '1F' }}
                   >
                     <w.icon size={17} strokeWidth={1.75} style={{ color: w.color }} />
                   </span>
@@ -246,7 +246,7 @@ export function Landing() {
                 <div className="p-5">
                   <span
                     className="flex h-9 w-9 items-center justify-center rounded-lg"
-                    style={{ background: 'rgba(255, 255, 255, 0.08)' }}
+                    style={{ background: f.color + '1F' }}
                   >
                     <f.icon size={16} strokeWidth={1.75} style={{ color: f.color }} />
                   </span>
@@ -283,7 +283,7 @@ export function Landing() {
                 <p className="text-txt-muted">$ zeox keys create --batch 25</p>
                 <p className="text-txt-primary">✓ 25 keys issued</p>
                 <p className="text-txt-muted">$ zeox status</p>
-                <p className="text-white">✓ all services operational</p>
+                <p className="text-accent-green">✓ all services operational</p>
                 <p className="mt-2 text-[10px] text-txt-muted">// illustrative prototype output</p>
               </div>
             </div>
