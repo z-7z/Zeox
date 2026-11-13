@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   ArrowRight,
   Activity as ActivityIcon,
+  FileCode2,
 } from 'lucide-react';
 import { NavigationBar } from '../components/NavigationBar';
 import { Footer } from '../components/Footer';
@@ -63,27 +64,6 @@ const previewRows = [
   { name: 'batch-25-keys', service: 'Zeox Keys', status: 'Done', color: '#22C55E' },
   { name: 'loader-v2.lua', service: 'Script Protect', status: 'Running', color: '#EAB308' },
 ];
-
-function FileCode2(props: { size?: number; strokeWidth?: number; style?: React.CSSProperties }) {
-  return (
-    <svg
-      width={props.size ?? 24}
-      height={props.size ?? 24}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={props.strokeWidth ?? 2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      style={props.style}
-    >
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-      <path d="M14 2v6h6" />
-      <path d="m9 13-2 2 2 2" />
-      <path d="m13 17 2-2-2-2" />
-    </svg>
-  );
-}
 
 export function Landing() {
   return (
