@@ -44,15 +44,13 @@ export function Pricing() {
             key={p.name}
             className={
               'relative rounded-2xl border p-7 ' +
-              (p.popular
-                ? 'border-white bg-white text-black'
-                : 'border-white/10 bg-neutral-950 text-white')
+              (p.popular ? 'border-white bg-white text-black' : 'border-white/10 bg-neutral-950 text-white')
             }
           >
             {p.popular ? (
               <span className="absolute right-6 top-6 rounded-full bg-black px-3 py-1 text-[10px] font-medium text-white">Popular</span>
             ) : null}
-            <div className="mb-6 h-9 w-9 rounded-lg border ' + (p.popular ? 'border-black/20' : 'border-white/20') + ''} />
+            <div className={'mb-6 h-9 w-9 rounded-lg border ' + (p.popular ? 'border-black/20' : 'border-white/20')} />
             <h3 className="text-sm font-medium opacity-70">{p.name}</h3>
             <p className="mt-2 text-5xl font-semibold tracking-tight">{p.price}</p>
             <p className={'mt-2 text-xs ' + (p.popular ? 'text-black/60' : 'text-neutral-500')}>{p.note}</p>
