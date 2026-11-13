@@ -1,26 +1,18 @@
 import { type LucideIcon } from 'lucide-react';
 import { GlassCard } from './GlassCard';
 
-interface PlaceholderPageProps {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-}
+interface PlaceholderPageProps { icon: LucideIcon; title: string; description: string }
 
-/** Shared visual placeholder for sections planned in a later phase. */
 export function PlaceholderPage({ icon: Icon, title, description }: PlaceholderPageProps) {
   return (
-    <div className="flex items-center justify-center px-5 py-24">
-      <GlassCard className="max-w-md text-center">
-        <div className="p-10">
-          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl border border-line bg-panel">
-            <Icon size={24} strokeWidth={1.5} className="text-txt-primary" />
-          </span>
-          <h2 className="mt-6 text-lg font-semibold tracking-tight text-white">{title}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-txt-secondary">{description}</p>
-          <p className="mt-6 inline-flex rounded-full border border-line bg-panel px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-txt-muted">
-            Coming in a future phase
-          </p>
+    <div className="flex items-start justify-center px-5 py-14 sm:py-20">
+      <GlassCard className="w-full max-w-lg">
+        <div className="p-6 sm:p-8">
+          <p className="section-kicker">WORKSPACE / IN DEVELOPMENT</p>
+          <div className="mt-5 flex items-start gap-4 border-t border-line-soft pt-5">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-line-soft bg-panel text-accent-cyan"><Icon size={17} strokeWidth={1.5} /></span>
+            <div><h2 className="text-lg font-semibold tracking-tight text-txt-primary">{title}</h2><p className="mt-2 text-sm leading-relaxed text-txt-secondary">{description}</p><p className="mt-4 font-mono text-[9px] uppercase tracking-wider text-txt-muted">Planned for a future phase</p></div>
+          </div>
         </div>
       </GlassCard>
     </div>
