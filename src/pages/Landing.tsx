@@ -11,12 +11,12 @@ import { NavigationBar } from '../components/NavigationBar';
 import { Footer } from '../components/Footer';
 import { ZeoxLogo } from '../components/ZeoxLogo';
 import { platformStatus, services } from '../data/mock';
+import { scrollToSection } from '../utils/scrollToSection';
 
 const accent = {
   cyan: '#5CD4E6',
   orange: '#FF9150',
   pink: '#F2A6C7',
-  green: '#7BD9C2',
 };
 
 const heroUsage = [
@@ -60,7 +60,7 @@ export function Landing() {
                 <Link to="/dashboard" className="btn-primary">
                   Open control deck <ArrowRight size={15} />
                 </Link>
-                <a href="#services" className="btn-ghost">
+                <a href="#services" onClick={(event) => scrollToSection(event, 'services')} className="btn-ghost">
                   Explore the platform <ChevronRight size={15} />
                 </a>
               </div>
@@ -142,7 +142,7 @@ export function Landing() {
         <section aria-label="Platform metrics" className="border-y border-line-soft bg-panel/70">
           <div className="mx-auto grid max-w-[1320px] grid-cols-2 divide-x divide-y divide-line-soft px-4 sm:px-6 md:grid-cols-4 md:divide-y-0 lg:px-8">
             {[
-              { value: '99.98%', label: 'Platform uptime', color: accent.green },
+              { value: '99.98%', label: 'Platform uptime', color: accent.cyan },
               { value: '30,240', label: 'Operations / month', color: accent.cyan },
               { value: '< 50ms', label: 'Average API latency', color: accent.orange },
               { value: '2.4.1', label: 'Engine build', color: accent.pink },
@@ -155,7 +155,7 @@ export function Landing() {
           </div>
         </section>
 
-        <section id="services" className="mx-auto grid max-w-[1320px] gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[0.65fr_1.35fr] lg:px-8 lg:py-14">
+        <section id="services" className="scroll-mt-16 mx-auto grid max-w-[1320px] gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[0.65fr_1.35fr] lg:px-8 lg:py-14">
           <div className="max-w-sm">
             <p className="section-kicker">THE PLATFORM</p>
             <h2 className="mt-3 text-2xl font-semibold tracking-tight text-txt-primary sm:text-3xl">One console.<br />Three core tools.</h2>
@@ -180,7 +180,7 @@ export function Landing() {
           </div>
         </section>
 
-        <section id="status" className="border-y border-line-soft bg-panel/55">
+        <section id="status" className="scroll-mt-16 border-y border-line-soft bg-panel/55">
           <div className="mx-auto max-w-[1320px] px-4 py-9 sm:px-6 lg:px-8 lg:py-11">
             <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
               <div><p className="section-kicker">SYSTEM STATUS</p><h2 className="mt-2 text-xl font-semibold tracking-tight text-txt-primary">Service health</h2></div>
@@ -189,7 +189,7 @@ export function Landing() {
             <div className="grid gap-0 border-y border-line-soft sm:grid-cols-3 sm:divide-x sm:divide-line-soft">
               {platformStatus.map((item) => {
                 const Icon = item.icon;
-                const color = item.level === 'operational' ? accent.green : accent.orange;
+                const color = item.level === 'operational' ? accent.cyan : accent.orange;
                 return (
                   <div key={item.title} className="flex items-start gap-3 border-b border-line-soft px-3 py-4 last:border-0 sm:border-0 sm:px-5 sm:first:pl-0">
                     <Icon size={15} className="mt-0.5 shrink-0" style={{ color }} />
@@ -201,7 +201,7 @@ export function Landing() {
           </div>
         </section>
 
-        <section id="workflow" className="mx-auto max-w-[1320px] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+        <section id="workflow" className="scroll-mt-16 mx-auto max-w-[1320px] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
           <div className="grid gap-7 lg:grid-cols-[0.65fr_1.35fr]">
             <div><p className="section-kicker">HOW IT WORKS</p><h2 className="mt-3 text-2xl font-semibold tracking-tight text-txt-primary sm:text-3xl">Built around the work.</h2><p className="mt-3 max-w-sm text-sm leading-6 text-txt-secondary">Move from protected code to managed access without leaving the console.</p></div>
             <div className="grid gap-0 border-y border-line-soft sm:grid-cols-3 sm:divide-x sm:divide-line-soft">

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { ZeoxLockup } from './ZeoxLogo';
+import { scrollToSection } from '../utils/scrollToSection';
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -11,10 +12,10 @@ export function Footer() {
           <ZeoxLockup size={19} />
           <p className="mt-2 max-w-md text-xs leading-5 text-txt-muted">LuaU protection, key management, and operation visibility in one workspace.</p>
         </div>
-        <nav aria-label="Footer navigation" className="flex flex-wrap items-center gap-x-5 gap-y-3 font-mono text-[9px] uppercase tracking-wider text-txt-muted">
-          <a href="#services" className="transition-colors hover:text-txt-primary">Platform</a>
-          <a href="#status" className="transition-colors hover:text-txt-primary">System status</a>
-          <a href="#workflow" className="transition-colors hover:text-txt-primary">Workflow</a>
+        <nav aria-label="Footer navigation" className="flex flex-wrap items-center gap-x-5 gap-y-3 font-mono text-[9px] uppercase tracking-wider text-txt-muted md:col-span-2 md:row-start-1">
+          <a href="#services" onClick={(event) => scrollToSection(event, 'services')} className="transition-colors hover:text-txt-primary">Platform</a>
+          <a href="#status" onClick={(event) => scrollToSection(event, 'status')} className="transition-colors hover:text-txt-primary">System status</a>
+          <a href="#workflow" onClick={(event) => scrollToSection(event, 'workflow')} className="transition-colors hover:text-txt-primary">Workflow</a>
           <Link to="/dashboard" className="inline-flex items-center gap-1 text-accent-orange hover:text-txt-primary">Open deck <ArrowUpRight size={11} /></Link>
         </nav>
         <div className="flex items-center justify-between border-t border-line-soft pt-4 font-mono text-[9px] uppercase tracking-wider text-txt-muted md:col-span-2">

@@ -11,9 +11,9 @@ interface ActivityItemProps {
 }
 
 const statusStyles: Record<ActivityStatus, { dot: string; label: string; text: string }> = {
-  success: { dot: 'bg-accent-green', label: 'Completed', text: 'text-accent-green' },
+  success: { dot: 'bg-accent-cyan', label: 'Completed', text: 'text-accent-cyan' },
   pending: { dot: 'bg-warn', label: 'Pending', text: 'text-warn' },
-  failed: { dot: 'bg-accent-red', label: 'Failed', text: 'text-accent-red' },
+  failed: { dot: 'bg-accent-pink', label: 'Failed', text: 'text-accent-pink' },
 };
 
 /** Single row in the Recent Activity list. */

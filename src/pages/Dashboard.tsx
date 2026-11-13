@@ -27,7 +27,7 @@ type OperationRow = { type: string; name: string; service: string; status: Opera
 
 const summaryStats = [
   { label: 'Total operations', value: '3,482', note: 'this month', color: '#5CD4E6' },
-  { label: 'Platform uptime', value: '99.98%', note: 'last 30 days', color: '#7BD9C2' },
+  { label: 'Platform uptime', value: '99.98%', note: 'last 30 days', color: '#5CD4E6' },
   { label: 'API latency', value: '42ms', note: 'average response', color: '#FF9150' },
   { label: 'Engine build', value: '2.4.1', note: 'prototype data', color: '#F2A6C7' },
 ];
@@ -118,9 +118,9 @@ function Overview({ searchTerm }: { searchTerm: string }) {
         </article>
 
         <article className="card p-4 sm:p-5">
-          <div className="flex items-center justify-between border-b border-line-soft pb-3"><div><p className="eyebrow">SYSTEM / HEALTH</p><h2 className="mt-1 text-sm font-medium text-txt-primary">Service status</h2></div><span className="flex items-center gap-1.5 font-mono text-[9px] uppercase text-accent-green"><span className="status-dot bg-accent-green" />All systems normal</span></div>
+          <div className="flex items-center justify-between border-b border-line-soft pb-3"><div><p className="eyebrow">SYSTEM / HEALTH</p><h2 className="mt-1 text-sm font-medium text-txt-primary">Service status</h2></div><span className="flex items-center gap-1.5 font-mono text-[9px] uppercase text-accent-cyan"><span className="status-dot bg-accent-cyan" />All systems normal</span></div>
           <div className="divide-y divide-line-soft">
-            {platformStatus.map((item) => { const Icon = item.icon; return <div key={item.title} className="flex items-center gap-3 py-3"><Icon size={14} className="text-txt-muted" /><div className="min-w-0 flex-1"><p className="truncate text-xs text-txt-primary">{item.title}</p><p className="mt-0.5 font-mono text-[9px] text-txt-muted">{item.metadata}</p></div><span className="flex items-center gap-1.5 font-mono text-[9px] text-accent-green"><span className="status-dot bg-accent-green" />{item.state}</span></div>; })}
+            {platformStatus.map((item) => { const Icon = item.icon; return <div key={item.title} className="flex items-center gap-3 py-3"><Icon size={14} className="text-txt-muted" /><div className="min-w-0 flex-1"><p className="truncate text-xs text-txt-primary">{item.title}</p><p className="mt-0.5 font-mono text-[9px] text-txt-muted">{item.metadata}</p></div><span className="flex items-center gap-1.5 font-mono text-[9px] text-accent-cyan"><span className="status-dot bg-accent-cyan" />{item.state}</span></div>; })}
           </div>
         </article>
       </section>
@@ -162,7 +162,7 @@ function Overview({ searchTerm }: { searchTerm: string }) {
 
       {dialogOpen && <div className="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setDialogOpen(false)}><section ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="new-operation-title" className="card w-full max-w-md p-5 sm:p-6" onClick={(event) => event.stopPropagation()}>
         <div className="mb-5"><p className="section-kicker">PROTOTYPE / LOCAL ONLY</p><h2 id="new-operation-title" className="mt-2 text-lg font-semibold text-txt-primary">Create an operation</h2><p className="mt-1 text-sm text-txt-secondary">This example is added to the page only; it is not saved to a server.</p></div>
-        <form onSubmit={handleCreateOperation} className="space-y-4"><label className="block text-xs font-medium text-txt-secondary">File or operation name<input autoFocus required maxLength={120} value={newName} onChange={(event) => { setNewName(event.target.value); setFormError(''); }} placeholder="e.g. player-core.lua" className="control-field mt-2 w-full" /></label><label className="block text-xs font-medium text-txt-secondary">Service<select value={newService} onChange={(event) => setNewService(event.target.value)} className="control-field mt-2 w-full"><option>Zeox Protect</option><option>Zeox Keys</option><option>Script Protect</option></select></label>{formError && <p className="text-xs text-accent-red" role="alert">{formError}</p>}<div className="flex justify-end gap-2 border-t border-line-soft pt-4"><button type="button" onClick={() => setDialogOpen(false)} className="btn-ghost !rounded-md !px-4 !py-2 text-xs">Cancel</button><button type="submit" className="btn-primary !rounded-md !px-4 !py-2 text-xs">Add sample</button></div></form>
+        <form onSubmit={handleCreateOperation} className="space-y-4"><label className="block text-xs font-medium text-txt-secondary">File or operation name<input autoFocus required maxLength={120} value={newName} onChange={(event) => { setNewName(event.target.value); setFormError(''); }} placeholder="e.g. player-core.lua" className="control-field mt-2 w-full" /></label><label className="block text-xs font-medium text-txt-secondary">Service<select value={newService} onChange={(event) => setNewService(event.target.value)} className="control-field mt-2 w-full"><option>Zeox Protect</option><option>Zeox Keys</option><option>Script Protect</option></select></label>{formError && <p className="text-xs text-accent-pink" role="alert">{formError}</p>}<div className="flex justify-end gap-2 border-t border-line-soft pt-4"><button type="button" onClick={() => setDialogOpen(false)} className="btn-ghost !rounded-md !px-4 !py-2 text-xs">Cancel</button><button type="submit" className="btn-primary !rounded-md !px-4 !py-2 text-xs">Add sample</button></div></form>
       </section></div>}
     </div>
   );

@@ -32,7 +32,7 @@ export function StatCard({
           <span
             className={
               'inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium ' +
-              (up ? 'bg-accent-green/10 text-accent-green' : 'bg-accent-red/10 text-accent-red')
+              (up ? 'bg-accent-cyan/10 text-accent-cyan' : 'bg-accent-pink/10 text-accent-pink')
             }
           >
             <span className="status-dot bg-current" />
@@ -41,7 +41,7 @@ export function StatCard({
         </div>
         <p className="mt-2.5 text-3xl font-semibold tracking-tight text-white">{value}</p>
         <p className="mt-1.5 flex items-center gap-1.5 text-xs text-txt-muted">
-          <DeltaIcon size={12} className={up ? 'text-accent-green' : 'text-accent-red'} />
+          <DeltaIcon size={12} className={up ? 'text-accent-cyan' : 'text-accent-pink'} />
           {description}
         </p>
         <Icon size={0} className="hidden" aria-hidden />

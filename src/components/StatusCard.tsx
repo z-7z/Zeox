@@ -5,7 +5,7 @@ export type StatusLevel = 'operational' | 'warning' | 'error' | 'prototype';
 interface StatusCardProps { icon: LucideIcon; title: string; state: string; level: StatusLevel; metadata: string; compact?: boolean }
 
 const levelStyles: Record<StatusLevel, { color: string; text: string }> = {
-  operational: { color: '#7BD9C2', text: 'text-accent-green' },
+  operational: { color: '#5CD4E6', text: 'text-accent-cyan' },
   warning: { color: '#FF9150', text: 'text-accent-orange' },
   error: { color: '#F2A6C7', text: 'text-accent-pink' },
   prototype: { color: '#606C70', text: 'text-txt-secondary' },
