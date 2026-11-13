@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Card } from './ui';
 
 export function FeatureTrio() {
@@ -205,6 +206,7 @@ export function DashboardPreview() {
   ];
   return (
     <section className="mx-auto max-w-6xl px-6 py-28">
+      <Link to="/dashboard" className="block cursor-pointer transition-opacity hover:opacity-90">
       <div className="rounded-2xl border border-white/10 bg-neutral-950 p-3 shadow-[0_0_80px_rgba(255,255,255,0.06)]">
         <div className="flex overflow-hidden rounded-xl border border-white/10 bg-black">
           <div className="hidden w-11 flex-col items-center gap-4 border-r border-white/10 py-4 sm:flex">
@@ -325,6 +327,7 @@ export function DashboardPreview() {
           </div>
         </div>
       </div>
+    </Link>
     </section>
   );
 }
