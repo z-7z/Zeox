@@ -1,93 +1,66 @@
-import { test, expect, type Download } from '@playwright/test';
+import { test, expect } from '@playwright/test';
+import { go, openSidebar, sidebar } from './navigation';
 
-async function contents(download: Download) {
-  const stream = await download.createReadStream();
-  if (!stream) throw new Error('Download has no content');
-  const chunks = [];
-  for await (const part of stream) chunks.push(part);
-  return Buffer.concat(chunks).toString('utf8');
-}
-
-test('the real snapshot replaces six skeleton cards without moving the desktop grid', async ({ page }) => {
-  let release!: () => void;
-  const gate = new Promise<void>(resolve => { release = resolve; });
-  await page.route('**/data/overview.json', async route => { await gate; await route.continue(); });
-  await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
-  const loading = page.getByRole('status', { name: 'Loading overview' });
-  await expect(loading.locator('.db-card')).toHaveCount(6);
-  const box = await loading.boundingBox();
-  release();
-  await expect(page.getByRole('heading', { name: '7.8%' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: '1,842' })).toBeVisible();
-  expect((await page.locator('.db-grid').boundingBox())?.height).toBeCloseTo(box!.height);
-  await expect(page.locator('.heat-cells > span')).toHaveCount(7 * 24);
-
-  const stage = page.getByRole('button', { name: /^Add to cart:/ });
-  await stage.click();
-  await expect(page.getByRole('dialog').getByRole('row', { name: /Add to cart 38,200 53.1%/ })).toBeVisible();
-  await page.keyboard.press('Escape');
-  await expect(stage).toBeFocused();
+test('dashboard links open the real tools; its status cards use successful session operations', async ({ page }) => {
+  await page.goto('/');
+  const summary = page.getByRole('region', { name: 'Session summary' });
+  await expect(summary.locator('dd')).toHaveText(['0', '0', '0']); await expect(page.getByText('No runs yet')).toBeVisible();
+  await page.getByRole('link', { name: 'Open editor' }).click(); await page.getByRole('button', { name: 'Build output' }).click();
+  await go(page, 'Dashboard'); await expect(summary.locator('dd')).toHaveText(['1', '0', '0']);
+  const recent = page.getByRole('region', { name: 'Recent runs' }); await expect(recent.getByRole('listitem')).toContainText('Source build');
+  await page.getByRole('link', { name: 'Open vault' }).click(); await page.getByRole('button', { name: 'Use sample' }).click();
+  const secret = 'glass test sample phrase'; await page.getByLabel('Passphrase', { exact: true }).fill(secret);
+  await page.getByLabel('Confirm passphrase', { exact: true }).fill(secret); await page.getByRole('button', { name: 'Encrypt file', exact: true }).click();
+  await go(page, 'Dashboard'); await expect(summary.locator('dd')).toHaveText(['1', '1', '0']);
+  await expect(recent.locator('li span')).toHaveText(['Encryption', 'Source build']); await expect(recent).not.toContainText('game-config');
+  await recent.getByRole('link', { name: 'View report' }).click(); await expect(page.getByRole('table').getByRole('row')).toHaveCount(3);
+  await page.getByRole('button', { name: 'Reset', exact: true }).click(); await page.getByRole('button', { name: 'Clear usage' }).click();
+  await go(page, 'Dashboard'); await expect(summary.locator('dd')).toHaveText(['0', '0', '0']);
 });
 
-test('a failed snapshot can be retried', async ({ page }) => {
-  await page.route('**/data/overview.json', route => route.fulfill({ status: 503, body: 'Unavailable' }));
-  await page.goto('/dashboard');
-  await expect(page.getByRole('alert')).toContainText('Overview unavailable');
-  await page.unroute('**/data/overview.json');
-  await page.getByRole('button', { name: 'Try again' }).click();
-  await expect(page.getByRole('heading', { name: '7.8%' })).toBeVisible();
-});
-
-test('team invitations are local, persistent and deduplicated', async ({ page }) => {
-  await page.goto('/dashboard');
-  await page.getByRole('button', { name: 'Invite Members', exact: true }).click();
-  const dialog = page.getByRole('dialog');
-  await dialog.getByLabel('Email address').fill('teammate@example.org');
-  await dialog.getByLabel('Workspace role').selectOption('Viewer');
-  await dialog.getByRole('button', { name: 'Create invitation' }).click();
-  await expect(dialog).toContainText('Viewer · Pending');
-  await dialog.getByLabel('Email address').fill('TEAMMATE@example.org');
-  await dialog.getByRole('button', { name: 'Create invitation' }).click();
-  await expect(dialog.getByRole('alert')).toContainText('already has a pending invitation');
-  await page.reload();
-  await expect(page.getByRole('heading', { name: '1 pending invitation' })).toBeVisible();
-});
-
-test('search reaches offline skeleton and hourly CSV downloads', async ({ page }) => {
-  await page.goto('/dashboard');
-  await expect(page.getByRole('heading', { name: '1,842' })).toBeVisible();
-  await page.keyboard.press('/');
-  const search = page.getByRole('combobox', { name: 'Search commands' });
-  await search.fill('Download skeleton');
-  await search.press('Enter');
-  const dialog = page.getByRole('dialog');
-  let downloading = page.waitForEvent('download');
-  await dialog.getByRole('button', { name: /Download skeleton/ }).click();
-  const skeleton = await downloading;
-  expect(skeleton.suggestedFilename()).toBe('zeox-overview-skeleton.html');
-  const html = await contents(skeleton);
-  expect(html).toContain('prefers-reduced-motion');
-  expect(html).not.toMatch(/<script|<link/i);
-  downloading = page.waitForEvent('download');
-  await dialog.getByRole('button', { name: /Export hourly sales/ }).click();
-  const csv = await contents(await downloading);
-  expect(csv.trim().split('\r\n')).toHaveLength(1 + 7 * 24);
-  expect(csv).toContain('Sat,21:00,4800');
-  await page.setContent(html);
-  await expect(page.locator('.sk-card')).toHaveCount(6);
-});
-
-test('390px navigation works without overflow and honors reduced motion', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
+test('skeleton download matches the four slots and opens offline without scripts or session data', async ({ page, context }) => {
+  await page.goto('/dashboard', { waitUntil: 'networkidle' }); await context.setOffline(true);
+  const real = await page.locator('.overview-grid > *').evaluateAll(els => els.map(el => el.getBoundingClientRect().width));
+  expect(real).toHaveLength(4);
+  const [file] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Download skeleton' }).click()]);
+  expect(file.suggestedFilename()).toBe('zeox-overview-skeleton.html'); const stream = await file.createReadStream(); const chunks = [];
+  for await (const chunk of stream!) chunks.push(chunk); const html = Buffer.concat(chunks).toString();
+  expect(html).not.toMatch(/<script|<link|https?:\/\/|settings\.luau|game-config/); expect(html).toContain('prefers-reduced-motion');
+  await page.setContent(html); await expect(page.locator('.overview-grid .sk-tile')).toHaveCount(4); await expect(page.locator('.overview-portal')).toHaveCount(2);
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/dashboard');
-  await expect(page.getByRole('heading', { name: '7.8%' })).toBeVisible();
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
-  await page.getByRole('button', { name: 'Open workspace navigation' }).click();
-  await page.getByRole('combobox').fill('Downloads');
-  await page.getByRole('combobox').press('Enter');
-  const skeleton = page.locator('dialog .sk-card').first();
-  expect(await skeleton.evaluate(el => getComputedStyle(el, '::after').animationName)).toBe('none');
-  await page.keyboard.press('Escape');
-  await expect(page.getByRole('button', { name: 'Open workspace navigation' })).toBeFocused();
+  expect(await page.locator('.sk-tile').first().evaluate(el => getComputedStyle(el, '::after').animationName)).toBe('none');
+});
+
+test('desktop sidebar can disappear entirely without losing a draft or changing routes', async ({ page }) => {
+  await page.goto('/obfuscate'); const editor = page.getByRole('textbox', { name: 'Source code' }); await editor.fill('return 12');
+  const before = await page.locator('.ws-frame').boundingBox(); await page.getByRole('button', { name: 'Hide sidebar' }).click();
+  await expect(sidebar(page)).toHaveCount(0); await expect(page.getByRole('button', { name: 'Open sidebar' })).toHaveAttribute('aria-expanded', 'false');
+  expect((await page.locator('.ws-frame').boundingBox())!.width).toBeGreaterThan(before!.width + 50);
+  await editor.press('End'); await editor.press('/'); await expect(editor).toHaveText('return 12/'); await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.getByRole('link', { name: 'Zeox home' }).click(); await expect(sidebar(page)).toHaveCount(0);
+  await page.getByRole('link', { name: 'Open editor' }).click(); await expect(editor).toHaveText('return 12/');
+  await openSidebar(page); await expect(sidebar(page).locator('[aria-current=page]')).toHaveText('Obfuscate');
+});
+
+test('mobile drawer contains focus, dismisses from keyboard, button and backdrop, and releases scroll on resize', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 640 }); await page.goto('/vault');
+  const opener = page.getByRole('button', { name: 'Open sidebar' }), dialog = page.getByRole('dialog', { name: 'Workspace navigation' });
+  await opener.click(); await expect(dialog).toBeVisible(); await expect(sidebar(page).getByRole('link', { name: 'Vault' })).toBeFocused();
+  expect(await dialog.evaluate(el => el.matches(':modal'))).toBe(true);
+  await page.keyboard.press('Shift+Tab'); await expect(sidebar(page).getByRole('link', { name: 'Usages' })).toBeFocused();
+  await page.keyboard.press('Escape'); await expect(opener).toBeFocused(); await expect(dialog).toHaveCount(0);
+  await opener.click(); await page.mouse.click(375, 135); await expect(opener).toBeFocused();
+  await opener.click(); await page.getByRole('button', { name: 'Close sidebar' }).click(); await expect(opener).toBeFocused();
+  await opener.click(); await page.setViewportSize({ width: 1024, height: 720 });
+  await expect(dialog).toHaveCount(0); await expect(sidebar(page).getByRole('link')).toHaveCount(4);
+  await expect.poll(() => page.evaluate(() => document.body.style.overflow)).not.toBe('hidden');
+  await page.setViewportSize({ width: 390, height: 640 }); await expect(opener).toBeVisible(); await expect(sidebar(page)).toHaveCount(0);
+});
+
+test('reduced transparency uses opaque surfaces while controls and artwork stay legible', async ({ page, context }) => {
+  const cdp = await context.newCDPSession(page);
+  await cdp.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-transparency', value: 'reduce' }] });
+  await page.goto('/'); const card = page.getByRole('link', { name: 'Open editor' });
+  await expect(card).toHaveCSS('backdrop-filter', 'none'); await expect(card).toHaveCSS('background-color', 'rgb(27, 27, 27)');
+  await card.click(); await expect(page.getByRole('textbox', { name: 'Source code' }).locator('.sx-keyword').first()).toBeVisible();
 });

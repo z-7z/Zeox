@@ -1,19 +1,21 @@
 # Zeox Workspace
 
-A monochrome, dashboard-first workspace. The four labeled sections are real routes with the same navigation on desktop and phones. All tools run in the browser; no account, upload API or server secret is required.
+A local, monochrome workspace for Lua source and file protection. It has exactly four destinations in a **vertical left sidebar**. On desktop, the header button hides or restores the rail. On phones, it opens a left-hand drawer; selecting a section, tapping the backdrop or pressing Escape dismisses it. There is no command palette or horizontal tab strip.
 
 | Section | Route | What it does |
 | --- | --- | --- |
-| **Dashboard** | `/`, `/dashboard` | The six-card overview: conversion funnel, hatched order mix, traffic, team, hourly heatmap and quick actions. The figures are a **demo snapshot**, not tool usage. Open **Downloads** for the script-free HTML skeleton or hourly sales CSV. |
+| **Dashboard** | `/`, `/dashboard` | Launch either tool, see real session counts and the three latest operations. **Download skeleton** saves a standalone, script-free HTML version of the loading layout. |
 | **Obfuscate** | `/obfuscate` | Edit or open a UTF-8 `.lua` / `.luau` script (512 KiB max) with live syntax highlighting. Pick build settings, then preview, copy or download the separate output file. |
 | **Usages** | `/usages` | Actual successful source builds, encryptions and decryptions **in this tab**. Counters cover all successful runs; the filterable ledger and CSV contain the last 50 runs, with times and byte counts only. |
 | **Vault** | `/vault` | Encrypt and restore Luau, Lua 5.1 and Roblox Studio files byte-for-byte. |
 
-`/dashboard/overview` redirects to Dashboard for existing bookmarks. The earlier product showcase is still at `/showcase`. Open workspace search with `/` or `Ctrl/⌘ K`; use `Esc` to close a dialog.
+The former `/dashboard/overview` and `/showcase` URLs redirect to Dashboard. There is no storefront, team/account system, remote analytics or demo sales snapshot.
 
 ## Motion and surfaces
 
-The overview preserves the original narrow rail and two wide status cards above four widgets. The cards have soft borders; their **artwork**, not the card hit targets or metrics, moves: light travels along the funnel, the hatched pie gently turns, and the portraits float. Below-the-fold artwork reveals on entry; continuous overview effects pause offscreen. The footer motion switch applies across workspace sections, and the OS reduced-motion preference takes precedence.
+The cards use translucent graphite or pearl fills, curved highlight edges and local artwork. Shared material tokens live in `src/components/workspace/material.css`. Browsers without backdrop filtering get solid fills; reduced-transparency and increased-contrast preferences also remove blur. On phones, tool tiles share a row, the editor scrolls internally, and the file picker leaves room for passphrase inputs. The viewport remains zoomable.
+
+The Dashboard's sculptures and their masked light move **inside** stationary links. Continuous artwork pauses offscreen. The sidebar motion switch applies throughout the workspace; the OS reduced-motion preference takes precedence.
 
 ## Source tools and local state
 
@@ -21,7 +23,7 @@ The source studio has three panels in reading order: **Source → Build settings
 
 Obfuscate offers three independent source transformations: express plain quoted strings as three-digit Lua byte escapes, remove ordinary comments and compact whitespace. The lexical pass leaves identifiers, existing escapes, bracket strings and entire Luau interpolations alone. It keeps directive comments and copyright/SPDX notices. There is no VM, runtime loader or execution step. This is **not encryption or a guarantee of secrecy**; the output remains source code. For encrypted storage, use Vault.
 
-Changing workspace sections preserves the source draft and completed downloads. Vault clears passphrase inputs when leaving its section. A workspace reload or leaving for the showcase drops tool state, including the Usages counters. No source text, user files, passphrases or tool logs are written to Web Storage. Only separate, explicitly changed dashboard demo settings (team invitations, campaigns, fulfillment and workspace name/activity) use `localStorage`.
+Changing workspace sections preserves the source draft and completed downloads. Vault clears passphrase inputs when leaving its section. A workspace reload drops tool state, including the Usages counters. Nothing in the workspace reads or writes Web Storage. Dashboard and Usages share the same in-memory counters; neither collects filenames or contents.
 
 ## Vault and archive compatibility
 
@@ -43,6 +45,6 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. The suite covers routed navigation, mobile widths, motion preferences, data retry and skeleton/CSV downloads, live token styling, editor undo and size limits, source transformations, local usage accounting, and independent decryption / offline round trips for all six Vault file types.
+`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. The suite covers rail and drawer navigation, mobile widths, motion/transparency preferences, skeleton and usage CSV downloads, live token styling, editor undo and size limits, source transformations, local usage accounting, and independent decryption / offline round trips for all six Vault file types.
 
-Deploy `dist/` to a static HTTPS host. `vercel.json` rewrites the application routes to `index.html`, serves assets and `/data/overview.json` unchanged, and sets a same-origin content security policy. The font and imagery are served locally. See `DESIGN_WORKFLOW.md` for the design contract and `public/licenses/` for the font and editor notices.
+Deploy `dist/` to a static HTTPS host. `vercel.json` rewrites the application routes to `index.html`, serves static assets unchanged, and sets a same-origin content security policy. The font and imagery are served locally. See `DESIGN_WORKFLOW.md` for the design contract and `public/licenses/` for the font and editor notices.

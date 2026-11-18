@@ -11,13 +11,12 @@ function Circuit({ active }: { active: boolean }) {
       {[false, true].map(mirror => <g key={String(mirror)} transform={mirror ? 'translate(300 0) scale(-1 1)' : undefined}>{traces.map((d, i) => <g key={d}><path d={d} className="vt-trace" />
         {i % 2 === 0 && <path d={d} pathLength="100" className={`vt-packet packet-${i}${mirror ? ' reverse' : ''}`} />}</g>)}</g>)}
     </svg><div className="vt-chip"><span className="vt-chip-face"><Cpu size={17} /><b>AES</b></span></div>
-    <span className="vt-circuit-code">C1 : 256</span>
   </div>;
 }
 export function EnginePanel({ session }: { session: VaultSession }) {
   const { phase, supported } = session;
-  return <section className="vt-panel vt-engine" aria-label="Cipher engine"><div className="vt-side-head"><h2><CircuitBoard size={16} />Cipher engine</h2>
-    <span className={`vt-status${phase ? ' working' : !supported ? ' unavailable' : ''}`}><i />{!supported ? 'Offline' : phase ? 'Working' : 'Ready'}</span></div>
+  return <section className="glass-card vt-panel vt-engine" aria-label="Cipher engine"><div className="vt-side-head"><h2><CircuitBoard size={16} />Cipher engine</h2>
+    <span className={`vt-status${phase ? ' working' : !supported ? ' unavailable' : ''}`}><i />{!supported ? 'Unavailable' : phase ? 'Working' : 'Ready'}</span></div>
     <Circuit active={!!phase} />
     <dl className="vt-specs"><div><dt>Cipher</dt><dd>AES-256-GCM</dd></div><div><dt>Key derivation</dt><dd>PBKDF2 <span>/</span> SHA-256</dd></div>
       <div><dt>Execution</dt><dd className="vt-execution"><Radio size={12} />{phase ? phaseLabel[phase] : 'On device'}</dd></div></dl>
@@ -29,7 +28,7 @@ export function EventRow({ event }: { event: SessionEvent }) {
   return <li className="vt-event"><span className="vt-event-icon"><Icon size={15} /></span><span className="vt-event-body"><strong>{event.name}</strong><small>{sealed ? 'Encrypted' : 'Restored'} <b>·</b> {formatSize(event.size)}</small></span><time dateTime={new Date(event.time).toISOString()}>{time(event.time)}</time></li>;
 }
 export function SessionPanel({ events, openLog }: { events: SessionEvent[]; openLog: () => void }) {
-  return <section className="vt-panel vt-log-panel" aria-label="Session activity"><div className="vt-side-head"><h2><History size={16} />Session activity</h2><button onClick={openLog} className="vt-opening" aria-label="View all session activity"><ArrowUpRight size={16} /></button></div>
+  return <section className="glass-card vt-panel vt-log-panel" aria-label="Session activity"><div className="vt-side-head"><h2><History size={16} />Session activity</h2><button onClick={openLog} className="vt-opening" aria-label="Open session log" title="Open session log"><ArrowUpRight size={16} /></button></div>
     {events.length ? <ul className="vt-latest">{events.slice(0, 2).map(e => <EventRow event={e} key={e.id} />)}</ul> : <div className="vt-log-empty"><span><ArrowDownLeft size={18} /></span><div><strong>No files processed yet</strong><p>Completed operations will appear here.</p></div></div>}
   </section>;
 }

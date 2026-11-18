@@ -2,7 +2,7 @@
 
 This document defines the reusable workflow for any AI (or human) changing
 Zeox interfaces. It combines the Skeleton Download System, vendored AI Design
-Skills, and the solid card design system.
+Skills, and the glass card design system.
 
 ## Workflow (run in order, every time)
 
@@ -10,8 +10,8 @@ Skills, and the solid card design system.
    the component inventory before touching anything. Preserve unrelated
    working code.
 2. **Understand the existing Zeox design system.** The active workspace shares
-   its card grid/tokens in `src/components/dashboard/layout.css` and its
-   section chrome in `src/components/workspace/`.
+   its material and navigation in `src/components/workspace/` and its
+   dashboard/skeleton grid in `src/components/dashboard/layout.css`.
 3. **Read relevant AI Design Skills.** Vendored skills live in `skills/`.
    Read `skills/landing-page-design/SKILL.md` before any landing page, page
    section, or component design work. Use `figma-designer` (external,
@@ -23,38 +23,33 @@ Skills, and the solid card design system.
 5. **Select suitable design patterns and components.** Match patterns to the
    actual purpose of each page. Do not reuse one layout everywhere.
 6. **Create the interface using the existing architecture.** Reuse `Shell`,
-   `PageHeading`, `StatusCard`, `WidgetHeading`, the `.db-card` surface and
-   the shared routed sections. The public showcase has separate components.
+   `PageHeading`, the `.glass-card` material, session providers and the four
+   routed sections.
 7. **Review** visual quality, responsiveness (390px check), accessibility
    (focus rings, semantic HTML, alt text), and consistency.
 8. **Report the changes made.**
 
 ## Dashboard-first workspace
 
-`/` and `/dashboard` open the original six-card overview. Do not substitute
-one tool for the whole site. Keep **Dashboard, Obfuscate, Usages and Vault**
-visible in the shared header, including at 320px. `/dashboard/overview` is a
-compatibility redirect. Keep real session activity in Usages separate from
-the demo analytics in the reference dashboard.
+`/` and `/dashboard` open the tool overview. Use one left-hand navigation
+landmark with exactly **Dashboard, Obfuscate, Usages and Vault**. Keep it
+vertical on every screen. The desktop rail can disappear completely; on
+phones (including short landscape viewports) it becomes a normally closed modal drawer. Keep a labeled trigger,
+current-page indication, Escape/backdrop dismissal and keyboard focus return.
+Never add a second top strip, command search, simulated accounts or sales.
+`/dashboard/overview` and `/showcase` are compatibility redirects.
 
-Differentiate the four sections by function, not by adding more navigation.
-Dashboard keeps the reference grid and its shortcuts. Obfuscate uses a compact
-editable source view, a settings panel and a read-only result after a build;
-stack them in this order on phones. Use restrained color for syntax tokens
-only. Usages is a totals strip and activity ledger, not demo charts. Vault is
-a file and passphrase workbench, not a source editor.
+Differentiate sections by task. Dashboard has two illustrated tool links,
+a session summary and recent runs from the real local ledger. Its skeleton
+uses the same four slots, available directly as offline HTML. Obfuscate has
+compact input, settings and read-only output, in order on phones. Usages is
+a totals strip and exportable report. Vault is a file and passphrase workbench.
 
-Keep the inset frame, icon rail, two wide charts and four smaller widgets.
-The loading state and standalone HTML skeleton share the real grid and funnel
-geometry. Expose the existing skeleton and CSV through **Downloads**.
-
-Animate artwork **inside** the cards. Keep metrics, hit targets and outer
-bounds steady. Clip shine to the ribbon, move the pie texture as a unit,
-and stagger the avatar images. Test pointer, keyboard, touch and viewport
-entry. Honor both the session switch and `prefers-reduced-motion`; keep all
-information readable with movement off. The Vault illustration belongs in
-its file card, not in a page-wide hero. Use actual crypto phases, not fake
-progress indicators.
+Keep the inset desktop frame and narrow icon rail from the reference. On a
+phone, reclaim the full width for content and keep the launch/build/encrypt
+action within the first screen without disabling zoom or shrinking inputs.
+Animate **artwork inside cards**, not metrics, text, hit targets or bounds.
+Honor both the sidebar motion switch and `prefers-reduced-motion`.
 
 ## Skeleton Download System
 
@@ -78,14 +73,15 @@ Design contract for an external template importer (not shipped in the dashboard 
   package installation. Avoid unnecessary installations.
 - `cleanup()` discards the temp workspace and never touches imported files.
 
-## Card design system (solid, no blur)
+## Card design system (soft glass)
 
-Use a neutral black/white palette throughout the workspace: a charcoal
-outer matte, black canvas, near-black panels, white active tabs and text,
-and legible grays for metadata. Convey trends with icons and text, not hue.
-Use the shared 15–16px card radius, smaller rounded inputs/buttons and soft
-pills for compact tags. Match the source reference's spacing and hierarchy,
-not its square registration marks. No frosted overlays or colored glows.
+Use a neutral black/white palette, translucent material, subtle refraction
+at the rim, and a static light field behind the cards. Keep an opaque,
+high-contrast surface behind code and passphrase inputs. Reuse shared
+rounded surfaces and the solid fallback for unsupported blur, reduced
+transparency and increased contrast. No moving full-page backgrounds.
+Inspect at 320px, 390px, a short landscape height and desktop; check focus,
+touch targets, safe-area padding, contrast, scroll and visible text.
 
 ## Icons
 

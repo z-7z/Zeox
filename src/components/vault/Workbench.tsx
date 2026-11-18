@@ -32,7 +32,7 @@ export function Workbench({ s }: { s: VaultSession }) {
     if (!busy) s.selectFile(Array.from(e.dataTransfer.files));
   }
   const result = s.result;
-  return <section className="vt-panel vt-workbench" id="workbench" aria-labelledby="bench-title" tabIndex={-1}>
+  return <section className="glass-card vt-panel vt-workbench" id="workbench" aria-labelledby="bench-title" tabIndex={-1}>
     <div className="vt-bench-head"><h2 id="bench-title"><span className="vt-title-icon"><FolderLock size={18} /></span>File workbench</h2>
       <ModeSwitch mode={s.mode} change={s.switchMode} disabled={busy} /></div>
     {!s.supported && <div className="vt-warning" role="alert"><CircleAlert size={15} />This browser needs HTTPS and Web Crypto to process files locally.</div>}
@@ -64,7 +64,7 @@ export function Workbench({ s }: { s: VaultSession }) {
         <p className="vt-pass-help" id="vt-pass-help">{encrypt ? 'Use 12 or more characters. Lost passphrases cannot be recovered.' : 'Use the same passphrase that was used to encrypt this archive.'}</p>
         {s.problem && <p className="vt-error" id="vt-error" role="alert"><CircleAlert size={14} />{s.problem.message}</p>}
       </div>
-      <div className="vt-action-bar"><span className="vt-local-proof"><ShieldCheck size={14} />{busy ? 'Processing locally' : 'Local processing only'}</span>
+      <div className="vt-action-bar"><span className="vt-local-proof"><ShieldCheck size={14} />{busy ? 'Processing locally' : 'No upload'}</span>
         <button className="vt-primary" type="submit" disabled={busy || !s.supported}>{s.phase ? <><LoaderCircle size={15} className="vt-spinner" />{phaseLabel[s.phase]}…</> : <>{encrypt ? <LockKeyhole size={14} /> : <UnlockKeyhole size={14} />}{encrypt ? 'Encrypt file' : 'Decrypt file'}<ArrowRight size={15} /></>}</button>
       </div></form>}
     <span className="sr-only" role="status">{s.phase ? phaseLabel[s.phase] : result ? (encrypt ? 'File encrypted. Download ready.' : 'File restored. Download ready.') : s.file ? `${s.file.name} selected` : ''}</span>

@@ -1,5 +1,6 @@
 import { test, expect, type Download, type Page } from '@playwright/test';
 import { createDecipheriv, pbkdf2Sync } from 'node:crypto';
+import { openSidebar } from './navigation';
 
 const secret = 'orbit atlas lantern violet';
 async function read(download: Download) {
@@ -135,10 +136,10 @@ test('mobile studio fits the viewport, guide restores focus, and motion can be d
   await guide.click();
   await expect(page.getByRole('dialog')).toContainText('must be decrypted');
   await page.keyboard.press('Escape'); await expect(guide).toBeFocused();
-  await page.getByRole('button', { name: 'Enable animation' }).click();
+  await openSidebar(page); await page.getByRole('button', { name: 'Enable animation' }).click(); await page.keyboard.press('Escape');
   const art = page.locator('.vt-file-art img');
   expect(await art.evaluate(el => getComputedStyle(el).animationName)).toBe('none');
   await page.emulateMedia({ reducedMotion: 'reduce' }); await page.reload();
   expect(await art.evaluate(el => getComputedStyle(el).animationName)).toBe('none');
-  await expect(page.getByRole('button', { name: 'Motion reduced by system preference' })).toBeDisabled();
+  await openSidebar(page); await expect(page.getByRole('button', { name: 'Motion reduced by system preference' })).toBeDisabled();
 });

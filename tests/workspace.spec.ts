@@ -1,7 +1,7 @@
-import { expect, test, type Download, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Download, type Locator } from '@playwright/test';
 
-const tabs = (page: Page) => page.getByRole('navigation', { name: 'Workspace sections' });
-const go = (page: Page, section: string) => tabs(page).getByRole('link', { name: section, exact: true }).click();
+import { go, openSidebar, sidebar } from './navigation';
+
 // Read the rendered lines of these small fixtures exactly, including their
 // trailing empty line. A contenteditable code view has no textarea.value.
 const codeText = (editor: Locator) => editor.locator('.cm-line').allTextContents().then(lines => lines.join('\n'));
@@ -11,51 +11,51 @@ async function text(download: Download) {
 }
 
 for (const width of [320, 390, 1440]) {
-  test(`visible routes, history and direct entries at ${width}px`, async ({ page }) => {
-    await page.setViewportSize({ width, height: 850 });
-    await page.goto('/');
+  test(`four vertical destinations, direct entries and history at ${width}px`, async ({ page }) => {
+    const mobile = width < 761;
+    await page.setViewportSize({ width, height: 844 }); await page.goto('/');
     await expect(page.getByRole('heading', { level: 1, name: 'Overview' })).toBeVisible();
-    await expect(tabs(page).getByRole('link')).toHaveText(['Dashboard', 'Obfuscate', 'Usages', 'Vault']);
-    await expect(tabs(page).getByRole('link', { name: 'Dashboard' })).toHaveAttribute('aria-current', 'page');
-    await expect(page.getByRole('button', { name: 'Encrypt file', exact: true })).toHaveCount(0);
-    for (const section of ['Obfuscate', 'Usages', 'Vault']) {
-      await go(page, section); await expect(page).toHaveURL(new RegExp('/' + section.toLowerCase() + '$'));
-      await expect(page.getByRole('heading', { level: 1, name: section, exact: true })).toBeVisible();
-      await expect(tabs(page).getByRole('link')).toHaveText(['Dashboard', 'Obfuscate', 'Usages', 'Vault']);
-      await expect(tabs(page).locator('[aria-current=page]')).toHaveText(section);
+    await expect(page.getByRole('banner').getByRole('navigation')).toHaveCount(0);
+    if (mobile) await expect(sidebar(page)).toHaveCount(0);
+    await page.keyboard.press('/'); await page.keyboard.press('Control+k'); await expect(page.getByRole('dialog')).toHaveCount(0);
+    await expect(page.locator('body')).not.toContainText(/campaign|purchase rate|orders|sales|workspace commands/i);
+    for (const section of ['Dashboard', 'Obfuscate', 'Usages', 'Vault']) {
+      const nav = await openSidebar(page), links = nav.getByRole('link');
+      await expect(links).toHaveText(['Dashboard', 'Obfuscate', 'Usages', 'Vault']);
+      const boxes = await links.evaluateAll(es => es.map(el => { const b = el.getBoundingClientRect(); return [b.left, b.top, b.bottom]; }));
+      expect(boxes[0][0]).toBeLessThan(width * .1);
+      for (let i=1; i<boxes.length; i++) { expect(boxes[i][0]).toBeCloseTo(boxes[0][0]); expect(boxes[i][1]).toBeGreaterThanOrEqual(boxes[i-1][2]); }
+      await nav.getByRole('link', { name: section, exact: true }).click(); await expect(page).toHaveURL(new RegExp('/'+section.toLowerCase()+'$'));
+      await expect(page.getByRole('heading', { level: 1, name: section === 'Dashboard' ? 'Overview' : section, exact: true })).toBeVisible();
+      if (mobile) await expect(sidebar(page)).toHaveCount(0); else await expect(nav.locator('[aria-current=page]')).toHaveText(section);
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
-      const box = await tabs(page).getByRole('link', { name: section }).boundingBox();
-      expect(box!.y).toBeLessThan(72); expect(box!.x + box!.width).toBeLessThanOrEqual(width);
     }
-    await page.goBack(); await expect(page).toHaveTitle('Usages — Zeox Workspace');
+    if (mobile) await openSidebar(page);
+    await page.goBack(); await expect(page).toHaveTitle('Usages — Zeox Workspace'); await expect(page.getByRole('dialog')).toHaveCount(0);
     await page.goForward(); await expect(page).toHaveTitle('Vault — Zeox Workspace');
     await page.reload(); await expect(page.getByRole('button', { name: 'Use sample' })).toBeVisible();
-    await page.goto('/dashboard/overview'); await expect(page).toHaveURL(/\/dashboard$/);
-    await expect(page.getByRole('heading', { name: '1,842' })).toBeVisible();
+    for (const path of ['/dashboard/overview', '/showcase']) {
+      await page.goto(path); await expect(page).toHaveURL(/\/dashboard$/); await expect(page.getByText('No runs yet')).toBeVisible();
+    }
   });
 }
 
-test('chart artwork moves within still cards, pauses offscreen and respects both motion switches', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
-  const region = page.getByRole('region', { name: 'Purchase rate' });
-  const sheen = region.locator('.ribbon-sheen'), drift = page.locator('.pie-drift');
-  await expect(sheen).toHaveCSS('animation-name', 'ribbon-scan');
-  await expect(drift).toHaveCSS('animation-name', 'pie-drift');
-  const bounds = await region.boundingBox();
-  const first = await drift.evaluate(el => getComputedStyle(el).transform);
-  await expect.poll(() => drift.evaluate(el => getComputedStyle(el).transform)).not.toBe(first);
-  expect(await region.boundingBox()).toEqual(bounds);
-  await expect(region).toHaveCSS('border-radius', '15px');
-  await page.getByRole('region', { name: 'Quick actions' }).scrollIntoViewIfNeeded();
-  await expect(sheen).toHaveCSS('animation-play-state', 'paused');
-  const toggle = page.getByRole('button', { name: 'Enable animation' });
-  await toggle.click(); await expect(toggle).toHaveAttribute('aria-pressed', 'false');
-  await expect(sheen).toHaveCSS('animation-name', 'none');
+test('glass artwork moves inside stable cards, pauses offscreen and respects both motion switches', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 }); await page.goto('/');
+  const card = page.getByRole('link', { name: 'Open editor' }), art = card.locator('.portal-object');
+  await expect(card).toHaveCSS('backdrop-filter', 'blur(16px)'); await expect(art).toHaveCSS('animation-name', 'object-float');
+  await expect(card.locator('.object-shine')).toHaveCSS('animation-name','object-glint');
+  const bounds = await card.boundingBox(), transform = await art.evaluate(el => getComputedStyle(el).transform);
+  await expect.poll(() => art.evaluate(el => getComputedStyle(el).transform)).not.toBe(transform); expect(await card.boundingBox()).toEqual(bounds);
+  expect(await card.locator('.portal-stage').evaluate(el => el.getBoundingClientRect().bottom <= el.nextElementSibling!.getBoundingClientRect().top + 1)).toBe(true);
+  await page.setViewportSize({ width: 390, height: 260 }); await page.getByRole('button', { name: 'Download skeleton' }).scrollIntoViewIfNeeded();
+  await expect(art).toHaveCSS('animation-play-state', 'paused');
+  await openSidebar(page); const toggle = page.getByRole('button', { name: 'Enable animation' });
+  await toggle.click(); await expect(toggle).toHaveAttribute('aria-pressed', 'false'); await expect(art).toHaveCSS('animation-name', 'none');
   await go(page, 'Vault'); await expect(page.locator('.vt-file-art img')).toHaveCSS('animation-name', 'none');
-  await page.emulateMedia({ reducedMotion: 'reduce' }); await go(page, 'Dashboard');
+  await page.emulateMedia({ reducedMotion: 'reduce' }); await go(page, 'Dashboard'); await openSidebar(page);
   await expect(page.getByRole('button', { name: 'Motion reduced by system preference' })).toBeDisabled();
-  await expect(drift).toHaveCSS('animation-name', 'none');
+  await page.keyboard.press('Escape'); await expect(art).toHaveCSS('animation-name', 'none');
 });
 
 test('local source file builds offline, downloads under a distinct name, and survives section changes', async ({ page, context }) => {
@@ -118,7 +118,6 @@ test('editor validation never replaces a good draft or counts failed builds', as
   const src = page.getByLabel('Source code'); await src.fill('return [=[unfinished'); await src.press('Control+Enter');
   await expect(page.getByRole('alert')).toContainText('no closing bracket');
   await expect(page.getByLabel('Build output', { exact: true })).toHaveCount(0);
-  await page.keyboard.press('Control+k'); await page.getByRole('combobox', { name: 'Search commands' }).fill('Usages');
-  await page.keyboard.press('Enter'); await expect(page.getByText('No usage yet')).toBeVisible();
+  await go(page, 'Usages'); await expect(page.getByText('No usage yet')).toBeVisible();
   await go(page, 'Obfuscate'); await expect.poll(() => codeText(src)).toBe('return [=[unfinished');
 });

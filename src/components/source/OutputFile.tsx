@@ -17,7 +17,7 @@ export function OutputFile({ result, name, notify }: Props) {
     try { await navigator.clipboard.writeText(result); notify('Output copied to clipboard.'); }
     catch { preview.current?.selectAll(); notify('Output selected. Use your device’s copy command.'); }
   }
-  return <section className={`src-panel src-artifact${result === null ? ' is-empty' : ''}`} aria-labelledby="artifact-title">
+  return <section className={`glass-card src-panel src-artifact${result === null ? ' is-empty' : ''}`} aria-labelledby="artifact-title">
     <header className="src-panel-head"><span className="src-step" aria-hidden="true">03</span><h2 id="artifact-title">Output file</h2>
       {result === null ? <small>Not built</small> : <div className="src-file-actions"><button className="ws-button" onClick={copy}><Copy size={13} />Copy</button>
         {url && <a className="ws-button" download={name} href={url}><ArrowDownToLine size={13} />Download</a>}</div>}</header>

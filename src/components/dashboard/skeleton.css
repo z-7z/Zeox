@@ -1,28 +1,10 @@
-.sk-shape { display: block; background: #272727; border-radius: 3px; }
-.sk-card::after {
-  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
-  background: linear-gradient(106deg, transparent 34%, #ffffff08 47%, #ffffff0e 50%, #ffffff08 53%, transparent 66%);
-  transform: translateX(-105%); animation: db-shimmer 1.65s ease-in-out infinite;
-}
-.sk-head { position: relative; padding: var(--db-pad); border-bottom: 1px solid var(--db-line); }
-.sk-metric { height: 29px; width: 78px; }
-.sk-caption { height: 10px; width: min(62%, 230px); margin-top: 10px; }
-.sk-delta { position: absolute; top: var(--db-pad); right: var(--db-pad); width: 51px; height: 21px; }
-.sk-funnel { flex: 1; position: relative; }
-.sk-funnel svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.sk-pie { display: flex; gap: 9%; align-items: center; justify-content: center; flex: 1; min-height: 0; padding: 4%; }
-.sk-pie > .sk-shape { width: min(45%, calc(var(--db-stat-height) * .65)); height: auto; flex: none; aspect-ratio: 1; border-radius: 50%; }
-.sk-pie > div { width: 37%; display: grid; gap: 16px; }
-.sk-pie > div .sk-shape { width: 100%; height: 9px; }
-.sk-title { width: 38%; height: 11px; }
-.sk-rows { display: flex; flex-direction: column; justify-content: space-around; flex: 1; padding-top: 10px; }
-.sk-name { width: 45%; height: 10px; }
-.sk-rule { width: 100%; height: 4px; margin-top: 7px; }
-.sk-actions .sk-rule { width: 72%; }
-.sk-center { display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
-.sk-center > div { display: flex; }
-.sk-center > div .sk-shape { width: 40px; height: 40px; border-radius: 50%; margin: 0 -3px; border: 2px solid var(--db-card); }
-.sk-heat .sk-metric { margin: 26px 0 18px; }
-.sk-matrix { flex: 1; margin-bottom: 19px; background-image: linear-gradient(var(--db-card) 1px, transparent 1px), linear-gradient(90deg, var(--db-card) 1px, transparent 1px); background-size: 100% calc(100% / 7), calc(100% / 24) 100%; }
-@keyframes db-shimmer { from { transform: translateX(-105%); } to { transform: translateX(105%); } }
-@media (prefers-reduced-motion: reduce) { .sk-card::after { animation: none; } }
+.sk-title { height: 110px; position: relative; }.sk-title::after { content: ''; position: absolute; left: 1px; top: 40%; width: 134px; height: 26px; background: #ffffff15; border-radius: 8px; }
+.sk-tile { position: relative; overflow: hidden; }
+.sk-tile::before, .sk-tile i { content: ''; position: absolute; border-radius: 12px; background: #ffffff12; }
+.sk-tile::before { left: 18px; right: 55%; bottom: 27%; height: 14px; }
+.sk-tile i { left: 18px; width: 24%; bottom: 15%; height: 8px; }
+.sk-tile.overview-module { min-height: max(var(--module-h),118px); }
+.sk-tile.overview-portal i { inset: 18% 8% auto auto; width: 30%; height: 58%; border-radius: 45%; }
+@media (prefers-reduced-motion: no-preference) { .sk-tile::after { content: ''; position: absolute; inset: 0; background: linear-gradient(105deg,transparent 35%,#ffffff0b 50%,transparent 65%); animation: sk-glint 1.8s ease-in-out infinite; } }
+@keyframes sk-glint { from { transform: translateX(-105%); } to { transform: translateX(105%); } }
+@media (max-width: 600px) { .sk-title { height: 90px; } }
