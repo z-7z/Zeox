@@ -42,12 +42,12 @@ for (const width of [320, 390, 1440]) {
 
 test('glass artwork moves inside stable cards, pauses offscreen and respects both motion switches', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 }); await page.goto('/');
-  const card = page.getByRole('link', { name: 'Open editor' }), art = card.locator('.portal-object');
-  await expect(card).toHaveCSS('backdrop-filter', 'blur(16px)'); await expect(art).toHaveCSS('animation-name', 'object-float');
-  await expect(card.locator('.object-shine')).toHaveCSS('animation-name','object-glint');
+  const card = page.getByRole('region', { name: 'Export rate' }), art = card.locator('.ribbon-surface').first();
+  await expect(card).toHaveCSS('backdrop-filter', 'blur(16px)'); await expect(art).toHaveCSS('animation-name', 'ribbon-breathe');
+  await expect(card.locator('.ribbon-sheen')).toHaveCSS('animation-name', 'ribbon-scan');
+  await expect(page.locator('.pie-drift')).toHaveCSS('animation-name', 'pie-drift');
   const bounds = await card.boundingBox(), transform = await art.evaluate(el => getComputedStyle(el).transform);
   await expect.poll(() => art.evaluate(el => getComputedStyle(el).transform)).not.toBe(transform); expect(await card.boundingBox()).toEqual(bounds);
-  expect(await card.locator('.portal-stage').evaluate(el => el.getBoundingClientRect().bottom <= el.nextElementSibling!.getBoundingClientRect().top + 1)).toBe(true);
   await page.setViewportSize({ width: 390, height: 260 }); await page.getByRole('button', { name: 'Download skeleton' }).scrollIntoViewIfNeeded();
   await expect(art).toHaveCSS('animation-play-state', 'paused');
   await openSidebar(page); const toggle = page.getByRole('button', { name: 'Enable animation' });

@@ -13,12 +13,12 @@ export function useMotion() {
 export type MotionState = ReturnType<typeof useMotion>;
 
 /** Reveal on actual viewport entry (including below-the-fold mobile cards).
- * A single RAF coalesces pointer events. Tilt only the sculpture, not the hit target. */
-export function MotionGrid({ children, enabled, className = 'overview-grid' }: { children: ReactNode; enabled: boolean; className?: string }) {
+ * A single RAF coalesces pointer events. Tilt only the chart artwork, not the hit target. */
+export function MotionGrid({ children, enabled, className = 'db-grid' }: { children: ReactNode; enabled: boolean; className?: string }) {
   const grid = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const root = grid.current; if (!root || !enabled) return;
-    const cards = Array.from(root.querySelectorAll<HTMLElement>(':scope > .tool-portal'));
+    const cards = Array.from(root.querySelectorAll<HTMLElement>(':scope > .db-card'));
     const observer = typeof IntersectionObserver !== 'undefined' ? new IntersectionObserver(entries => {
       for (const entry of entries) {
         const card = entry.target as HTMLElement;
@@ -31,7 +31,7 @@ export function MotionGrid({ children, enabled, className = 'overview-grid' }: {
     let frame = 0, latest: { card: HTMLElement; x: number } | undefined;
     function move(e: PointerEvent) {
       if (e.pointerType !== 'mouse' || !(e.target instanceof Element)) return;
-      const card = e.target.closest<HTMLElement>('.tool-portal'); if (!card) return;
+      const card = e.target.closest<HTMLElement>('.mix-body'); if (!card) return;
       latest = { card, x: e.clientX };
       if (!frame) frame = requestAnimationFrame(() => {
         frame = 0; if (!latest) return;

@@ -1,34 +1,82 @@
 import { test, expect } from '@playwright/test';
 import { go, openSidebar, sidebar } from './navigation';
 
-test('dashboard links open the real tools; its status cards use successful session operations', async ({ page }) => {
+test('reference artwork has two large cards above the four original widget shapes', async ({ page }) => {
   await page.goto('/');
-  const summary = page.getByRole('region', { name: 'Session summary' });
-  await expect(summary.locator('dd')).toHaveText(['0', '0', '0']); await expect(page.getByText('No runs yet')).toBeVisible();
+  const cards = page.locator('.db-grid > section');
+  await expect(cards).toHaveCount(6);
+  const bounds = await cards.evaluateAll(els => els.map(el => {
+    const { x, y, width, height, right } = el.getBoundingClientRect(); return { x, y, width, height, right, name: el.getAttribute('aria-label') };
+  }));
+  expect(bounds.map(b => b.name)).toEqual(['Export rate', 'Total files', 'Input formats', 'Session summary', 'Volume by hour', 'Quick actions']);
+  const [funnel, mix, ...widgets] = bounds;
+  expect(mix.y).toBe(funnel.y); expect(mix.x).toBeGreaterThan(funnel.right); expect(mix.width).toBeCloseTo(funnel.width, 0);
+  expect(widgets[0].y).toBeGreaterThan(funnel.y + funnel.height); expect(widgets[0].x).toBe(funnel.x); expect(widgets[3].right).toBeCloseTo(mix.right);
+  for (const [i, w] of widgets.entries()) {
+    expect(w.y).toBe(widgets[0].y); expect(w.width).toBeCloseTo(widgets[0].width, 0); if (i) expect(w.x).toBeGreaterThan(widgets[i-1].right);
+  }
+  await expect(cards.locator('.stage-rate')).toHaveText(['100%', '53%', '23%', '8%']);
+  await expect(cards.locator('.ribbon-surface')).toHaveCount(4); await expect(cards.locator('.hatched-pie pattern')).toHaveCount(5);
+  await expect(cards.locator('.pie-wedge')).toHaveCount(5); await expect(cards.locator('.legend-percent')).toHaveText(['37.9%', '28.0%', '15.0%', '12.0%', '7.1%']);
+  await expect(cards.locator('.segment-track')).toHaveCount(5); await expect(cards.locator('.avatar-stack img')).toHaveCount(3);
+  await expect(cards.locator('.heat-row')).toHaveCount(7); await expect(cards.locator('.heat-cells > span')).toHaveCount(7 * 24);
+});
+
+test('sample charts open accessible detail tables and return focus without recording a run', async ({ page }) => {
+  await page.goto('/');
+  const dialog = page.getByRole('dialog'); await expect(page.getByText('Sample charts', { exact: true })).toBeVisible();
+  for (const [selector, index, title, row] of [
+    ['.funnel-stage', 1, 'Export funnel', 'Imported38,20053.1%'], ['.legend-entry', 3, 'File distribution', 'Models22112.0%'],
+    ['.input-list button', 2, 'Input formats', 'Roblox places1,60015.7%'],
+  ] as const) {
+    const button = page.locator(selector).nth(index); await button.focus(); await button.press('Enter');
+    await expect(dialog).toHaveAccessibleName(title); await expect(dialog.locator('.chosen-row')).toHaveText(row);
+    await page.keyboard.press('Escape'); await expect(button).toBeFocused(); await expect(dialog).toHaveCount(0);
+  }
+  await page.getByRole('button', { name: 'Inspect processed volume by day' }).click();
+  await expect(dialog.getByRole('row')).toHaveCount(8); await expect(dialog.getByRole('row').nth(6)).toContainText('Sat');
+  await dialog.getByRole('button', { name: 'Close chart details' }).click(); await expect(page.getByText('No runs yet')).toBeVisible();
+  await page.getByRole('link', { name: 'View usages' }).click(); await expect(page.getByText('No usage yet')).toBeVisible();
+});
+
+test('quick actions open the actual tools, with real counts and recent operations in the portrait card', async ({ page }) => {
+  await page.goto('/');
+  const summary = page.getByRole('region', { name: 'Session summary' }); await expect(summary.getByText('No runs yet')).toBeVisible();
   await page.getByRole('link', { name: 'Open editor' }).click(); await page.getByRole('button', { name: 'Build output' }).click();
-  await go(page, 'Dashboard'); await expect(summary.locator('dd')).toHaveText(['1', '0', '0']);
-  const recent = page.getByRole('region', { name: 'Recent runs' }); await expect(recent.getByRole('listitem')).toContainText('Source build');
+  await go(page, 'Dashboard'); await expect(summary.getByText('1 completed run', { exact: true })).toBeVisible();
+  const recent = summary.getByRole('list', { name: 'Recent runs' }); await expect(recent.getByRole('listitem')).toContainText('Source build');
   await page.getByRole('link', { name: 'Open vault' }).click(); await page.getByRole('button', { name: 'Use sample' }).click();
   const secret = 'glass test sample phrase'; await page.getByLabel('Passphrase', { exact: true }).fill(secret);
   await page.getByLabel('Confirm passphrase', { exact: true }).fill(secret); await page.getByRole('button', { name: 'Encrypt file', exact: true }).click();
-  await go(page, 'Dashboard'); await expect(summary.locator('dd')).toHaveText(['1', '1', '0']);
-  await expect(recent.locator('li span')).toHaveText(['Encryption', 'Source build']); await expect(recent).not.toContainText('game-config');
-  await recent.getByRole('link', { name: 'View report' }).click(); await expect(page.getByRole('table').getByRole('row')).toHaveCount(3);
+  await go(page, 'Dashboard'); await expect(summary.getByText('2 completed runs')).toBeVisible();
+  await expect(recent.locator('li span')).toHaveText(['Encryption', 'Source build']); await expect(summary).not.toContainText('game-config');
+  await summary.getByRole('link', { name: 'View report' }).click(); await expect(page.getByRole('table').getByRole('row')).toHaveCount(3);
   await page.getByRole('button', { name: 'Reset', exact: true }).click(); await page.getByRole('button', { name: 'Clear usage' }).click();
-  await go(page, 'Dashboard'); await expect(summary.locator('dd')).toHaveText(['0', '0', '0']);
+  await go(page, 'Dashboard'); await expect(summary.getByText('No runs yet')).toBeVisible();
 });
 
-test('skeleton download matches the four slots and opens offline without scripts or session data', async ({ page, context }) => {
-  await page.goto('/dashboard', { waitUntil: 'networkidle' }); await context.setOffline(true);
-  const real = await page.locator('.overview-grid > *').evaluateAll(els => els.map(el => el.getBoundingClientRect().width));
-  expect(real).toHaveLength(4);
+test('loading state and offline export share all six slots, without scripts, requests or session data', async ({ page, context }) => {
+  // Hold only the lazy page module so the actual in-app fallback is observable.
+  let release!: () => void; const hold = new Promise<void>(resolve => { release = resolve; });
+  await page.route(/\/(?:src\/pages\/Dashboard\.tsx|assets\/Dashboard-[^/]+\.js)(?:\?.*)?$/, async route => { await hold; await route.continue(); });
+  await page.goto('/dashboard', { waitUntil: 'commit' });
+  const loading = page.getByRole('status', { name: 'Opening dashboard' }); let tiles: string;
+  try { await expect(loading.locator('.status-card')).toHaveCount(2); await expect(loading.locator('.widget-card')).toHaveCount(4); tiles = await loading.innerHTML(); }
+  finally { release(); }
+  await expect(page.locator('.db-grid > section')).toHaveCount(6); await page.waitForLoadState('networkidle'); await context.setOffline(true);
   const [file] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Download skeleton' }).click()]);
   expect(file.suggestedFilename()).toBe('zeox-overview-skeleton.html'); const stream = await file.createReadStream(); const chunks = [];
   for await (const chunk of stream!) chunks.push(chunk); const html = Buffer.concat(chunks).toString();
   expect(html).not.toMatch(/<script|<link|https?:\/\/|settings\.luau|game-config/); expect(html).toContain('prefers-reduced-motion');
-  await page.setContent(html); await expect(page.locator('.overview-grid .sk-tile')).toHaveCount(4); await expect(page.locator('.overview-portal')).toHaveCount(2);
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  expect(await page.locator('.sk-tile').first().evaluate(el => getComputedStyle(el, '::after').animationName)).toBe('none');
+  const standalone = await context.newPage(), requests: string[] = []; standalone.on('request', req => requests.push(req.url()));
+  await standalone.setContent(html); expect(await standalone.locator('.db-skeleton').innerHTML()).toBe(tiles);
+  await expect(standalone.locator('.sk-card')).toHaveCount(6);
+  const rows = () => standalone.locator('.sk-card').evaluateAll(els => els.map(el => el.getBoundingClientRect().y));
+  const desktop = await rows(); expect(new Set(desktop).size).toBe(2); expect(desktop[1]).toBe(desktop[0]); expect(desktop[2]).toBeGreaterThan(desktop[1]);
+  await standalone.setViewportSize({ width: 390, height: 844 }); expect(new Set(await rows()).size).toBe(6);
+  await standalone.emulateMedia({ reducedMotion: 'reduce' });
+  expect(await standalone.locator('.sk-card').first().evaluate(el => getComputedStyle(el, '::after').animationName)).toBe('none');
+  expect(requests).toEqual([]);
 });
 
 test('desktop sidebar can disappear entirely without losing a draft or changing routes', async ({ page }) => {
@@ -60,7 +108,7 @@ test('mobile drawer contains focus, dismisses from keyboard, button and backdrop
 test('reduced transparency uses opaque surfaces while controls and artwork stay legible', async ({ page, context }) => {
   const cdp = await context.newCDPSession(page);
   await cdp.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-transparency', value: 'reduce' }] });
-  await page.goto('/'); const card = page.getByRole('link', { name: 'Open editor' });
-  await expect(card).toHaveCSS('backdrop-filter', 'none'); await expect(card).toHaveCSS('background-color', 'rgb(27, 27, 27)');
-  await card.click(); await expect(page.getByRole('textbox', { name: 'Source code' }).locator('.sx-keyword').first()).toBeVisible();
+  await page.goto('/'); const card = page.getByRole('region', { name: 'Export rate' });
+  await expect(card).toHaveCSS('backdrop-filter', 'none'); await expect(card).toHaveCSS('background-color', 'rgb(15, 15, 15)');
+  await page.getByRole('link', { name: 'Open editor' }).click(); await expect(page.getByRole('textbox', { name: 'Source code' }).locator('.sx-keyword').first()).toBeVisible();
 });

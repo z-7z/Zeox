@@ -18,7 +18,7 @@
 }
 /* A hairline reflection follows the curve, never washing out the contents. */
 @supports (mask-composite: exclude) {
-  .glass-card:not(.sk-tile):not(.is-empty)::before {
+  .glass-card:not(.sk-card):not(.is-empty)::before {
     content: ''; pointer-events: none; position: absolute; z-index: 1; inset: -1px; padding: 1px; border-radius: inherit;
     background: linear-gradient(135deg,#ffffff62,transparent 22%,transparent 60%,#ffffff29 92%,transparent);
     mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;

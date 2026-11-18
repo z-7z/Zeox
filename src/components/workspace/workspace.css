@@ -66,3 +66,13 @@
 }
 .db-scene[data-motion=off] *, .db-scene[data-motion=off] *::before, .db-scene[data-motion=off] *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 @media (prefers-reduced-motion: reduce) { .db-scene *, .db-scene *::before, .db-scene *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+
+/* Overview keeps the title in the toolbar, like the reference. Only its
+   canvas changes; sidebar behavior and the three tool layouts are shared. */
+.db-scene[data-section=dashboard] { --db-gap: clamp(13px,1.18vw,20px); background: #1c1c1c; }
+[data-section=dashboard] .ws-window { background: radial-gradient(ellipse at 85% 0,#151515,transparent 62%),#0a0a0a; }
+[data-section=dashboard] .ws-main { max-width: none; padding: var(--db-gap); }
+.ws-overview-title { font-size: 15px; font-weight: 530; letter-spacing: -.035em; }
+@media (max-width: 760px), (max-width: 1024px) and (max-height: 520px) {
+  [data-section=dashboard] .ws-main { padding: 11px max(12px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left)); }
+}
