@@ -1,5 +1,5 @@
 /* A tool inside the workspace; no separate landing page or navigation. */
-.vt-app { --bg: #090909; --panel: var(--db-card); --edge: var(--db-line); --soft-edge: #262626; --ink: var(--db-ink); --muted: var(--db-muted); --dim: var(--db-dim); --accent: #e0e0e0; --mono: var(--db-mono); }
+.vt-app { max-width: 1230px; margin: auto; padding: clamp(4px,1vw,16px) 0 8px; --bg: #090909; --panel: var(--db-card); --edge: var(--db-line); --soft-edge: #262626; --ink: var(--db-ink); --muted: var(--db-muted); --dim: var(--db-dim); --accent: #e0e0e0; --mono: var(--db-mono); }
 .vt-app svg { flex-shrink: 0; }.vt-app input { font: inherit; }
 .vt-app .vt-eyebrow { font: 500 9px/1.4 var(--mono); letter-spacing: .11em; }
 .vt-app .vt-eyebrow span { color: #999; }

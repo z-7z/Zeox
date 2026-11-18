@@ -1,0 +1,39 @@
+/* A ledger, not a second analytics dashboard: one paper-like totals strip,
+   tabular figures and the activity table first. No invented time series. */
+.usage-report { max-width: 1250px; margin: auto; padding: clamp(8px, 1.35vw, 22px) clamp(0px, 1vw, 16px) 12px; }
+.usage-totals { border-radius: var(--db-radius); background: #e2e2e0; color: #191919; padding: 14px clamp(15px, 2vw, 28px) 19px; }
+.usage-totals-head, .usage-totals-head > span, .usage-controls, .usage-controls label, .usage-ledger header, .usage-ledger h2 { display: flex; align-items: center; gap: 7px; }
+.usage-totals-head { justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid #b4b4b2; }
+.usage-totals-head > span { color: #333; font: 600 10px/1.3 var(--db-mono); text-transform: uppercase; letter-spacing: .07em; }
+.usage-totals-head small { color: #525252; font: 10px var(--db-mono); }
+.usage-metrics { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); margin-top: 14px; }
+.usage-metrics section { min-width: 0; }
+.usage-metrics section + section { border-left: 1px solid #b6b6b4; padding-left: clamp(12px,2vw,28px); }
+.usage-metrics h2 { color: #464646; font-size: 12px; line-height: 1.35; font-weight: 500; }
+.usage-metrics strong { display: block; margin-top: 4px; font: 500 clamp(24px,2.4vw,38px)/1.05 var(--db-mono); letter-spacing: -.07em; overflow-wrap: anywhere; }
+.usage-columns { display: grid; grid-template-columns: minmax(0,2.15fr) minmax(210px,.85fr); gap: var(--db-gap); margin-top: var(--db-gap); align-items: start; }
+.usage-ledger header { justify-content: space-between; flex-wrap: wrap; padding: 12px 16px; gap: 10px; border-bottom: 1px solid #343434; }
+.usage-report .db-card h2 { color: #eee; font-size: 15px; font-weight: 540; letter-spacing: -.032em; }
+.usage-controls label { font-size: 11px; color: #b6b6b6; }
+.usage-controls select { min-height: 30px; background: #1b1b1b; color: #ddd; padding: 4px; border: 1px solid #383838; border-radius: 8px; }
+.usage-controls .ws-button { min-height: 30px; font-size: 11px; padding: 4px 8px; }
+.usage-table-wrap { overflow: auto; max-height: 350px; scrollbar-width: thin; }
+.usage-ledger table { width: 100%; border-collapse: collapse; text-align: right; font: 11px/1.4 var(--db-mono); white-space: nowrap; }
+.usage-ledger :is(th,td) { padding: 10px; border-bottom: 1px solid #292929; text-align: right; font-weight: 400; }
+.usage-ledger th:first-child { text-align: left; }
+.usage-ledger thead th { position: sticky; top: 0; background: #191919; color: #bdbdbd; font-size: 10px; }
+.usage-ledger tbody th { font: 12px Inter,sans-serif; }.usage-ledger tbody tr:last-child > * { border-bottom: 0; }
+.usage-empty { padding: 30px 16px 26px; text-align: center; }.usage-empty strong { font-size: 13px; font-weight: 540; }
+.usage-empty p, .usage-mix p, .usage-note { color: var(--db-muted); font-size: 11px; line-height: 1.6; }
+.usage-empty > div { display: flex; justify-content: center; gap: 15px; margin-top: 8px; }
+.usage-empty a { display: inline-flex; align-items: center; gap: 3px; padding-block: 3px; color: #ddd; font-size: 11px; }.usage-empty a:hover { text-decoration: underline; }
+.usage-ledger footer { padding: 9px 14px; border-top: 1px solid #292929; color: var(--db-muted); font: 10px/1.5 var(--db-mono); }
+.usage-mix { padding: 16px; }.usage-mix ul { display: grid; gap: 15px; margin-top: 19px; }.usage-mix li > div { display: flex; align-items: baseline; justify-content: space-between; gap: 7px; font-size: 12px; }.usage-mix li b { font: 11px var(--db-mono); }
+.usage-meter { display: block; height: 5px; border-radius: 5px; overflow: hidden; margin-top: 6px; background: #303030; }.usage-meter i { display: block; height: 100%; background: #d6d6d6; border-radius: inherit; }
+.usage-note { padding-top: 12px; }.usage-confirm { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; padding: 10px 13px; margin-bottom: var(--db-gap); border: 1px solid #444; background: #191919; border-radius: 10px; font-size: 12px; }.usage-confirm p { margin-right: auto; }
+@media (max-width: 760px) { .usage-columns { grid-template-columns: minmax(0,1fr); }.usage-report { padding: 0 0 10px; } }
+@media (max-width: 600px) {
+  .usage-totals { padding: 12px; }.usage-metrics { margin-top: 10px; }.usage-metrics h2 { font-size: 10px; }.usage-metrics strong { font-size: 21px; }.usage-metrics section + section { padding-inline-start: 8px; }
+  .usage-report .ws-description { max-width: 230px; }.usage-ledger header { padding: 10px; gap: 7px; }.usage-controls { gap: 5px; }.usage-controls label > svg { display: none; }
+  .usage-ledger :is(th,td) { padding: 9px 6px; font-size: 10px; }.usage-ledger tbody th { font-size: 11px; }
+}

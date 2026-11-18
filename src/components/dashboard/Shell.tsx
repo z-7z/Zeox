@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { AudioLines, Bell, Menu, Monitor, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import profile from '../../assets/avatars/profile.svg';
-import { navGroups, utilities, type Destination } from './navigation';
+import { chartCommands, navGroups, utilities, type Destination } from './navigation';
 import type { OpenPanel } from './model';
 import { ZeoxMark } from '../ZeoxMark';
 import { sections, type Section } from '../workspace/sections';
@@ -19,18 +19,16 @@ export function Shell({ active, motion, open, children, unread, workspaceName }:
   return <div className="db-scene" data-motion={motion.enabled ? 'on' : 'off'}>
     <a className="db-skip" href="#workspace-main">Skip to content</a>
     <div className="db-window">
-      <aside className="db-rail" aria-label="Workspace sidebar">
+      {active.id === 'dashboard' && <aside className="db-rail" aria-label="Workspace sidebar">
         <Link className="rail-brand" to="/dashboard" aria-label="Zeox home"><ZeoxMark /></Link>
-        <nav className="rail-navigation" aria-label="Workspace shortcuts"><div className="rail-group">
-          {sections.map(({ id, icon: Icon, path, label }) => <Link to={path} key={id} className={`rail-button${active.id === id ? ' is-current' : ''}`} aria-label={label} aria-current={active.id === id ? 'page' : undefined}>
-            <Icon size={16} /><span className="rail-tip" aria-hidden="true">{label}</span></Link>)}
-        </div>{navGroups.map(group => <div className="rail-group" key={group[0].id}>{group.map(item => <RailButton key={item.id} item={item} open={open} />)}</div>)}</nav>
+        <nav className="rail-navigation" aria-label="Dashboard shortcuts">{[chartCommands, ...navGroups].map(group => <div className="rail-group" key={group[0].id}>
+          {group.map(item => <RailButton key={item.id} item={item} open={open} />)}</div>)}</nav>
         <div className="rail-utilities">{utilities.map(item => <RailButton key={item.id} item={item} open={open} />)}</div>
-      </aside>
+      </aside>}
       <div className="db-workspace">
         <header className="db-topbar">
           <div className="db-crumb"><button className="mobile-menu" onClick={() => open('search')} aria-label="Open workspace navigation"><Menu size={18} /></button>
-            <Link to="/dashboard" className="ws-wordmark">Zeox</Link><span className="ws-divider-slash">/</span><span className="ws-name" title={workspaceName}>{workspaceName === 'Zeox workspace' ? 'Workspace' : workspaceName}</span></div>
+            <Link to="/dashboard" className="ws-wordmark">{active.id !== 'dashboard' && <ZeoxMark />}Zeox</Link><span className="ws-divider-slash">/</span><span className="ws-name" title={workspaceName}>{workspaceName === 'Zeox workspace' ? 'Workspace' : workspaceName}</span></div>
           <nav className="ws-tabs" aria-label="Workspace sections">{sections.map(({ id, path, label, icon: Icon }) => <Link key={id} to={path} aria-current={active.id === id ? 'page' : undefined}>
             <Icon size={14} /><span>{label}</span></Link>)}</nav>
           <div className="top-tools"><button type="button" className="search-trigger" onClick={() => open('search')} aria-label="Search workspace"><Search size={14} /><span>Search</span><kbd>/</kbd></button>

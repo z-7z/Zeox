@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type DragEvent } from 'react';
-import { ArrowDownToLine, ArrowRight, ArrowUpRight, Braces, CheckCheck, CircleAlert, Eye, EyeOff, FileCode2, KeyRound, LoaderCircle, LockKeyhole, RotateCcw, ShieldCheck, UnlockKeyhole, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowRight, ArrowUpRight, FolderLock, CheckCheck, CircleAlert, Eye, EyeOff, FileCode2, KeyRound, LoaderCircle, LockKeyhole, RotateCcw, ShieldCheck, UnlockKeyhole, X } from 'lucide-react';
 import { formatSize, SOURCE_ACCEPT, type Mode } from '../../lib/vault/container';
 import { phaseLabel, type VaultSession } from './session';
 import { FileArt } from './StudioChrome';
@@ -33,7 +33,7 @@ export function Workbench({ s }: { s: VaultSession }) {
   }
   const result = s.result;
   return <section className="vt-panel vt-workbench" id="workbench" aria-labelledby="bench-title" tabIndex={-1}>
-    <div className="vt-bench-head"><h2 id="bench-title"><span className="vt-title-icon"><Braces size={18} /></span>File workbench</h2>
+    <div className="vt-bench-head"><h2 id="bench-title"><span className="vt-title-icon"><FolderLock size={18} /></span>File workbench</h2>
       <ModeSwitch mode={s.mode} change={s.switchMode} disabled={busy} /></div>
     {!s.supported && <div className="vt-warning" role="alert"><CircleAlert size={15} />This browser needs HTTPS and Web Crypto to process files locally.</div>}
     {result ? <div className="vt-result" key="result"><div className="vt-result-mark"><ShieldCheck size={30} /></div>
