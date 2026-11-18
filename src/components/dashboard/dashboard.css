@@ -40,8 +40,8 @@
 .search-trigger:hover, .bell-trigger:hover { color: #f3f3f3; border-color: #464646; }
 .mobile-menu { display: none; }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .db-card:not(.sk-card)::after { content: ''; pointer-events: none; position: absolute; inset: 0; z-index: 1; transform: translateX(-115%); background: linear-gradient(110deg, transparent 36%, #ffffff06 50%, transparent 64%); }
-  .db-card:not(.sk-card):hover::after { animation: card-shine .85s cubic-bezier(.22,1,.36,1) both; }
+  .motion-grid > .db-card::after { content: ''; pointer-events: none; position: absolute; inset: 0; z-index: 1; transform: translateX(-115%); background: linear-gradient(110deg, transparent 36%, #ffffff06 50%, transparent 64%); }
+  .motion-grid > .db-card:hover::after { animation: card-shine .85s cubic-bezier(.22,1,.36,1) both; }
 }
 @keyframes card-shine { to { transform: translateX(115%); } }
 

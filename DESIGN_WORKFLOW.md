@@ -37,6 +37,13 @@ visible in the shared header, including at 320px. `/dashboard/overview` is a
 compatibility redirect. Keep real session activity in Usages separate from
 the demo analytics in the reference dashboard.
 
+Differentiate the four sections by function, not by adding more navigation.
+Dashboard keeps the reference grid and its shortcuts. Obfuscate uses a compact
+editable source view, a settings panel and a read-only result after a build;
+stack them in this order on phones. Use restrained color for syntax tokens
+only. Usages is a totals strip and activity ledger, not demo charts. Vault is
+a file and passphrase workbench, not a source editor.
+
 Keep the inset frame, icon rail, two wide charts and four smaller widgets.
 The loading state and standalone HTML skeleton share the real grid and funnel
 geometry. Expose the existing skeleton and CSV through **Downloads**.

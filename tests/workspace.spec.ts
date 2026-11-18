@@ -1,7 +1,10 @@
-import { expect, test, type Download, type Page } from '@playwright/test';
+import { expect, test, type Download, type Locator, type Page } from '@playwright/test';
 
 const tabs = (page: Page) => page.getByRole('navigation', { name: 'Workspace sections' });
 const go = (page: Page, section: string) => tabs(page).getByRole('link', { name: section, exact: true }).click();
+// Read the rendered lines of these small fixtures exactly, including their
+// trailing empty line. A contenteditable code view has no textarea.value.
+const codeText = (editor: Locator) => editor.locator('.cm-line').allTextContents().then(lines => lines.join('\n'));
 async function text(download: Download) {
   const stream = await download.createReadStream(); if (!stream) throw new Error('Missing file');
   const chunks = []; for await (const chunk of stream) chunks.push(chunk); return Buffer.concat(chunks).toString('utf8');
@@ -18,6 +21,7 @@ for (const width of [320, 390, 1440]) {
     for (const section of ['Obfuscate', 'Usages', 'Vault']) {
       await go(page, section); await expect(page).toHaveURL(new RegExp('/' + section.toLowerCase() + '$'));
       await expect(page.getByRole('heading', { level: 1, name: section, exact: true })).toBeVisible();
+      await expect(tabs(page).getByRole('link')).toHaveText(['Dashboard', 'Obfuscate', 'Usages', 'Vault']);
       await expect(tabs(page).locator('[aria-current=page]')).toHaveText(section);
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
       const box = await tabs(page).getByRole('link', { name: section }).boundingBox();
@@ -59,9 +63,9 @@ test('local source file builds offline, downloads under a distinct name, and sur
   const expected = '--!strict\nlocal msg = [=[  -- ملف\ntext  ]=]\nreturn msg\n';
   await page.goto('/obfuscate', { waitUntil: 'networkidle' }); await context.setOffline(true);
   await page.getByLabel('Open Lua or Luau source').setInputFiles({ name: 'ملف.lua', mimeType: 'text/plain', buffer: Buffer.from(original) });
-  await expect(page.getByLabel('Source code')).toHaveValue(original);
+  await expect.poll(() => codeText(page.getByLabel('Source code'))).toBe(original);
   await page.getByRole('button', { name: 'Build output' }).click();
-  await expect(page.getByLabel('Build output', { exact: true })).toHaveValue(expected);
+  await expect.poll(() => codeText(page.getByLabel('Build output', { exact: true }))).toBe(expected);
   const waiting = page.waitForEvent('download'); await page.getByRole('link', { name: 'Download', exact: true }).click();
   const file = await waiting; expect(file.suggestedFilename()).toBe('ملف.obf.lua'); expect(await text(file)).toBe(expected);
   expect(await page.evaluate(() => [localStorage.length, sessionStorage.length])).toEqual([0, 0]);
@@ -69,12 +73,12 @@ test('local source file builds offline, downloads under a distinct name, and sur
   await expect(page.getByRole('region', { name: 'Completed runs' })).toContainText('1');
   await expect(page.getByRole('table').getByRole('row').nth(1)).toContainText('Source build');
   await expect(page.getByRole('table')).not.toContainText('ملف');
-  await go(page, 'Obfuscate'); await expect(page.getByLabel('Build output', { exact: true })).toHaveValue(expected);
+  await go(page, 'Obfuscate'); await expect.poll(() => codeText(page.getByLabel('Build output', { exact: true }))).toBe(expected);
   await page.getByLabel('Encode text literals').uncheck();
   await page.getByLabel('Remove comments').uncheck(); await page.getByLabel('Compact spacing').uncheck();
   await expect(page.getByRole('link', { name: 'Download', exact: true })).toHaveCount(0);
   await page.getByLabel('Source code').press('Control+Enter');
-  await expect(page.getByLabel('Build output', { exact: true })).toHaveValue(original);
+  await expect.poll(() => codeText(page.getByLabel('Build output', { exact: true }))).toBe(original);
 });
 
 test('usage counts successes only, filters and exports metadata, resets without losing a Vault download', async ({ page }) => {
@@ -109,12 +113,12 @@ test('editor validation never replaces a good draft or counts failed builds', as
     ['binary.luau', Buffer.from([0]), 'not a text script'], ['huge.lua', Buffer.alloc(512 * 1024 + 1), '512 KiB'],
   ] as const) {
     await picker.setInputFiles({ name, buffer, mimeType: 'application/octet-stream' }); await expect(page.getByRole('alert')).toContainText(message);
-    await expect(page.getByLabel('Source code')).toHaveValue(/local settings/);
+    await expect.poll(() => codeText(page.getByLabel('Source code'))).toMatch(/local settings/);
   }
   const src = page.getByLabel('Source code'); await src.fill('return [=[unfinished'); await src.press('Control+Enter');
   await expect(page.getByRole('alert')).toContainText('no closing bracket');
   await expect(page.getByLabel('Build output', { exact: true })).toHaveCount(0);
   await page.keyboard.press('Control+k'); await page.getByRole('combobox', { name: 'Search commands' }).fill('Usages');
   await page.keyboard.press('Enter'); await expect(page.getByText('No usage yet')).toBeVisible();
-  await go(page, 'Obfuscate'); await expect(src).toHaveValue('return [=[unfinished');
+  await go(page, 'Obfuscate'); await expect.poll(() => codeText(src)).toBe('return [=[unfinished');
 });
