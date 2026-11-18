@@ -12,7 +12,7 @@ test('the real snapshot replaces six skeleton cards without moving the desktop g
   let release!: () => void;
   const gate = new Promise<void>(resolve => { release = resolve; });
   await page.route('**/data/overview.json', async route => { await gate; await route.continue(); });
-  await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
+  await page.goto('/dashboard/overview', { waitUntil: 'domcontentloaded' });
   const loading = page.getByRole('status', { name: 'Loading overview' });
   await expect(loading.locator('.db-card')).toHaveCount(6);
   const box = await loading.boundingBox();
@@ -31,7 +31,7 @@ test('the real snapshot replaces six skeleton cards without moving the desktop g
 
 test('a failed snapshot can be retried', async ({ page }) => {
   await page.route('**/data/overview.json', route => route.fulfill({ status: 503, body: 'Unavailable' }));
-  await page.goto('/dashboard');
+  await page.goto('/dashboard/overview');
   await expect(page.getByRole('alert')).toContainText('Overview unavailable');
   await page.unroute('**/data/overview.json');
   await page.getByRole('button', { name: 'Try again' }).click();
@@ -39,7 +39,7 @@ test('a failed snapshot can be retried', async ({ page }) => {
 });
 
 test('team invitations are local, persistent and deduplicated', async ({ page }) => {
-  await page.goto('/dashboard');
+  await page.goto('/dashboard/overview');
   await page.getByRole('button', { name: 'Invite Members', exact: true }).click();
   const dialog = page.getByRole('dialog');
   await dialog.getByLabel('Email address').fill('teammate@example.org');
@@ -54,7 +54,7 @@ test('team invitations are local, persistent and deduplicated', async ({ page })
 });
 
 test('search reaches offline skeleton and hourly CSV downloads', async ({ page }) => {
-  await page.goto('/dashboard');
+  await page.goto('/dashboard/overview');
   await expect(page.getByRole('heading', { name: '1,842' })).toBeVisible();
   await page.keyboard.press('/');
   const search = page.getByRole('combobox', { name: 'Search commands' });
@@ -80,7 +80,7 @@ test('search reaches offline skeleton and hourly CSV downloads', async ({ page }
 test('390px navigation works without overflow and honors reduced motion', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/dashboard');
+  await page.goto('/dashboard/overview');
   await expect(page.getByRole('heading', { name: '7.8%' })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
   await page.getByRole('button', { name: 'Open workspace navigation' }).click();

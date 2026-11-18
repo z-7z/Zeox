@@ -28,9 +28,18 @@ Skills, and the solid card design system.
    (focus rings, semantic HTML, alt text), and consistency.
 8. **Report the changes made.**
 
+## Vault studio
+
+`/` and `/dashboard` now open the local file-encryption workbench. Keep the
+file picker, confirmation and action usable at 390px. The plum blueprint
+header, studio render and circuit illustration belong to this product;
+its panels use actual processing phases, not simulated progress or demo
+sales figures. Both the session motion switch and the OS reduced-motion
+preference must disable decorative motion.
+
 ## Reference-matched overview
 
-The analytics page at `/dashboard` follows the supplied monochrome reference,
+The archived analytics page at `/dashboard/overview` follows the supplied monochrome reference,
 rather than the product-card palette below. Its tokens, grid and corner marks
 live in `src/components/dashboard/layout.css`. The real cards and the loading
 state share grid dimensions and funnel geometry. The Downloads panel exports

@@ -1,5 +1,10 @@
 import { defineConfig } from '@playwright/test';
 
+// Minimal Linux images default to ASCII; Chromium then discards Unicode download names.
+if (process.platform === 'linux' && !process.env.LC_ALL && (!process.env.LANG || /^(C|POSIX)$/.test(process.env.LANG))) {
+  process.env.LANG = 'C.UTF-8';
+}
+
 export default defineConfig({
   testDir: './tests',
   use: {
