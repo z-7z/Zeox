@@ -28,9 +28,18 @@ Skills, and the solid card design system.
    (focus rings, semantic HTML, alt text), and consistency.
 8. **Report the changes made.**
 
+## Reference-matched overview
+
+The analytics page at `/dashboard` follows the supplied monochrome reference,
+rather than the product-card palette below. Its tokens, grid and corner marks
+live in `src/components/dashboard/layout.css`. The real cards and the loading
+state share grid dimensions and funnel geometry. The Downloads panel exports
+that local skeleton as a script-free HTML document with reduced-motion support.
+This is separate from the external-template import workflow below.
+
 ## Skeleton Download System
 
-Location: `src/lib/skeleton/`. See its JSDoc for the full API.
+Design contract for an external template importer (not shipped in the dashboard UI):
 
 - Sources: GitHub repositories (`{ kind: 'github', owner, repo, ref?, subdirectory? }`).
 - Flow: `download()` → temp workspace → `inspect()` → `planImport()` →

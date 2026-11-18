@@ -1,85 +1,72 @@
 # Zeox — zeox.xyz
 
-Premium developer tools and script protection ecosystem. This repository
-contains the initial frontend: the **public landing page** and the
-**dashboard overview**.
+React 18, TypeScript and Vite frontend for the Zeox public site and workspace.
+Tailwind CSS is used on the landing page; the dashboard has its own scoped
+monochrome design system and uses Lucide icons.
 
-## Stack
-
-- React 18 + TypeScript
-- Vite
-- Tailwind CSS
-- Lucide React (icons)
-- React Router
-
-## Getting started
+## Run locally
 
 ```bash
 npm install
-npm run dev      # start dev server
-npm run build    # production build
+npm run dev             # / is the public site; /dashboard is the workspace
+npm run dev:dashboard   # optional preview that opens the workspace from /
+npm run build           # type-check and create a production build in dist/
 ```
 
-## Scope of this phase
+`vercel.json` rewrites `/dashboard` to `/index.html` so direct visits and
+refreshes load the workspace. On other static hosts configure the same
+rewrite. Serve `/data/overview.json` and the assets as normal static files.
 
-Implemented:
+## Dashboard overview
 
-- Public landing page (`/`)
-- Dashboard overview (`/dashboard`)
+The desktop layout follows the supplied reference: a narrow icon rail, compact
+header, two status cards and four smaller widgets on a charcoal canvas.
+It reflows into two columns on tablets and one on phones. Inter, the three
+avatar illustrations and both SVG charts are served locally; there are no
+chart-library or external asset requests.
 
-Placeholder routes (visual only, planned for later phases):
+- **Purchase funnel:** continuous layered ribbon, four stage totals and shares.
+- **Orders:** five hatched pie sectors, linked legend highlights and channel details.
+- **Traffic, team, hourly sales, quick actions:** segmented traffic bars, an
+  invitation empty state, a 7 × 24 sales heatmap and working action controls.
+- **Command menu:** press `/`, `Ctrl+K` or `⌘K`; navigate with the arrow keys
+  and Enter. Escape closes dialogs and restores focus to the activating control.
+- **Workspace actions:** save draft campaigns, prepare invitations, rename
+  the workspace and mark sample orders fulfilled. These changes persist on
+  this device using `localStorage`. No emails, ads or shipping requests are sent.
 
-- `/dashboard/protect` — Zeox Protect
-- `/dashboard/keys` — Zeox Keys
-- `/dashboard/script-protect` — Script Protect
-- `/dashboard/activity` — Activity
-- `/dashboard/settings` — Settings
+All metrics come from the local demonstration fixture `public/data/overview.json`.
+The charts, detail tables and 168 hourly rows in the sales CSV use that same
+snapshot. A failed fetch displays a retry action. No backend or credentials
+are required.
 
-## Design system
+## Skeleton download & shine
 
-Solid premium card system on OLED black. See `DESIGN_WORKFLOW.md` for the
-full token table, card roles, and the AI design workflow used to evolve the
-interfaces.
+The loading state uses six card-shaped placeholders with the same responsive
+grid as the loaded dashboard. It is tied to the actual snapshot request, not
+a simulated progress timer. The quiet loading shimmer and card-hover shine
+are disabled by `prefers-reduced-motion`.
 
-Approved surfaces: `#000000`, `#050507`, cards `#101014` / `#15141B`,
-borders `#292333`. Accents: purple `#8B5CF6` dominant, orange `#FF7411`
-selective. No backdrop blur, no frosted glass, no glow on cards.
+Open **Downloads → Download skeleton** from the rail (or search for
+“Download skeleton”). `zeox-overview-skeleton.html` contains the actual
+loading component's markup, layout CSS and animation. It works offline with
+no scripts, dependencies or external template imports. **Export sales**
+downloads `zeox-hourly-sales.csv`.
 
-## Skeleton Download System
+Components and styles live in `src/components/dashboard/`; `src/pages/Dashboard.tsx`
+composes the workspace. The public page keeps its existing route and links to
+the real workspace through a lightweight preview thumbnail.
 
-`src/lib/skeleton/` provides a reusable engine for downloading approved UI
-skeletons and project templates from GitHub repositories:
+## Browser tests
 
-- Downloads land in an isolated temporary workspace, never in app code.
-- Downloaded structures are inspected before import (layouts, components,
-  styles, configs, dependencies, executable files).
-- Specific files or folders can be selected for import.
-- Conflicts with existing files are detected; nothing is overwritten without
-  explicit per-file confirmation.
-- Downloaded files are never executed. Cleanup discards the workspace only.
-
-```ts
-import { SkeletonDownloader } from './lib/skeleton';
-
-const dl = new SkeletonDownloader({ onStateChange, onProgress });
-await dl.download({ kind: 'github', owner, repo });
-const report = dl.inspect();
-const plan = dl.planImport({ paths }, existingFiles);
-await dl.import(plan, resolutions, writeFile);
-dl.cleanup();
+```bash
+npx playwright install chromium
+npm run test:e2e
 ```
 
-## AI Design Skills
+The suite covers loading and error states, chart details, focus restoration,
+local invitations, both downloads and the 390px reduced-motion layout. Set
+`CHROMIUM_PATH` to use an existing compatible Chromium executable instead.
 
-Design skills are vendored in `skills/` (adapted from
-[elayadesign/ai-design-skills](https://github.com/elayadesign/ai-design-skills),
-MIT). Read `skills/landing-page-design/SKILL.md` before any design task, per
-`DESIGN_WORKFLOW.md`. `figma-designer` is used only when Figma work is
-required.
-
-## Notes
-
-- All data is mock/prototype data. No backend, no Supabase, no OAuth, no payments.
-- The Zeox logo is rendered as a vector component in `src/components/ZeoxLogo.tsx`.
-  To use the official PNG instead, place it at `src/assets/zeox-logo.png` and swap
-  the `<svg>` for an `<img />` in that component.
+See `DESIGN_WORKFLOW.md` for the project's design guidance. The self-hosted
+Inter font's license is in `public/licenses/Inter-OFL.txt`.
