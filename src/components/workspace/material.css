@@ -1,0 +1,33 @@
+/* Shared smoked glass. The first fill is the solid fallback; no filters on
+   text or editor contents. Keep a static light field behind the material. */
+.db-scene {
+  --db-ink: #f6f6f6; --db-muted: #bcbcbc; --db-dim: #a5a5a5; --db-line: #ffffff26;
+  --db-card: #191919; --db-radius: 22px; --db-gap: clamp(12px, 1.3vw, 19px);
+  --db-mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+  color-scheme: dark; color: var(--db-ink); font-variant-numeric: tabular-nums;
+}
+.glass-card {
+  --glass-base: #1b1b1b; --glass-fill: rgb(25 25 25 / .60); --glass-edge: rgb(255 255 255 / .16);
+  --glass-sheen: linear-gradient(128deg, #ffffff0d, transparent 47%, #ffffff04 100%);
+  position: relative; min-width: 0; isolation: isolate; border: 1px solid var(--glass-edge); border-radius: var(--db-radius);
+  background: var(--glass-sheen), var(--glass-base);
+  box-shadow: inset 0 1px 0 #ffffff12, inset 0 -1px 0 #ffffff04, 0 8px 20px -14px #000c;
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-card { background: var(--glass-sheen), var(--glass-fill); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+}
+/* A hairline reflection follows the curve, never washing out the contents. */
+@supports (mask-composite: exclude) {
+  .glass-card:not(.sk-tile):not(.is-empty)::before {
+    content: ''; pointer-events: none; position: absolute; z-index: 1; inset: -1px; padding: 1px; border-radius: inherit;
+    background: linear-gradient(135deg,#ffffff62,transparent 22%,transparent 60%,#ffffff29 92%,transparent);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
+  }
+}
+@media (max-width: 600px) { .db-scene { --db-radius: 18px; --db-gap: 10px; } }
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .glass-card, .db-scene .ws-bar, .db-scene .ws-drawer { background: var(--glass-base,#171717); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+@media (forced-colors: active) {
+  .glass-card { background: Canvas; color: CanvasText; border: 1px solid CanvasText; box-shadow: none; backdrop-filter: none; }
+}

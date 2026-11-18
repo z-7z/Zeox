@@ -1,11 +1,11 @@
 /* A tool inside the workspace; no separate landing page or navigation. */
-.vt-app { max-width: 1230px; margin: auto; padding: clamp(4px,1vw,16px) 0 8px; --bg: #090909; --panel: var(--db-card); --edge: var(--db-line); --soft-edge: #262626; --ink: var(--db-ink); --muted: var(--db-muted); --dim: var(--db-dim); --accent: #e0e0e0; --mono: var(--db-mono); }
+.vt-app { max-width: 1160px; margin: auto; padding: 0 0 8px; --bg: #090909; --panel: var(--db-card); --edge: var(--db-line); --soft-edge: #262626; --ink: var(--db-ink); --muted: var(--db-muted); --dim: var(--db-dim); --accent: #e0e0e0; --mono: var(--db-mono); }
 .vt-app svg { flex-shrink: 0; }.vt-app input { font: inherit; }
 .vt-app .vt-eyebrow { font: 500 9px/1.4 var(--mono); letter-spacing: .11em; }
 .vt-app .vt-eyebrow span { color: #999; }
 /* File bench */
 .vt-workspace { display: grid; grid-template-columns: minmax(0, 1.87fr) minmax(270px, 1fr); gap: var(--db-gap); align-items: stretch; }
-.vt-panel { min-width: 0; border: 1px solid var(--edge); background: var(--panel); border-radius: var(--db-radius); }
+.vt-panel { min-width: 0; }
 .vt-workbench { scroll-margin: 14px; overflow: hidden; }
 .vt-workbench:focus { outline: none; } .vt-workbench:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .vt-bench-head, .vt-side-head, .vt-field-heading, .vt-action-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -59,7 +59,8 @@
 .vt-reveal:hover { background: #1d1d1d; color: #dcdcdc; }
 .vt-pass-help, .vt-local-proof { color: var(--dim); font-size: 11px; line-height: 1.5; }
 .vt-pass-help { margin-top: 8px; }
-.vt-action-bar { padding: 13px 22px; background: #151515; border-top: 1px solid var(--soft-edge); }
+.vt-action-bar { padding: 13px 22px; background: #ffffff05; border-top: 1px solid #ffffff12; }
+.vt-action-bar .vt-primary { flex: none; white-space: nowrap; }
 .vt-local-proof { display: inline-flex; align-items: center; gap: 6px; color: #a7a7a7; }
 .vt-local-proof svg { color: #a4a4a4; }
 .vt-app .vt-primary, .vt-app .vt-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 9px 13px; border-radius: 8px; font-size: 12px; font-weight: 550; }
@@ -99,7 +100,6 @@
 .vt-chip::before { top: -4px; }.vt-chip::after { bottom: -4px; }
 .vt-chip-face { min-width: 49px; height: 32px; display: flex; align-items: center; justify-content: center; gap: 4px; border-radius: 2px; border: 1px solid #414141; background: #1c1c1c; color: #c0c0c0; }
 .vt-chip-face b { font: 600 10px var(--mono); letter-spacing: .035em; }
-.vt-circuit-code { position: absolute; right: 6px; bottom: 4px; color: #8f8f8f; font: 8px/1.2 var(--mono); letter-spacing: .08em; }
 .vt-specs { margin: 2px 18px 13px; }
 .vt-specs > div { display: flex; align-items: center; justify-content: space-between; gap: 5px; min-height: 27px; border-bottom: 1px solid #272727; }
 .vt-specs > div:last-child { border-bottom: 0; }
@@ -169,8 +169,6 @@
 .vt-file-art img { display: block; width: 100%; height: auto; animation: vt-float 6s ease-in-out infinite; mask-image: radial-gradient(ellipse at 50% 48%, #000 52%, transparent 77%); }
 .vt-app[data-motion=off] .vt-drop .vt-file-art, .vt-app[data-motion=off] .vt-primary:hover svg { transform: none; }
 .vt-drop.has-file .vt-drop-button { padding-right: 35px; }.vt-drop-copy { min-width: 0; }.vt-file-art { flex: none; }
-.vt-archive-link { display: inline-flex; align-items: center; gap: 5px; margin-top: 15px; color: var(--accent); font-size: 11px; }
-.vt-archive-link:hover { text-decoration: underline; }
 @media (max-width: 1000px) {
   .vt-workspace { grid-template-columns: minmax(0,1.6fr) minmax(240px,1fr); }
   .vt-bench-fields, .vt-bench-head, .vt-action-bar { padding-inline: 15px; }.vt-key-hint { font-size: 8px; }
@@ -182,11 +180,11 @@
   .vt-aside { grid-template-columns: minmax(0,1fr); }.vt-bench-head { padding: 12px; gap: 4px; }.vt-bench-head h2 { font-size: 14px; gap: 6px; }.vt-title-icon { height: 24px; width: 24px; }.vt-title-icon svg { height: 15px; width: 15px; }
   .vt-app .vt-switch button { min-height: 29px; font-size: 10px; gap: 4px; padding-inline: 6px; }.vt-switch button svg { width: 11px; height: 11px; }
   .vt-bench-fields { padding: 13px; }.vt-field-heading { margin-bottom: 7px; }.vt-pass-heading { margin-top: 13px; }
-  .vt-drop-button { min-height: 158px; flex-direction: column; gap: 1px; text-align: center; padding: 8px; }.vt-file-art { width: 91px; }
+  .vt-drop-button { min-height: 86px; flex-direction: row; gap: 9px; text-align: left; padding: 9px; }.vt-file-art { width: 62px; }
   .vt-drop-copy strong { font-size: 13px; }.vt-drop-copy small { font-size: 10px; }.vt-key-hint { font-size: 8px; }.vt-pass-grid { grid-template-columns: minmax(0,1fr) auto; gap: 6px; }.vt-input-wrap { padding: 0 10px; gap: 7px; }
   .vt-input-wrap:nth-child(2) { grid-row: 2; grid-column: 1 / -1; }.vt-reveal { grid-column: 2; grid-row: 1; width: 37px; }.vt-app .vt-input-wrap input { height: 37px; font-size: 16px; }.vt-input-wrap input::placeholder { font-size: 12px; }
-  .vt-pass-help { font-size: 10.5px; }.vt-action-bar { padding: 11px 13px; }.vt-app .vt-primary { min-height: 39px; }.vt-local-proof { font-size: 10px; gap: 4px; }
-  .vt-side-head { padding-inline: 14px; }.vt-circuit { margin-inline: 14px; min-height: 88px; }.vt-specs { margin-inline: 14px; }.vt-log-panel { min-height: auto; }.vt-log-empty, .vt-latest { padding-inline: 14px; }
-  .vt-result { min-height: 318px; padding: 24px 14px; }.vt-dialog-inner { padding: 18px; }
+  .vt-pass-help { font-size: 10.5px; }.vt-action-bar { padding: 11px 13px; }.vt-app .vt-primary { min-height: 39px; }.vt-local-proof { font-size: 10px; gap: 4px; }.vt-aside { gap: var(--db-gap); }
+  .vt-side-head { padding-inline: 14px; }.vt-engine { display: grid; grid-template-columns: minmax(60px,.45fr) minmax(170px,1fr); align-items: stretch; }.vt-engine .vt-side-head { grid-column: 1/-1; }.vt-circuit { margin: 10px 0 12px 12px; min-height: 65px; }.vt-specs { margin: 7px 12px 10px; }.vt-log-panel { min-height: auto; }.vt-log-empty, .vt-latest { padding-inline: 14px; }
+  .vt-result { min-height: 250px; padding: 18px 14px; }.vt-dialog-inner { padding: 18px; }
 }
 @media (max-width: 365px) { .vt-bench-head h2 { font-size: 13px; }.vt-app .vt-switch button { padding-inline: 5px; }.vt-switch button svg { display: none; } }

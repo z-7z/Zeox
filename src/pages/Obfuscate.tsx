@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { FileCode2, FolderOpen, HardDrive, RotateCcw } from 'lucide-react';
+import { FileCode2, FolderOpen, RotateCcw } from 'lucide-react';
 import { CodeEditor } from '../components/source/CodeEditor';
 import { BuildSettings } from '../components/source/BuildSettings';
 import { OutputFile } from '../components/source/OutputFile';
@@ -33,9 +33,9 @@ export function Obfuscate() {
   const outputName = name.replace(/\.(luau?)$/i, tool.options.encodeText ? '.obf.$1' : '.compact.$1');
   return <div className="src-studio">
     <PageHeading title="Obfuscate" eyebrow="Source studio" description="Build a separate copy of your Lua or Luau script."
-      actions={<span className="src-spec"><HardDrive size={13} />On device <i />512 KiB max</span>} />
+      actions={<span className="src-spec">UTF-8 <i />512 KiB max</span>} />
     <div className="src-desk">
-      <section className="src-panel src-input" aria-label="Source editor" aria-busy={reading}>
+      <section className="glass-card src-panel src-input" aria-label="Source editor" aria-busy={reading}>
         <header className="src-panel-head"><span className="src-step" aria-hidden="true">01</span><h2>Source</h2>
           <div className="src-file-actions"><button className="src-quiet" onClick={tool.sample} disabled={reading} aria-label="Load example source">Example</button>
             <button className="ws-button" disabled={reading} onClick={() => picker.current?.click()}><FolderOpen size={13} />{reading ? 'Reading…' : 'Open file'}</button></div></header>

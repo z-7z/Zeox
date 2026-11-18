@@ -10,7 +10,7 @@ const transforms: { key: keyof Options; label: string; hint: string }[] = [
 
 export function BuildSettings({ tool, reading }: { tool: SourceSession; reading: boolean }) {
   const count = transforms.filter(({ key }) => tool.options[key]).length;
-  return <section className="src-panel src-recipe" aria-labelledby="recipe-title">
+  return <section className="glass-card src-panel src-recipe" aria-labelledby="recipe-title">
     <header className="src-panel-head"><span className="src-step" aria-hidden="true">02</span><h2 id="recipe-title">Build settings</h2><small>{count} of 3 on</small></header>
     <fieldset className="src-transforms" disabled={reading}><legend className="db-sr">Source transformations</legend>
       {transforms.map(({ key, label, hint }) => <label key={key} className="src-transform">
