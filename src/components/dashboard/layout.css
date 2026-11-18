@@ -1,0 +1,52 @@
+/* Shared by the overview, its loading state, and the offline skeleton download. */
+.db-scene {
+  --db-card: #0b0c0e;
+  --db-line: #26272b;
+  --db-muted: #999aa3;
+  --db-dim: #83848e;
+  --db-ink: #f0f0f3;
+  --db-gap: clamp(12px, 1.35vw, 22px);
+  --db-pad: clamp(14px, 1.25vw, 22px);
+  --db-stat-height: clamp(300px, 26.15vw, 412px);
+  --db-small-height: clamp(283px, 21.7vw, 340px);
+  --db-mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+  box-sizing: border-box;
+  color: var(--db-ink);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  color-scheme: dark;
+}
+.db-scene *, .db-scene *::before, .db-scene *::after { box-sizing: border-box; }
+.db-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--db-gap); }
+.db-card {
+  min-width: 0; position: relative; isolation: isolate; overflow: hidden;
+  display: flex; flex-direction: column;
+  background: var(--db-card); border: 1px solid var(--db-line); border-radius: 2px;
+}
+/* Registration marks: short, square corners, rather than a glowing border. */
+.db-card::before {
+  --tick: linear-gradient(#65666d, #65666d);
+  content: ''; position: absolute; z-index: 2; inset: 0; pointer-events: none;
+  background: var(--tick) left top / 6px 1px, var(--tick) left top / 1px 6px,
+    var(--tick) right top / 6px 1px, var(--tick) right top / 1px 6px,
+    var(--tick) left bottom / 6px 1px, var(--tick) left bottom / 1px 6px,
+    var(--tick) right bottom / 6px 1px, var(--tick) right bottom / 1px 6px;
+  background-repeat: no-repeat;
+}
+.status-card { height: var(--db-stat-height); grid-column: span 2; }
+.widget-card { min-height: var(--db-small-height); padding: var(--db-pad); }
+.db-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; clip-path: inset(50%); white-space: nowrap; overflow: hidden; }
+@media (max-width: 1000px) {
+  .db-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .status-card { grid-column: auto; }
+  .db-scene { --db-small-height: 288px; }
+}
+@media (max-width: 920px) {
+  .status-card { grid-column: 1 / -1; }
+  .db-scene { --db-stat-height: clamp(290px, 45vw, 360px); --db-pad: 18px; }
+}
+@media (max-width: 600px) {
+  .db-grid { grid-template-columns: minmax(0, 1fr); }
+  .db-scene { --db-stat-height: 284px; --db-small-height: 280px; --db-gap: 14px; --db-pad: 16px; }
+}
