@@ -208,3 +208,13 @@
 @media (prefers-reduced-motion: reduce) {
   .db-scene *, .db-scene *::before, .db-scene *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
 }
+
+/* Reveal the chart geometry once, without animating or changing its values. */
+@media (prefers-reduced-motion: no-preference) {
+  .funnel-plot > svg { transform-origin: left center; animation: db-ribbon-in .68s cubic-bezier(.22,1,.36,1) backwards; }
+  .hatched-pie { animation: db-pie-in .7s cubic-bezier(.22,1,.36,1) backwards; }
+  .segment-track > span { transform-origin: left; animation: db-track-in .65s cubic-bezier(.22,1,.36,1) backwards; }
+}
+@keyframes db-ribbon-in { from { opacity: .15; transform: scale(.96, .5); } to { opacity: 1; transform: none; } }
+@keyframes db-pie-in { from { opacity: .15; transform: rotate(-12deg) scale(.93); } to { opacity: 1; transform: none; } }
+@keyframes db-track-in { from { transform: scaleX(0); } to { transform: scaleX(1); } }

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Header } from '../components/site/Header';
 import { Hero } from '../components/site/Hero';
 import { WhatIs, HowItWorks, WhatWeProvide } from '../components/site/Sections';
@@ -6,6 +7,11 @@ import { Pricing, Integrations } from '../components/site/Pricing';
 import { Footer } from '../components/site/Footer';
 
 export function Landing() {
+  useEffect(() => {
+    const previous = document.title;
+    document.title = 'Zeox — Product showcase';
+    return () => { document.title = previous; };
+  }, []);
   return (
     <div className="min-h-screen bg-black text-white">
       <Header />
