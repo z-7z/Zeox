@@ -1,0 +1,120 @@
+import { expect, test, type Download, type Page } from '@playwright/test';
+
+const tabs = (page: Page) => page.getByRole('navigation', { name: 'Workspace sections' });
+const go = (page: Page, section: string) => tabs(page).getByRole('link', { name: section, exact: true }).click();
+async function text(download: Download) {
+  const stream = await download.createReadStream(); if (!stream) throw new Error('Missing file');
+  const chunks = []; for await (const chunk of stream) chunks.push(chunk); return Buffer.concat(chunks).toString('utf8');
+}
+
+for (const width of [320, 390, 1440]) {
+  test(`visible routes, history and direct entries at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 850 });
+    await page.goto('/');
+    await expect(page.getByRole('heading', { level: 1, name: 'Overview' })).toBeVisible();
+    await expect(tabs(page).getByRole('link')).toHaveText(['Dashboard', 'Obfuscate', 'Usages', 'Vault']);
+    await expect(tabs(page).getByRole('link', { name: 'Dashboard' })).toHaveAttribute('aria-current', 'page');
+    await expect(page.getByRole('button', { name: 'Encrypt file', exact: true })).toHaveCount(0);
+    for (const section of ['Obfuscate', 'Usages', 'Vault']) {
+      await go(page, section); await expect(page).toHaveURL(new RegExp('/' + section.toLowerCase() + '$'));
+      await expect(page.getByRole('heading', { level: 1, name: section, exact: true })).toBeVisible();
+      await expect(tabs(page).locator('[aria-current=page]')).toHaveText(section);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+      const box = await tabs(page).getByRole('link', { name: section }).boundingBox();
+      expect(box!.y).toBeLessThan(72); expect(box!.x + box!.width).toBeLessThanOrEqual(width);
+    }
+    await page.goBack(); await expect(page).toHaveTitle('Usages — Zeox Workspace');
+    await page.goForward(); await expect(page).toHaveTitle('Vault — Zeox Workspace');
+    await page.reload(); await expect(page.getByRole('button', { name: 'Use sample' })).toBeVisible();
+    await page.goto('/dashboard/overview'); await expect(page).toHaveURL(/\/dashboard$/);
+    await expect(page.getByRole('heading', { name: '1,842' })).toBeVisible();
+  });
+}
+
+test('chart artwork moves within still cards, pauses offscreen and respects both motion switches', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const region = page.getByRole('region', { name: 'Purchase rate' });
+  const sheen = region.locator('.ribbon-sheen'), drift = page.locator('.pie-drift');
+  await expect(sheen).toHaveCSS('animation-name', 'ribbon-scan');
+  await expect(drift).toHaveCSS('animation-name', 'pie-drift');
+  const bounds = await region.boundingBox();
+  const first = await drift.evaluate(el => getComputedStyle(el).transform);
+  await expect.poll(() => drift.evaluate(el => getComputedStyle(el).transform)).not.toBe(first);
+  expect(await region.boundingBox()).toEqual(bounds);
+  await expect(region).toHaveCSS('border-radius', '15px');
+  await page.getByRole('region', { name: 'Quick actions' }).scrollIntoViewIfNeeded();
+  await expect(sheen).toHaveCSS('animation-play-state', 'paused');
+  const toggle = page.getByRole('button', { name: 'Enable animation' });
+  await toggle.click(); await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  await expect(sheen).toHaveCSS('animation-name', 'none');
+  await go(page, 'Vault'); await expect(page.locator('.vt-file-art img')).toHaveCSS('animation-name', 'none');
+  await page.emulateMedia({ reducedMotion: 'reduce' }); await go(page, 'Dashboard');
+  await expect(page.getByRole('button', { name: 'Motion reduced by system preference' })).toBeDisabled();
+  await expect(drift).toHaveCSS('animation-name', 'none');
+});
+
+test('local source file builds offline, downloads under a distinct name, and survives section changes', async ({ page, context }) => {
+  const original = '--!strict\n-- scratch\nlocal  msg = [=[  -- ملف\ntext  ]=]\nreturn    msg\n';
+  const expected = '--!strict\nlocal msg = [=[  -- ملف\ntext  ]=]\nreturn msg\n';
+  await page.goto('/obfuscate', { waitUntil: 'networkidle' }); await context.setOffline(true);
+  await page.getByLabel('Open Lua or Luau source').setInputFiles({ name: 'ملف.lua', mimeType: 'text/plain', buffer: Buffer.from(original) });
+  await expect(page.getByLabel('Source code')).toHaveValue(original);
+  await page.getByRole('button', { name: 'Build output' }).click();
+  await expect(page.getByLabel('Build output', { exact: true })).toHaveValue(expected);
+  const waiting = page.waitForEvent('download'); await page.getByRole('link', { name: 'Download', exact: true }).click();
+  const file = await waiting; expect(file.suggestedFilename()).toBe('ملف.obf.lua'); expect(await text(file)).toBe(expected);
+  expect(await page.evaluate(() => [localStorage.length, sessionStorage.length])).toEqual([0, 0]);
+  await context.setOffline(false); await go(page, 'Usages');
+  await expect(page.getByRole('region', { name: 'Completed runs' })).toContainText('1');
+  await expect(page.getByRole('table').getByRole('row').nth(1)).toContainText('Source build');
+  await expect(page.getByRole('table')).not.toContainText('ملف');
+  await go(page, 'Obfuscate'); await expect(page.getByLabel('Build output', { exact: true })).toHaveValue(expected);
+  await page.getByLabel('Encode text literals').uncheck();
+  await page.getByLabel('Remove comments').uncheck(); await page.getByLabel('Compact spacing').uncheck();
+  await expect(page.getByRole('link', { name: 'Download', exact: true })).toHaveCount(0);
+  await page.getByLabel('Source code').press('Control+Enter');
+  await expect(page.getByLabel('Build output', { exact: true })).toHaveValue(original);
+});
+
+test('usage counts successes only, filters and exports metadata, resets without losing a Vault download', async ({ page }) => {
+  await page.goto('/obfuscate');
+  await page.getByRole('button', { name: 'Build output' }).click(); await go(page, 'Vault');
+  await page.getByRole('button', { name: 'Encrypt file', exact: true }).click(); await expect(page.getByRole('alert')).toContainText('Choose a file first');
+  await page.getByRole('button', { name: 'Use sample' }).click();
+  const pass = page.getByLabel('Passphrase', { exact: true }), secret = 'not stored in the ledger'; await pass.fill(secret);
+  await go(page, 'Usages'); await go(page, 'Vault'); await expect(pass).toHaveValue('');
+  await pass.fill(secret); await page.getByLabel('Confirm passphrase', { exact: true }).fill(secret);
+  await page.getByRole('button', { name: 'Encrypt file', exact: true }).click();
+  // Navigation need not wait for the in-flight job.
+  await go(page, 'Usages');
+  await expect(page.getByRole('region', { name: 'Completed runs' }).locator('strong')).toHaveText('2');
+  const filter = page.getByLabel('Filter usage log'); await filter.selectOption('vault');
+  await expect(page.getByRole('table').getByRole('row')).toHaveCount(2);
+  const waiting = page.waitForEvent('download'); await page.getByRole('button', { name: 'Export log' }).click();
+  const csv = await text(await waiting); expect(csv).toMatch(/Z,Encryption,\d+,\d+\r\n$/); expect(csv).not.toMatch(/game-config|Source build|not stored/);
+  await page.getByRole('button', { name: 'Reset', exact: true }).click(); await page.getByRole('button', { name: 'Cancel' }).click();
+  await expect(page.getByRole('region', { name: 'Completed runs' }).locator('strong')).toHaveText('2');
+  await page.getByRole('button', { name: 'Reset', exact: true }).click(); await page.getByRole('button', { name: 'Clear usage' }).click();
+  await expect(page.getByText('No usage yet')).toBeVisible();
+  await go(page, 'Vault'); await expect(page.getByRole('link', { name: 'Download .zeox' })).toBeVisible();
+  await page.reload(); await expect(page.getByRole('link', { name: 'Download .zeox' })).toHaveCount(0);
+});
+
+test('editor validation never replaces a good draft or counts failed builds', async ({ page }) => {
+  await page.goto('/obfuscate');
+  const picker = page.getByLabel('Open Lua or Luau source');
+  for (const [name, buffer, message] of [
+    ['place.rbxl', Buffer.alloc(1), 'Open a .luau or .lua'], ['bad.lua', Buffer.from([255]), 'UTF-8'],
+    ['binary.luau', Buffer.from([0]), 'not a text script'], ['huge.lua', Buffer.alloc(512 * 1024 + 1), '512 KiB'],
+  ] as const) {
+    await picker.setInputFiles({ name, buffer, mimeType: 'application/octet-stream' }); await expect(page.getByRole('alert')).toContainText(message);
+    await expect(page.getByLabel('Source code')).toHaveValue(/local settings/);
+  }
+  const src = page.getByLabel('Source code'); await src.fill('return [=[unfinished'); await src.press('Control+Enter');
+  await expect(page.getByRole('alert')).toContainText('no closing bracket');
+  await expect(page.getByLabel('Build output', { exact: true })).toHaveCount(0);
+  await page.keyboard.press('Control+k'); await page.getByRole('combobox', { name: 'Search commands' }).fill('Usages');
+  await page.keyboard.press('Enter'); await expect(page.getByText('No usage yet')).toBeVisible();
+  await go(page, 'Obfuscate'); await expect(src).toHaveValue('return [=[unfinished');
+});

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowUpRight, BookOpen, History, LockKeyhole, Trash2, X } from 'lucide-react';
 import { FORMATS } from '../../lib/vault/container';
 import { FormatMark, type StudioModal } from './StudioChrome';
@@ -22,7 +23,7 @@ export function StudioDialog({ kind, close, events, clearLog }: { kind: Exclude<
         <li><b>02</b><span>Set and confirm a passphrase, encrypt, then save the .zeox archive. Keep your original and passphrase safe.</span></li>
         <li><b>03</b><span>To restore, switch to Decrypt, select the archive and enter its passphrase. Download the original bytes.</span></li></ol>
       <p className="vt-dialog-note"><LockKeyhole size={14} />Web Crypto uses AES-256-GCM and PBKDF2-SHA-256 (600,000 iterations), with a new salt and nonce for every archive. Files and passphrases are never sent to a server.</p>
-      <a className="vt-archive-link" href="/dashboard/overview" target="_blank" rel="noopener noreferrer">Previous overview & skeleton <ArrowUpRight size={12} /></a></>
+      <Link className="vt-archive-link" to="/dashboard" onClick={close}>Dashboard & skeleton downloads <ArrowUpRight size={12} /></Link></>
       : <><p className="vt-dialog-intro">The last 30 completed operations in this tab. This log contains metadata only and clears on refresh.</p>
         {events.length ? <><ul className="vt-all-events">{events.map(e => <EventRow event={e} key={e.id} />)}</ul><button className="vt-secondary vt-clear-log" onClick={clearLog}><Trash2 size={13} />Clear session log</button></>
           : <div className="vt-empty-dialog"><History size={24} /><strong>No files processed yet</strong><p>Encrypt or decrypt a file to start your session log.</p></div>}</>}

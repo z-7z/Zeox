@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { ArrowDownToLine, ChevronRight, Clock3, Plus, Settings, Timer, Truck, UsersRound, Zap } from 'lucide-react';
 import { compact, days, hour, money, salesSummary, type OpenPanel, type Overview } from './model';
 import { WidgetHeading } from './StatusCard';
@@ -14,7 +14,7 @@ export function TrafficCard({ data, open }: { data: Overview; open: OpenPanel })
     <ul className="traffic-list">{data.traffic.map((s, i) => <li key={s.name}>
       <button type="button" onClick={() => open('traffic', i)}>
         <span className="traffic-label">{s.name}<span>{compact(s.visits)}</span></span>
-        <span className="segment-track" aria-hidden="true"><span style={{ width: `${s.visits / max * 100}%` }} /></span>
+        <span className="segment-track" aria-hidden="true" style={{ '--row': i } as CSSProperties}><span style={{ width: `${s.visits / max * 100}%` }} /></span>
       </button>
     </li>)}</ul>
   </section>;
@@ -35,7 +35,7 @@ export function TeamCard({ count, open }: { count: number; open: OpenPanel }) {
 }
 
 // Discrete, perceptually ordered shades keep nearby hours distinguishable.
-const heatScale = ['#202125', '#292a30', '#34353c', '#404149', '#50515b', '#62636f', '#777884', '#91929f', '#b5b5c1', '#d5d5dd'];
+const heatScale = ['#212121', '#2a2a2a', '#353535', '#414141', '#525252', '#646464', '#797979', '#939393', '#b6b6b6', '#d6d6d6'];
 export function SalesCard({ data, open }: { data: Overview; open: OpenPanel }) {
   const { peak, day, hourIndex, average } = salesSummary(data.hourlySales);
   const [cell, setCell] = useState<{ d: number; h: number } | null>(null);
@@ -44,7 +44,7 @@ export function SalesCard({ data, open }: { data: Overview; open: OpenPanel }) {
     <div className="sales-stats"><div><strong>${compact(peak)}</strong><p>Peak · {day} {hour(hourIndex)}–{hour(hourIndex + 1)}</p></div>
       <div><b>${compact(average)}</b><p>Avg / hour</p></div></div>
     <button className="heatmap" aria-label="Inspect hourly sales for the last seven days" onClick={() => open('sales')} onMouseLeave={() => setCell(null)}>
-      {data.hourlySales.map((row, d) => <span className="heat-row" key={days[d]}><span className="heat-day">{days[d]}</span>
+      {data.hourlySales.map((row, d) => <span className="heat-row" key={days[d]} style={{ '--row': d } as CSSProperties}><span className="heat-day">{days[d]}</span>
         <span className="heat-cells">{row.map((n, h) => <span key={h} onMouseEnter={() => setCell({ d, h })}
           style={{ background: heatScale[Math.min(9, Math.floor(n / peak * 10))] }} />)}</span>
       </span>)}

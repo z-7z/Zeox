@@ -1,18 +1,18 @@
 import {
   Activity, ChartColumn, CircleHelp, Clock3, Database, FileDown, Files, Keyboard,
-  LayoutGrid, Megaphone, PieChart, Settings, ShoppingCart, Terminal, TrendingUp, UsersRound,
+  Megaphone, PieChart, Settings, ShoppingCart, Terminal, TrendingUp, UsersRound,
   type LucideIcon,
 } from 'lucide-react';
 import type { PanelId } from './model';
 
-export interface Destination { id: PanelId | 'overview'; label: string; icon: LucideIcon; hint: string }
+export interface Destination { id: PanelId; label: string; icon: LucideIcon; hint: string }
+export const chartCommands: Destination[] = [
+  { id: 'funnel', label: 'Purchase funnel', icon: TrendingUp, hint: 'Views, carts, checkouts and purchases' },
+  { id: 'sales', label: 'Sales by hour', icon: ChartColumn, hint: 'Explore the last seven days' },
+  { id: 'channels', label: 'Order distribution', icon: Database, hint: 'Orders by acquisition channel' },
+];
 export const navGroups: Destination[][] = [
   [
-    { id: 'overview', label: 'Overview', icon: LayoutGrid, hint: 'Return to the dashboard' },
-    { id: 'funnel', label: 'Purchase funnel', icon: TrendingUp, hint: 'Views, carts, checkouts and purchases' },
-    { id: 'sales', label: 'Sales by hour', icon: ChartColumn, hint: 'Explore the last seven days' },
-    { id: 'channels', label: 'Order distribution', icon: Database, hint: 'Orders by acquisition channel' },
-  ], [
     { id: 'orders', label: 'Review unfulfilled', icon: ShoppingCart, hint: 'Orders waiting to ship' },
     { id: 'traffic', label: 'Traffic sources', icon: PieChart, hint: 'Compare visits by source' },
     { id: 'team', label: 'Team members', icon: UsersRound, hint: 'Invite members and review invitations' },

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export type PanelId = 'search' | 'profile' | 'activity' | 'help' | 'settings' | 'funnel' | 'channels' | 'traffic' | 'team' | 'sales' | 'orders' | 'campaigns' | 'downloads';
 export type OpenPanel = (id: PanelId, row?: number) => void;
@@ -37,13 +37,14 @@ function isOverview(v: unknown): v is Overview {
     && Array.isArray(v.hourlySales) && v.hourlySales.length === 7 && v.hourlySales.every(row => Array.isArray(row) && row.length === 24 && row.every(amount));
 }
 
-export function useOverview() {
+export function useOverview(enabled = true) {
   const [data, setData] = useState<Overview | null>(null);
   const [error, setError] = useState(false);
   const [revision, setRevision] = useState(0);
   const refresh = useCallback(() => { setData(null); setError(false); setRevision(n => n + 1); }, []);
 
   useEffect(() => {
+    if (!enabled || data || error) return;
     const controller = new AbortController();
     async function load() {
       try {
@@ -58,7 +59,7 @@ export function useOverview() {
     }
     void load();
     return () => controller.abort();
-  }, [revision]);
+  }, [enabled, revision, data, error]);
   return { data, error, refresh };
 }
 
@@ -76,6 +77,7 @@ const initialWorkspace: Workspace = {
   name: 'Zeox workspace', invites: [], campaigns: [], fulfilled: [], activity: ['Your overview snapshot is ready.'],
 };
 export function useWorkspace() {
+  const dirty = useRef(false);
   const [workspace, setWorkspace] = useState<Workspace>(() => {
     try {
       const saved: unknown = JSON.parse(localStorage.getItem(storageKey) || 'null');
@@ -90,11 +92,16 @@ export function useWorkspace() {
     return initialWorkspace;
   });
   useEffect(() => {
+    if (!dirty.current) return;
+    dirty.current = false;
     try { localStorage.setItem(storageKey, JSON.stringify(workspace)); } catch { /* Session-only fallback. */ }
   }, [workspace]);
-  const update = (patch: Partial<Workspace>, event: string) => setWorkspace(prev => ({
-    ...prev, ...patch, activity: [event, ...prev.activity].slice(0, 24),
-  }));
+  const update = (patch: Partial<Workspace>, event: string) => {
+    dirty.current = true;
+    setWorkspace(prev => ({
+      ...prev, ...patch, activity: [event, ...prev.activity].slice(0, 24),
+    }));
+  };
   return { workspace, update };
 }
 export type WorkspaceState = ReturnType<typeof useWorkspace>;

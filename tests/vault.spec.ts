@@ -31,7 +31,7 @@ async function useSample(page: Page) {
 
 for (const suffix of ['luau', 'lua', 'rbxl', 'rbxlx', 'rbxm', 'rbxmx']) {
   test(`encrypts and restores a .${suffix} file byte-for-byte while offline`, async ({ page, context }) => {
-    await page.goto('/dashboard', { waitUntil: 'networkidle' });
+    await page.goto('/vault', { waitUntil: 'networkidle' });
     await context.setOffline(true);
     const name = `ملف-game.${suffix}`;
     const bytes = suffix.startsWith('rb') ? Buffer.from([0, 255, 128, 13, 10, 12, 42, 69, 0]) : Buffer.from('-- نص\r\nreturn { name = "Orbit" }\r\n');
@@ -63,7 +63,7 @@ for (const suffix of ['luau', 'lua', 'rbxl', 'rbxlx', 'rbxm', 'rbxmx']) {
 }
 
 test('fresh salts and nonces; rejects wrong passphrases and changed archives', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/vault');
   const first = await useSample(page);
   await page.getByRole('button', { name: 'Process another file' }).click();
   const second = await useSample(page);
@@ -86,7 +86,7 @@ test('fresh salts and nonces; rejects wrong passphrases and changed archives', a
 });
 
 test('reports unsupported, oversized, missing and mismatched inputs without overwriting files', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/vault');
   await page.getByRole('button', { name: 'Encrypt file', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Browse files' })).toBeFocused();
   await loadFile(page, 'test.txt', Buffer.from('not supported'));
@@ -110,7 +110,7 @@ test('reports unsupported, oversized, missing and mismatched inputs without over
 });
 
 test('session log is metadata only, clearable and transient', async ({ page }) => {
-  await page.goto('/dashboard');
+  await page.goto('/vault');
   await useSample(page);
   await page.getByRole('button', { name: 'Open session log' }).click();
   const dialog = page.getByRole('dialog');
@@ -127,8 +127,8 @@ test('session log is metadata only, clearable and transient', async ({ page }) =
 
 test('mobile studio fits the viewport, guide restores focus, and motion can be disabled', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/dashboard');
-  await expect(page.getByRole('heading', { name: 'Encryption studio.' })).toBeVisible();
+  await page.goto('/vault');
+  await expect(page.getByRole('heading', { name: 'Vault', level: 1 })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
   expect((await page.getByRole('button', { name: 'Encrypt file', exact: true }).boundingBox())!.y).toBeLessThan(805);
   const guide = page.getByRole('button', { name: 'Open studio guide' });
@@ -136,7 +136,7 @@ test('mobile studio fits the viewport, guide restores focus, and motion can be d
   await expect(page.getByRole('dialog')).toContainText('must be decrypted');
   await page.keyboard.press('Escape'); await expect(guide).toBeFocused();
   await page.getByRole('button', { name: 'Enable animation' }).click();
-  const art = page.locator('.vt-hero-art img');
+  const art = page.locator('.vt-file-art img');
   expect(await art.evaluate(el => getComputedStyle(el).animationName)).toBe('none');
   await page.emulateMedia({ reducedMotion: 'reduce' }); await page.reload();
   expect(await art.evaluate(el => getComputedStyle(el).animationName)).toBe('none');
