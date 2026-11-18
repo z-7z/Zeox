@@ -1,77 +1,46 @@
-# Zeox Vault
+# Zeox Workspace
 
-A mobile-first, client-side file encryption studio for Luau (`.luau`), Lua
-5.1 (`.lua`) and Roblox Studio places/models (`.rbxl`, `.rbxlx`, `.rbxm`,
-`.rbxmx`). Both `/` and `/dashboard` open the studio. The UI, font and artwork
-are served by the site; no account, file-upload API or crypto service is used.
+A monochrome, dashboard-first workspace. The four labeled sections are real routes with the same navigation on desktop and phones. All tools run in the browser; no account, upload API or server secret is required.
 
-## Using the studio
+| Section | Route | What it does |
+| --- | --- | --- |
+| **Dashboard** | `/`, `/dashboard` | The six-card overview: conversion funnel, hatched order mix, traffic, team, hourly heatmap and quick actions. The figures are a **demo snapshot**, not tool usage. Open **Downloads** for the script-free HTML skeleton or hourly sales CSV. |
+| **Obfuscate** | `/obfuscate` | Edit, open or paste a UTF-8 `.lua` / `.luau` script (512 KiB max). Build a separate source file, preview, copy or download it. |
+| **Usages** | `/usages` | Actual successful source builds, encryptions and decryptions **in this tab**. Counters cover all successful runs; the filterable ledger and CSV contain the last 50 runs, with times and byte counts only. |
+| **Vault** | `/vault` | Encrypt and restore Luau, Lua 5.1 and Roblox Studio files byte-for-byte. |
 
-1. In **Encrypt**, drop or browse for one file up to 25 MB. **Use sample**
-   supplies a small Luau configuration file without reading from your device.
-2. Enter and confirm a passphrase of at least 12 characters. Encrypt, then
-   **Download .zeox**. Keep the passphrase and your original file safe.
-3. In **Decrypt**, select the archive, enter its passphrase and download the
-   restored bytes under the original filename. Renaming an archive does not
-   change the name restored from inside it.
+`/dashboard/overview` redirects to Dashboard for existing bookmarks. The earlier product showcase is still at `/showcase`. Open workspace search with `/` or `Ctrl/⌘ K`; use `Esc` to close a dialog.
 
-This is encryption **at rest**, not a runtime script protector. Archives
-must be decrypted before use in Studio. Source files are never interpreted,
-executed, overwritten or sent to a server. There is no passphrase reset.
-The browser needs Web Crypto in a secure context (HTTPS, or localhost for
-development). Operations continue to work offline in an already-loaded tab.
+## Motion and surfaces
 
-The session log holds metadata for the last 30 successful operations in
-memory only. Files, passphrases, keys and log entries are not saved to Web
-Storage or IndexedDB. A result's object URL is revoked when the result is
-discarded or the studio unmounts. Downloads the user saves are ordinary files.
+The overview preserves the original narrow rail and two wide status cards above four widgets. The cards have soft borders; their **artwork**, not the card hit targets or metrics, moves: light travels along the funnel, the hatched pie gently turns, and the portraits float. Below-the-fold artwork reveals on entry; continuous overview effects pause offscreen. The footer motion switch applies across workspace sections, and the OS reduced-motion preference takes precedence.
 
-## Archive format v1
+## Source tools and local state
 
-See `src/lib/vault/container.ts`. Web Crypto derives a non-extractable AES-256
-key from the UTF-8 passphrase using PBKDF2-SHA-256 (600,000 iterations).
-Each encryption independently generates a 16-byte salt and 12-byte GCM IV.
-The fixed-size 33-byte header is `ZEOX`, version byte `0x01`, salt, IV. All
-header bytes are AES-GCM additional authenticated data. The remainder is the
-ciphertext followed by its 16-byte authentication tag.
+Obfuscate offers three independent source transformations: express plain quoted strings as three-digit Lua byte escapes, remove ordinary comments and compact whitespace. The lexical pass leaves identifiers, existing escapes, bracket strings and entire Luau interpolations alone. It keeps directive comments and copyright/SPDX notices. There is no VM, runtime loader or execution step. This is **not encryption or a guarantee of secrecy**; the output remains source code. For encrypted storage, use Vault.
 
-The plaintext payload is a two-byte, big-endian UTF-8 filename length, the
-filename, and the **unmodified file bytes**. Version, sizes, restored name
-and file type are checked before offering a restored file. Incorrect keys
-or tampered ciphertext do not produce a download. The suggested outer name
-includes the source name; rename the `.zeox` file if that name is sensitive.
+Changing workspace sections preserves the source draft and completed downloads. Vault clears passphrase inputs when leaving its section. A workspace reload or leaving for the showcase drops tool state, including the Usages counters. No source text, user files, passphrases or tool logs are written to Web Storage. Only separate, explicitly changed dashboard demo settings (team invitations, campaigns, fulfillment and workspace name/activity) use `localStorage`.
 
-## Interface
+## Vault and archive compatibility
 
-`src/pages/VaultStudio.tsx` composes the file workbench, illustrated vault
-core, cipher diagram, guide and session log. Visual states track file selection,
-actual cryptographic phases and completion. Drag feedback, control transitions,
-card entrances and button shine respect `prefers-reduced-motion`; **Motion on**
-in the footer can also disable animation for the session.
+1. In **Encrypt**, select one `.luau`, `.lua`, `.rbxl`, `.rbxlx`, `.rbxm` or `.rbxmx` file up to 25 MB (or choose **Use sample**).
+2. Set and confirm a passphrase of at least 12 characters; encrypt and download the `.zeox` archive. Keep your passphrase and original safe. There is no recovery mechanism.
+3. In **Decrypt**, open that archive, enter the same passphrase and download the original name and bytes. Archives must be restored before use in Roblox Studio. Source and binary assets are opaque to the cipher.
 
-The previous monochrome analytics dashboard and its offline skeleton / CSV
-downloads remain at `/dashboard/overview`. The earlier public site is available
-at `/showcase`. Both are loaded separately from the vault. The Guide includes
-a link to the previous overview.
+The v1 `.zeox` format is unchanged (`src/lib/vault/container.ts`). PBKDF2-SHA-256 (600,000 iterations) derives a non-extractable AES-256-GCM key. Each archive has a fresh 16-byte salt and 12-byte IV. Its 33-byte authenticated header is `ZEOX`, version `0x01`, salt and IV; the ciphertext ends in a 16-byte authentication tag. The plaintext is a 2-byte big-endian UTF-8 filename length, filename and unmodified file bytes. Incorrect keys and tampering do not yield downloads. The suggested outer archive name includes the original name; it can be renamed without affecting restoration.
 
-## Development & deployment
+Vault needs HTTPS (or localhost) and Web Crypto. Source and Vault operations work offline after their respective pages have loaded. The Vault log keeps metadata including filenames for its last 30 successful operations in memory, separate from the name-free Usages ledger. Object URLs are revoked when discarded.
 
-```bash
+## Develop, test and deploy
+
+```sh
 npm install
-npm run dev             # Vite + React 18 + TypeScript
-npm run build           # type-check and create dist/
+npm run dev
+npm run build
 npx playwright install chromium
 npm run test:e2e
 ```
 
-Set `CHROMIUM_PATH` to use an existing compatible Chromium. Tests cover all
-six extensions, UTF-8 filenames, independent decryption of the archive format,
-offline round trips, validation and tamper rejection, session state, mobile
-motion settings, and the archived dashboard workflows.
+`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. The suite covers routed navigation, mobile widths, motion preferences, data retry and skeleton/CSV downloads, source transformations, local usage accounting, and independent decryption / offline round trips for all six Vault file types.
 
-Deploy `dist/` to a static HTTPS host. `vercel.json` includes explicit SPA
-rewrites, a same-origin content security policy and response headers. Other
-hosts should serve `index.html` for the three non-root app routes but keep
-assets and `/data/overview.json` as static files. No server secrets are needed.
-See `DESIGN_WORKFLOW.md` for design guidance; Inter's license is included in
-`public/licenses/Inter-OFL.txt`.
+Deploy `dist/` to a static HTTPS host. `vercel.json` rewrites the application routes to `index.html`, serves assets and `/data/overview.json` unchanged, and sets a same-origin content security policy. The font and imagery are served locally. See `DESIGN_WORKFLOW.md` for the design contract and `public/licenses/Inter-OFL.txt` for the font license.

@@ -7,7 +7,7 @@ const traces = [
 ];
 function Circuit({ active }: { active: boolean }) {
   return <div className={`vt-circuit${active ? ' is-active' : ''}`} aria-hidden="true">
-    <svg viewBox="0 0 300 108" preserveAspectRatio="none"><defs><pattern id="circuit-dots" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".7" fill="#3c364d" /></pattern></defs><rect width="300" height="108" fill="url(#circuit-dots)" />
+    <svg viewBox="0 0 300 108" preserveAspectRatio="none"><defs><pattern id="circuit-dots" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".7" fill="#393939" /></pattern></defs><rect width="300" height="108" fill="url(#circuit-dots)" />
       {[false, true].map(mirror => <g key={String(mirror)} transform={mirror ? 'translate(300 0) scale(-1 1)' : undefined}>{traces.map((d, i) => <g key={d}><path d={d} className="vt-trace" />
         {i % 2 === 0 && <path d={d} pathLength="100" className={`vt-packet packet-${i}${mirror ? ' reverse' : ''}`} />}</g>)}</g>)}
     </svg><div className="vt-chip"><span className="vt-chip-face"><Cpu size={17} /><b>AES</b></span></div>

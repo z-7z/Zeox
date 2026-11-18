@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ArrowDownToLine, ArrowUpRight, Check, ChevronRight, CornerDownLeft, Layers, RefreshCw, Search, Settings, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { navGroups, panelIcons, utilities } from './navigation';
+import { Link, useNavigate } from 'react-router-dom';
+import { sections } from '../workspace/sections';
+import { chartCommands, navGroups, panelIcons, utilities } from './navigation';
 import { CampaignPanel, OrdersPanel, SettingsPanel, TeamPanel } from './WorkspaceForms';
 import { DownloadsPanel, InsightPanel } from './DetailPanels';
 import type { OpenPanel, Overview, PanelId, WorkspaceState } from './model';
@@ -19,11 +20,13 @@ interface DialogProps extends WorkspaceState {
 }
 
 function CommandMenu({ open, close, refresh, exportSales, available }: Pick<DialogProps, 'open' | 'close' | 'refresh' | 'exportSales'> & { available: boolean }) {
+  const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
   const list = useRef<HTMLDivElement>(null);
   const commands = [
-    ...[...navGroups.flat(), ...utilities].filter(item => item.id !== 'search').map(item => ({ ...item, run: () => item.id === 'overview' ? close() : open(item.id) })),
+    ...sections.map(section => ({ ...section, run: () => { close(); navigate(section.path); } })),
+    ...[...chartCommands, ...navGroups.flat(), ...utilities].filter(item => item.id !== 'search').map(item => ({ ...item, run: () => open(item.id) })),
     { label: 'Download skeleton', id: 'skeleton', icon: Layers, hint: 'Get the standalone HTML loading layout', run: () => open('downloads') },
     ...(available ? [{ label: 'Export sales', id: 'export', icon: ArrowDownToLine, hint: 'Download the hourly sales CSV', run: () => { close(); exportSales(); } }] : []),
     { label: 'Refresh overview', id: 'refresh', icon: RefreshCw, hint: 'Reload the local data snapshot', run: () => { close(); refresh(); } },
@@ -83,10 +86,10 @@ export function WorkspaceDialog(props: DialogProps) {
       <button className="panel-link" onClick={() => open('settings')}><Settings size={16} /><span>Workspace settings</span><ChevronRight size={14} /></button>
       <button className="panel-link" onClick={() => open('downloads')}><Layers size={16} /><span>Downloads & skeleton</span><ChevronRight size={14} /></button>
       <button className="panel-link" onClick={() => { close(); refresh(); }}><RefreshCw size={16} /><span>Refresh overview</span><ChevronRight size={14} /></button>
-      <Link className="panel-link" to="/"><ArrowUpRight size={16} /><span>Visit Zeox home</span></Link></>; break;
-    case 'help': content = <><p className="panel-intro">Explore the charts to inspect their numbers. Use the command menu to find any card or workspace action.</p>
+      <Link className="panel-link" to="/showcase"><ArrowUpRight size={16} /><span>Visit product showcase</span></Link></>; break;
+    case 'help': content = <><p className="panel-intro">Use the tabs for Dashboard, Obfuscate, Usages and Vault. Open a chart to inspect its numbers, or search for a workspace action.</p>
       <div className="shortcut-line"><span>Open search</span><kbd>/</kbd></div><div className="shortcut-line"><span>Command menu</span><kbd>Ctrl / ⌘ + K</kbd></div><div className="shortcut-line"><span>Close a dialog</span><kbd>Esc</kbd></div>
-      <p className="local-note">Zeox overview uses a local demo snapshot. No account or network service is required.</p></>; break;
+      <p className="local-note">Overview shows a demo snapshot. Usages shows real tool activity in this tab. No account is required.</p></>; break;
   }
   return <dialog ref={dialog} className="workspace-dialog" aria-labelledby="dialog-title"
     onCancel={e => { e.preventDefault(); close(); }} onClick={e => { if (e.target === e.currentTarget) close(); }}>

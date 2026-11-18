@@ -132,9 +132,9 @@ export function AISolutions() {
 export function DashboardPreview() {
   return (
     <section className="mx-auto max-w-6xl px-6 py-28" aria-label="Dashboard preview">
-      <Link to="/dashboard/overview" aria-label="Open the interactive Zeox dashboard"
+      <Link to="/dashboard" aria-label="Open the interactive Zeox dashboard"
         className="block overflow-hidden rounded-xl border border-white/10 transition-colors hover:border-white/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">
-        <img src={overviewPreview} width={2031} height={1176} loading="lazy" decoding="async"
+        <img src={overviewPreview} width={1440} height={900} loading="lazy" decoding="async"
           alt="Zeox overview with a purchase funnel, order distribution, traffic sources and hourly sales heatmap."
           className="block h-auto w-full" />
       </Link>

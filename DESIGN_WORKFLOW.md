@@ -9,8 +9,9 @@ Skills, and the solid card design system.
 1. **Inspect the current project structure.** Read `README.md`, `src/`, and
    the component inventory before touching anything. Preserve unrelated
    working code.
-2. **Understand the existing Zeox design system.** Surfaces, accents, and
-   card roles are defined in `src/index.css` and `tailwind.config.js`.
+2. **Understand the existing Zeox design system.** The active workspace shares
+   its card grid/tokens in `src/components/dashboard/layout.css` and its
+   section chrome in `src/components/workspace/`.
 3. **Read relevant AI Design Skills.** Vendored skills live in `skills/`.
    Read `skills/landing-page-design/SKILL.md` before any landing page, page
    section, or component design work. Use `figma-designer` (external,
@@ -21,30 +22,32 @@ Skills, and the solid card design system.
    System (below) to bring in approved UI skeletons or templates.
 5. **Select suitable design patterns and components.** Match patterns to the
    actual purpose of each page. Do not reuse one layout everywhere.
-6. **Create the interface using the existing architecture.** Reuse
-   `GlassCard`, `StatCard`, `StatusCard`, `ServiceCard`, `AccountCard`,
-   `ActivityItem`, and the `.card` / `.card-elevated` surfaces.
+6. **Create the interface using the existing architecture.** Reuse `Shell`,
+   `PageHeading`, `StatusCard`, `WidgetHeading`, the `.db-card` surface and
+   the shared routed sections. The public showcase has separate components.
 7. **Review** visual quality, responsiveness (390px check), accessibility
    (focus rings, semantic HTML, alt text), and consistency.
 8. **Report the changes made.**
 
-## Vault studio
+## Dashboard-first workspace
 
-`/` and `/dashboard` now open the local file-encryption workbench. Keep the
-file picker, confirmation and action usable at 390px. The plum blueprint
-header, studio render and circuit illustration belong to this product;
-its panels use actual processing phases, not simulated progress or demo
-sales figures. Both the session motion switch and the OS reduced-motion
-preference must disable decorative motion.
+`/` and `/dashboard` open the original six-card overview. Do not substitute
+one tool for the whole site. Keep **Dashboard, Obfuscate, Usages and Vault**
+visible in the shared header, including at 320px. `/dashboard/overview` is a
+compatibility redirect. Keep real session activity in Usages separate from
+the demo analytics in the reference dashboard.
 
-## Reference-matched overview
+Keep the inset frame, icon rail, two wide charts and four smaller widgets.
+The loading state and standalone HTML skeleton share the real grid and funnel
+geometry. Expose the existing skeleton and CSV through **Downloads**.
 
-The archived analytics page at `/dashboard/overview` follows the supplied monochrome reference,
-rather than the product-card palette below. Its tokens, grid and corner marks
-live in `src/components/dashboard/layout.css`. The real cards and the loading
-state share grid dimensions and funnel geometry. The Downloads panel exports
-that local skeleton as a script-free HTML document with reduced-motion support.
-This is separate from the external-template import workflow below.
+Animate artwork **inside** the cards. Keep metrics, hit targets and outer
+bounds steady. Clip shine to the ribbon, move the pie texture as a unit,
+and stagger the avatar images. Test pointer, keyboard, touch and viewport
+entry. Honor both the session switch and `prefers-reduced-motion`; keep all
+information readable with movement off. The Vault illustration belongs in
+its file card, not in a page-wide hero. Use actual crypto phases, not fake
+progress indicators.
 
 ## Skeleton Download System
 
@@ -70,30 +73,12 @@ Design contract for an external template importer (not shipped in the dashboard 
 
 ## Card design system (solid, no blur)
 
-Approved surfaces:
-
-| Token | Value | Use |
-|---|---|---|
-| Main background | `#000000` | page background |
-| Secondary background | `#050507` | nav bars, sidebar, footer |
-| Standard card | `#101014` | `.card` |
-| Elevated card | `#15141B` | `.card-elevated` |
-| Subtle border | `#292333` | all card borders |
-
-Accents: purple `#8B5CF6` dominant, violet `#A855F7`, lavender `#C4B5FD`,
-orange `#FF7411` and `#FF963D` used selectively.
-
-Card roles (each has its own identity, never identical):
-
-- **StatCard**: value first, small icon, no decoration. Flat `.card`.
-- **ServiceCard**: icon header, name, description, clear action. `.card-elevated`.
-- **StatusCard**: colored left edge encodes state (green/yellow/red), animated
-  dot, technical metadata.
-- **AccountCard**: plan, renewal, credit usage bar, manage action.
-- **ActivityItem**: rows inside a shared list card, timestamps and status.
-
-Banned on cards: backdrop-filter blur, frosted glass, excessive transparency,
-glow, large diffuse shadows, extra glass layers.
+Use a neutral black/white palette throughout the workspace: a charcoal
+outer matte, black canvas, near-black panels, white active tabs and text,
+and legible grays for metadata. Convey trends with icons and text, not hue.
+Use the shared 15–16px card radius, smaller rounded inputs/buttons and soft
+pills for compact tags. Match the source reference's spacing and hierarchy,
+not its square registration marks. No frosted overlays or colored glows.
 
 ## Icons
 

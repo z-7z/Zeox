@@ -1,22 +1,27 @@
-// The same curve meets on either side of each column. The three nested
-// envelopes make the thickness of the ribbon legible, even at phone sizes.
-const ribbon = [
-  ['#404146', '#8e8e97', '#c9c9d1'],
-  ['#34353a', '#53545f', '#757580'],
-  ['#292a30', '#3e3e48', '#565660'],
-  ['#29292e', '#393941', '#45454e'],
-];
-function envelope(column: number, start: number, end: number, scale: number) {
-  const x = column * 160, next = x + 160;
-  const a = 136 * start * scale, b = 136 * end * scale;
-  return `M${x},${150 - a} C${x + 85},${150 - a} ${next - 78},${150 - b} ${next},${150 - b}
-    L${next},${150 + b} C${next - 78},${150 + b} ${x + 85},${150 + a} ${x},${150 + a} Z`;
-}
+import { useId } from 'react';
 
+// Fixed data geometry. Light moves along the ribbon, never the values/labels.
+const ribbon = [
+  ['#474747', '#939393', '#d2d2d2'], ['#363636', '#545454', '#828282'],
+  ['#292929', '#414141', '#606060'], ['#282828', '#373737', '#494949'],
+];
+function edges(col: number, start: number, end: number, scale: number) {
+  const x = col * 160, next = x + 160, a = 136 * start * scale, b = 136 * end * scale;
+  const top = `M${x},${150 - a} C${x + 85},${150 - a} ${next - 78},${150 - b} ${next},${150 - b}`;
+  return { top, fill: `${top} L${next},${150 + b} C${next - 78},${150 + b} ${x + 85},${150 + a} ${x},${150 + a} Z` };
+}
 export function FunnelRibbon({ shares, placeholder = false }: { shares: number[]; placeholder?: boolean }) {
+  const id = useId();
+  const path = (i: number, scale: number) => edges(i, shares[i], shares[i + 1] ?? shares[i], scale);
   return <svg viewBox="0 0 640 300" preserveAspectRatio="none" aria-hidden="true">
-    {shares.map((start, i) => (placeholder ? [1] : [1, .89, .78]).map((scale, layer) =>
-      <path key={`${i}-${layer}`} d={envelope(i, start, shares[i + 1] ?? start, scale)} fill={placeholder ? '#26272d' : ribbon[i][layer]} />
-    ))}
+    {shares.map((_, i) => (placeholder ? [1] : [1, .89, .78]).map((scale, layer) =>
+      <path key={`${i}-${layer}`} className={!placeholder && layer === 2 ? 'ribbon-surface' : undefined} d={path(i, scale).fill} fill={placeholder ? '#272727' : ribbon[i][layer]} />))}
+    {!placeholder && <>
+      <defs><clipPath id={`${id}-ribbon`}><path d={shares.map((_, i) => path(i, 1).fill).join(' ')} /></clipPath>
+        <linearGradient id={`${id}-light`}><stop stopColor="white" stopOpacity="0" /><stop offset=".62" stopColor="white" stopOpacity=".26" /><stop offset="1" stopColor="white" stopOpacity="0" /></linearGradient></defs>
+      <g className="ribbon-light" clipPath={`url(#${id}-ribbon)`}>
+        <g className="ribbon-sheen"><path d="M-202 0h135L-140 300h-135z" fill={`url(#${id}-light)`} /></g>
+        {[.9, -.89].map(scale => <path key={scale} className="ribbon-stream" d={shares.map((_, i) => path(i, scale).top).join(' ')} fill="none" stroke="white" strokeOpacity=".44" strokeWidth="1.5" />)}
+      </g></>}
   </svg>;
 }

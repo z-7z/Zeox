@@ -1,28 +1,24 @@
 import { useEffect, useState } from 'react';
-import { StudioFooter, StudioHeader, StudioHero, type StudioModal } from '../components/vault/StudioChrome';
+import { BookOpen, History } from 'lucide-react';
+import type { StudioModal } from '../components/vault/StudioChrome';
 import { Workbench } from '../components/vault/Workbench';
 import { EnginePanel, SessionPanel } from '../components/vault/EnginePanels';
 import { StudioDialog } from '../components/vault/StudioDialog';
-import { useVaultSession } from '../components/vault/session';
+import { useVaultTool } from '../components/workspace/ToolSessions';
+import { useWorkspacePage } from '../components/workspace/WorkspaceLayout';
+import { PageHeading } from '../components/workspace/PageHeading';
 import '../components/vault/studio.css';
 
 export function VaultStudio() {
-  const session = useVaultSession();
+  const session = useVaultTool(), { motion } = useWorkspacePage();
   const [modal, setModal] = useState<StudioModal>(null);
-  const [motion, setMotion] = useState(true);
-  const [systemReduced, setSystemReduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  useEffect(() => {
-    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const change = () => setSystemReduced(media.matches);
-    media.addEventListener('change', change); return () => media.removeEventListener('change', change);
-  }, []);
-  return <div className="vt-app" id="vault-top" data-motion={motion && !systemReduced ? 'on' : 'off'}>
-    <a href="#workbench" className="vt-skip">Skip to file workbench</a>
-    <StudioHeader open={setModal} />
-    <main className="vt-main"><StudioHero openGuide={() => setModal('guide')} core={session.phase ? 'working' : session.result ? (session.mode === 'encrypt' ? 'sealed' : 'restored') : session.file ? 'loaded' : 'idle'} />
-      <div className="vt-workspace"><Workbench s={session} /><aside className="vt-aside" aria-label="Workspace status"><EnginePanel session={session} /><SessionPanel events={session.events} openLog={() => setModal('log')} /></aside></div>
-      <StudioFooter motion={motion} systemReduced={systemReduced} toggle={() => setMotion(enabled => !enabled)} />
-    </main>
+  const forgetPassphrase = session.forgetPassphrase;
+  useEffect(() => () => forgetPassphrase(), [forgetPassphrase]);
+  return <div className="vt-app" data-motion={motion ? 'on' : 'off'}>
+    <PageHeading title="Vault" eyebrow="File encryption" badge="On device" actions={<>
+      <button className="ws-button" onClick={() => setModal('log')} aria-label="Open session log"><History size={14} />Session log</button>
+      <button className="ws-button" onClick={() => setModal('guide')} aria-label="Open studio guide"><BookOpen size={14} />Guide</button></>} />
+    <div className="vt-workspace"><Workbench s={session} /><aside className="vt-aside" aria-label="Vault status"><EnginePanel session={session} /><SessionPanel events={session.events} openLog={() => setModal('log')} /></aside></div>
     {modal && <StudioDialog kind={modal} close={() => setModal(null)} events={session.events} clearLog={session.clearLog} />}
   </div>;
 }

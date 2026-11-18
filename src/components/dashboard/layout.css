@@ -1,14 +1,12 @@
 /* Shared by the overview, its loading state, and the offline skeleton download. */
 .db-scene {
-  --db-card: #0b0c0e;
-  --db-line: #26272b;
-  --db-muted: #999aa3;
-  --db-dim: #83848e;
-  --db-ink: #f0f0f3;
-  --db-gap: clamp(12px, 1.35vw, 22px);
-  --db-pad: clamp(14px, 1.25vw, 22px);
-  --db-stat-height: clamp(300px, 26.15vw, 412px);
-  --db-small-height: clamp(283px, 21.7vw, 340px);
+  --db-card: #0f0f0f; --db-radius: 16px; --db-line: #2b2b2b;
+  --db-muted: #aaa; --db-dim: #949494; --db-ink: #f3f3f3;
+  --db-gap: clamp(13px, 1.18vw, 20px); --db-pad: clamp(15px, 1.35vw, 22px);
+  --frame-y: clamp(12px, 2.45vh, 28px); --top-height: 60px;
+  --rows-height: calc(100svh - var(--frame-y) * 2 - var(--top-height) - var(--db-gap) - 150px);
+  --db-stat-height: clamp(266px, min(25.7vw, calc(var(--rows-height) * .54)), 398px);
+  --db-small-height: clamp(245px, min(21.8vw, calc(var(--rows-height) * .46)), 340px);
   --db-mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
   box-sizing: border-box;
   color: var(--db-ink);
@@ -22,31 +20,24 @@
 .db-card {
   min-width: 0; position: relative; isolation: isolate; overflow: hidden;
   display: flex; flex-direction: column;
-  background: var(--db-card); border: 1px solid var(--db-line); border-radius: 2px;
-}
-/* Registration marks: short, square corners, rather than a glowing border. */
-.db-card::before {
-  --tick: linear-gradient(#65666d, #65666d);
-  content: ''; position: absolute; z-index: 2; inset: 0; pointer-events: none;
-  background: var(--tick) left top / 6px 1px, var(--tick) left top / 1px 6px,
-    var(--tick) right top / 6px 1px, var(--tick) right top / 1px 6px,
-    var(--tick) left bottom / 6px 1px, var(--tick) left bottom / 1px 6px,
-    var(--tick) right bottom / 6px 1px, var(--tick) right bottom / 1px 6px;
-  background-repeat: no-repeat;
+  background: var(--db-card); border: 1px solid var(--db-line); border-radius: var(--db-radius);
 }
 .status-card { height: var(--db-stat-height); grid-column: span 2; }
 .widget-card { min-height: var(--db-small-height); padding: var(--db-pad); }
 .db-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; clip-path: inset(50%); white-space: nowrap; overflow: hidden; }
+@media (min-width: 1001px) and (max-height: 760px) {
+  .db-scene { --frame-y: 10px; --top-height: 52px; }
+}
 @media (max-width: 1000px) {
   .db-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .status-card { grid-column: auto; }
-  .db-scene { --db-small-height: 288px; }
+  .db-scene { --frame-y: 10px; --db-stat-height: 305px; --db-small-height: 270px; }
 }
 @media (max-width: 920px) {
   .status-card { grid-column: 1 / -1; }
-  .db-scene { --db-stat-height: clamp(290px, 45vw, 360px); --db-pad: 18px; }
+  .db-scene { --frame-y: 0px; --db-stat-height: clamp(302px, 42vw, 358px); }
 }
 @media (max-width: 600px) {
   .db-grid { grid-template-columns: minmax(0, 1fr); }
-  .db-scene { --db-stat-height: 284px; --db-small-height: 280px; --db-gap: 14px; --db-pad: 16px; }
+  .db-scene { --db-stat-height: 282px; --db-small-height: 263px; --db-radius: 15px; --db-gap: 12px; --db-pad: 15px; }
 }

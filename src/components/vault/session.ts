@@ -6,7 +6,7 @@ export type Problem = { field: 'file' | 'pass' | 'confirm' | 'operation'; messag
 export const phaseLabel: Record<Phase, string> = { reading: 'Reading file', deriving: 'Deriving key', sealing: 'Encrypting file', restoring: 'Decrypting file' };
 
 // Volatile state only. No uploads, storage, analytics or URLs containing secrets.
-export function useVaultSession() {
+export function useVaultSession(onSuccess: (operation: Mode, input: number, output: number) => void) {
   const [mode, setMode] = useState<Mode>('encrypt');
   const [file, setFile] = useState<File | null>(null);
   const [passphrase, setPassphrase] = useState('');
@@ -38,7 +38,7 @@ export function useVaultSession() {
     setResult(null); setFile(message ? null : files[0]); setProblem(message ? { field: 'file', message } : null);
   }
   function sample() {
-    if (mode === 'encrypt') selectFile([new File(['-- Sample configuration. This file is never executed.\nreturn {\n    name = "Orbit",\n    theme = "violet",\n}\n'], 'game-config.luau', { type: 'text/plain' })]);
+    if (mode === 'encrypt') selectFile([new File(['-- Sample configuration. This file is never executed.\nreturn {\n    name = "Orbit",\n    theme = "mono",\n}\n'], 'game-config.luau', { type: 'text/plain' })]);
   }
   async function run() {
     if (running.current || result) return;
@@ -56,13 +56,15 @@ export function useVaultSession() {
       setResult(output); setPassphrase(''); setConfirmation(''); setFile(null);
       const event: SessionEvent = { id: ++id.current, name: mode === 'encrypt' ? file.name : output.name, size: mode === 'encrypt' ? file.size : output.blob.size, time: Date.now(), mode };
       setEvents(list => [event, ...list].slice(0, 30));
+      onSuccess(mode, file.size, output.blob.size);
     } catch (error) {
       if (alive.current) setProblem({ field: 'operation', message: error instanceof Error ? error.message : 'The file could not be processed. Try again.' });
     } finally { running.current = false; if (alive.current) setPhase(null); }
   }
+  const forgetPassphrase = useCallback(() => { setPassphrase(''); setConfirmation(''); }, []);
   const clearLog = useCallback(() => setEvents([]), []);
   return { mode, switchMode, file, selectFile, removeFile: () => { if (!running.current) { setFile(null); setProblem(null); } }, sample,
     passphrase, editPass: (s: string) => { setPassphrase(s); setProblem(null); }, confirmation, editConfirm: (s: string) => { setConfirmation(s); setProblem(null); },
-    phase, problem, result, url, run, reset, events, clearLog, supported };
+    phase, problem, result, url, run, reset, events, clearLog, supported, forgetPassphrase };
 }
 export type VaultSession = ReturnType<typeof useVaultSession>;

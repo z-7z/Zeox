@@ -43,3 +43,8 @@ body {
   background-repeat: repeat-x;
   background-position: bottom;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .animate-marquee { animation: none; }
+}

@@ -21,13 +21,13 @@ export function Header() {
               {l.label}
             </a>
           ))}
-          <Link to="/dashboard/overview" className="text-sm text-neutral-400 transition-colors hover:text-white">
+          <Link to="/dashboard" className="text-sm text-neutral-400 transition-colors hover:text-white">
             Dashboard
           </Link>
         </nav>
         <div className="flex items-center gap-3">
           <Link
-            to="/dashboard/overview"
+            to="/dashboard"
             className="hidden rounded-full border border-white/25 px-4 py-2 text-sm text-white transition-colors hover:bg-white hover:text-black sm:block"
           >
             Live Demo

@@ -1,4 +1,4 @@
-.sk-shape { display: block; background: #26272d; border-radius: 3px; }
+.sk-shape { display: block; background: #272727; border-radius: 3px; }
 .sk-card::after {
   content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
   background: linear-gradient(106deg, transparent 34%, #ffffff08 47%, #ffffff0e 50%, #ffffff08 53%, transparent 66%);
