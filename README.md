@@ -4,18 +4,20 @@ A local, monochrome workspace for Lua source and file protection. It has exactly
 
 | Section | Route | What it does |
 | --- | --- | --- |
-| **Dashboard** | `/`, `/dashboard` | Launch either tool, see real session counts and the three latest operations. **Download skeleton** saves a standalone, script-free HTML version of the loading layout. |
+| **Dashboard** | `/`, `/dashboard` | The reference ribbon and hatched pie above four smaller cards. Inspect the sample charts, see the live session, or open a tool. **Download skeleton** saves the same six-slot loading layout as standalone, script-free HTML. |
 | **Obfuscate** | `/obfuscate` | Edit or open a UTF-8 `.lua` / `.luau` script (512 KiB max) with live syntax highlighting. Pick build settings, then preview, copy or download the separate output file. |
 | **Usages** | `/usages` | Actual successful source builds, encryptions and decryptions **in this tab**. Counters cover all successful runs; the filterable ledger and CSV contain the last 50 runs, with times and byte counts only. |
 | **Vault** | `/vault` | Encrypt and restore Luau, Lua 5.1 and Roblox Studio files byte-for-byte. |
+
+The charts are a **labeled sample**, not telemetry: their fixed values preserve the illustrated export funnel, file mix, dotted input tracks and hourly heatmap even on an empty tab. **This session** (the card with the three original portraits) reads the real Usages ledger and shows up to three recent runs. **Quick actions** opens the editor, Vault, Usages or the offline skeleton; none of these actions simulate an account or a sale.
 
 The former `/dashboard/overview` and `/showcase` URLs redirect to Dashboard. There is no storefront, team/account system, remote analytics or demo sales snapshot.
 
 ## Motion and surfaces
 
-The cards use translucent graphite or pearl fills, curved highlight edges and local artwork. Shared material tokens live in `src/components/workspace/material.css`. Browsers without backdrop filtering get solid fills; reduced-transparency and increased-contrast preferences also remove blur. On phones, tool tiles share a row, the editor scrolls internally, and the file picker leaves room for passphrase inputs. The viewport remains zoomable.
+The cards use translucent graphite or pearl fills, curved highlight edges and local artwork. Shared material tokens live in `src/components/workspace/material.css`. Browsers without backdrop filtering get solid fills; reduced-transparency and increased-contrast preferences also remove blur. On phones, the charts stack at full width, with the pie beside its legend. The editor scrolls internally and the file picker leaves room for passphrase inputs. The viewport remains zoomable.
 
-The Dashboard's sculptures and their masked light move **inside** stationary links. Continuous artwork pauses offscreen. The sidebar motion switch applies throughout the workspace; the OS reduced-motion preference takes precedence.
+The Dashboard's ribbon light, etched pie and portraits move **inside** stationary cards. Continuous artwork pauses offscreen. The sidebar motion switch applies throughout the workspace; the OS reduced-motion preference takes precedence.
 
 ## Source tools and local state
 

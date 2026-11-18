@@ -1,0 +1,40 @@
+/* Card bounds, hit targets and metrics never move. Clip light to the actual
+   ribbon, give the etched pie its own moving rim, and lift the avatar images. */
+.ribbon-light, .pie-orbit { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .db-scene[data-motion=on] .is-revealed .ribbon-light,
+  .db-scene[data-motion=on] .is-revealed .pie-orbit { display: inline; }
+  .is-revealed .funnel-plot > svg { transform-origin: left center; animation: db-ribbon-in .8s cubic-bezier(.18,.8,.25,1) var(--entry-delay, 0ms) backwards; }
+  .is-revealed .hatched-pie { animation: db-pie-in .85s cubic-bezier(.22,1,.36,1) var(--entry-delay, 0ms) backwards; }
+  .is-revealed .segment-track > span { transform-origin: left; animation: db-track-in .75s cubic-bezier(.22,1,.36,1) calc(var(--row) * 55ms) backwards; }
+  .is-revealed .heat-cells { animation: heat-develop .65s ease-out calc(var(--row) * 60ms) backwards; }
+  .is-revealed .ribbon-surface { transform-origin: 0px 150px; animation: ribbon-breathe 5.4s ease-in-out infinite alternate; }
+  .is-revealed .pie-drift { transform-origin: 132px 132px; animation: pie-drift 6.8s ease-in-out infinite alternate; }
+  .ribbon-sheen { animation: ribbon-scan 5.4s cubic-bezier(.4,.08,.55,1) infinite; }
+  .ribbon-stream { stroke-dasharray: 17 180; animation: ribbon-flow 6s linear infinite; }
+  .ribbon-stream:last-child { animation-delay: -2.1s; }
+  .pie-orbit { transform-origin: 132px 132px; animation: pie-orbit 20s linear infinite; }
+  .pie-plate { transform-origin: 132px 132px; transition: transform .35s ease-out; }
+  .is-revealed .avatar-stack img { animation: portrait-float 5s ease-in-out infinite; }
+  .avatar-stack img:nth-child(2) { animation-delay: -1.6s; }
+  .avatar-stack img:nth-child(3) { animation-delay: -3.2s; }
+  .db-card:not(.art-in-view) :is(.ribbon-surface,.ribbon-sheen,.ribbon-stream,.pie-drift,.pie-orbit,.avatar-stack img) { animation-play-state: paused; }
+  .quick-action > svg:last-child { transition: transform .22s ease-out; }
+  .quick-action:is(:focus-visible,:hover) > svg:last-child { transform: translateX(2px); }
+  @media (hover: hover) {
+    .db-scene[data-motion=on] .status-card:hover .pie-plate { transform: rotate(var(--art-turn,0deg)) scale(1.014); }
+    .db-scene[data-motion=on] .widget-card:hover .avatar-stack img:first-child { translate: -3px 0; }
+    .db-scene[data-motion=on] .widget-card:hover .avatar-stack img:last-child { translate: 3px 0; }
+    .avatar-stack img { transition: translate .35s ease-out; }
+  }
+}
+@keyframes db-ribbon-in { from { opacity: .4; transform: scaleY(.48); } to { opacity: 1; transform: none; } }
+@keyframes ribbon-scan { 0% { transform: translateX(0); } 76%,100% { transform: translateX(945px); } }
+@keyframes ribbon-breathe { from { transform: scaleY(.94); } to { transform: scaleY(1.04); } }
+@keyframes pie-drift { from { transform: rotate(-3.5deg); } to { transform: rotate(3.5deg); } }
+@keyframes ribbon-flow { to { stroke-dashoffset: -197; } }
+@keyframes db-pie-in { from { opacity: .4; transform: rotate(-13deg) scale(.91); } to { opacity: 1; transform: none; } }
+@keyframes pie-orbit { to { transform: rotate(360deg); } }
+@keyframes db-track-in { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes heat-develop { from { opacity: .18; } to { opacity: 1; } }
+@keyframes portrait-float { 0%,100% { transform: translateY(1px) rotate(-2deg); } 50% { transform: translateY(-3px) rotate(2deg); } }

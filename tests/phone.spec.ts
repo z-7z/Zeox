@@ -7,9 +7,12 @@ test('touch drawer gives the page its full width in portrait and short landscape
   await page.setViewportSize({ width: 320, height: 568 }); await page.goto('/');
   const open = page.getByRole('button', { name: 'Open sidebar' });
   await expect(open).toHaveAttribute('aria-expanded', 'false'); await expect(sidebar(page)).toHaveCount(0);
-  const tool = page.getByRole('link', { name: 'Open editor' }), other = page.getByRole('link', { name: 'Open vault' });
-  const [a,b] = await Promise.all([tool.boundingBox(), other.boundingBox()]);
-  expect(b!.x).toBeGreaterThan(a!.x + a!.width); expect(a!.y + a!.height).toBeLessThan(370);
+  // The funnel and pie stack at full width, with room for the legend next to the pie.
+  const funnel = page.getByRole('region', { name: 'Export rate' }), mix = page.getByRole('region', { name: 'Total files' });
+  const [a, b, pie, legend] = await Promise.all([funnel.boundingBox(), mix.boundingBox(), mix.locator('.hatched-pie').boundingBox(), mix.locator('ul').boundingBox()]);
+  expect(a!.width).toBeGreaterThanOrEqual(290); expect(b!.width).toBe(a!.width); expect(b!.x).toBe(a!.x);
+  expect(b!.y).toBeGreaterThan(a!.y + a!.height); expect(b!.y + b!.height).toBeLessThan(568);
+  expect(legend!.x).toBeGreaterThanOrEqual(pie!.x + pie!.width); expect(legend!.y + legend!.height).toBeLessThan(b!.y + b!.height);
   await open.tap(); await sidebar(page).getByRole('link', { name: 'Obfuscate' }).tap();
   await expect(page.getByRole('textbox', { name: 'Source code' })).toBeVisible();
   expect(await page.getByRole('button', { name: 'Build output' }).evaluate(el => el.getBoundingClientRect().bottom)).toBeLessThan(568);

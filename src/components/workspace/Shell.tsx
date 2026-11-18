@@ -63,7 +63,7 @@ export function Shell({ active, motion, children }: { active: Section; motion: M
   const trigger = useRef<HTMLButtonElement>(null);
   const visible = narrow ? drawer : rail;
   const Toggle = narrow ? Menu : visible ? PanelLeftClose : PanelLeftOpen;
-  return <div className="db-scene" data-motion={motion.enabled ? 'on' : 'off'}>
+  return <div className="db-scene" data-section={active.id} data-motion={motion.enabled ? 'on' : 'off'}>
     <a className="ws-skip" href="#workspace-main">Skip to content</a>
     <div className="ws-window">
       {narrow ? <Drawer open={drawer} close={() => setDrawer(false)} active={active} motion={motion} trigger={trigger} /> :
@@ -74,8 +74,9 @@ export function Shell({ active, motion, children }: { active: Section; motion: M
         <button ref={trigger} type="button" className="ws-icon-button" aria-label={visible ? 'Hide sidebar' : 'Open sidebar'} title={visible ? 'Hide sidebar' : 'Open sidebar'}
           aria-expanded={visible} aria-controls="workspace-sidebar" aria-haspopup={narrow ? 'dialog' : undefined}
           onClick={() => narrow ? setDrawer(v => !v) : setRail(v => !v)}><Toggle size={18} /></button>
-        <Link to="/dashboard" className="ws-wordmark" aria-label="Zeox home">Zeox</Link><span className="ws-breadcrumb" aria-hidden="true">/</span><span className="ws-location">{active.label}</span>
-        <span className="ws-device"><i aria-hidden="true" />On device</span>
+        {active.id === 'dashboard' ? <h1 className="ws-overview-title">Overview</h1> : <>
+          <Link to="/dashboard" className="ws-wordmark" aria-label="Zeox home">Zeox</Link><span className="ws-breadcrumb" aria-hidden="true">/</span><span className="ws-location">{active.label}</span></>}
+        <span className="ws-device"><i aria-hidden="true" />{active.id === 'dashboard' ? 'Sample charts' : 'On device'}</span>
       </header>
         <main id="workspace-main" className="ws-main" tabIndex={-1}>{children}</main>
       </div>

@@ -39,15 +39,20 @@ current-page indication, Escape/backdrop dismissal and keyboard focus return.
 Never add a second top strip, command search, simulated accounts or sales.
 `/dashboard/overview` and `/showcase` are compatibility redirects.
 
-Differentiate sections by task. Dashboard has two illustrated tool links,
-a session summary and recent runs from the real local ledger. Its skeleton
-uses the same four slots, available directly as offline HTML. Obfuscate has
-compact input, settings and read-only output, in order on phones. Usages is
-a totals strip and exportable report. Vault is a file and passphrase workbench.
+Keep the reference Dashboard composition: **two large charts above four small
+cards**, in order: layered funnel, hatched pie with legend, dotted tracks,
+three portraits, 7×24 heatmap, quick-action rows. Reuse the drawings in
+`src/components/dashboard/`; change the material on the cards, not the art.
+The charts are visibly marked as samples; the portrait card shows actual
+in-tab runs, and quick actions lead to real tools. The loading state and
+offline HTML export use the same grid and static six-slot template.
 
-Keep the inset desktop frame and narrow icon rail from the reference. On a
-phone, reclaim the full width for content and keep the launch/build/encrypt
-action within the first screen without disabling zoom or shrinking inputs.
+Keep the inset desktop frame and one left rail. On a phone, stack the
+charts full width, keep pie and legend side by side, and put Overview in
+the compact toolbar. Do not substitute tool posters or a top tab strip.
+Obfuscate keeps input, settings and read-only output in order on phones;
+Vault is a file and passphrase workbench; Usages is an exportable report.
+Keep build/encrypt within the first phone screen without disabling zoom.
 Animate **artwork inside cards**, not metrics, text, hit targets or bounds.
 Honor both the sidebar motion switch and `prefers-reduced-motion`.
 
