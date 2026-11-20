@@ -16,7 +16,10 @@
 .tool-placeholder { overflow: hidden; display: flex; flex-direction: column; gap: var(--db-pad); }
 .tool-placeholder > i { height: 10px; width: min(95px,40%); }
 .tool-placeholder > span { flex: 1; width: 76%; min-height: 8px; opacity: .65; }
-.ph-editor, .ph-settings { min-height: 260px; }.ph-output { min-height: 86px; }
+/* Shared by the lazy upload route and its single, centered fallback. */
+.ws-file-layout { width: min(100%, 912px); margin: clamp(8px, 3.8vh, 42px) auto 0; }
+.ph-intake { overflow: hidden; display: grid; gap: 16px; padding: clamp(16px, 2.6vw, 38px); }
+.ph-intake i { width: 86px; height: 12px; }.ph-intake b { width: min(220px,70%); height: 34px; }.ph-intake > span { margin-block: 16px; min-height: 262px; opacity: .65; }
 .ph-metrics { min-height: 184px; }.ph-ledger { min-height: 220px; }
 .ph-bench { min-height: 440px; }.ph-engine { flex: 1; min-height: 185px; }.ph-log { min-height: 118px; }
 /* Etched tracks encode a quantity, never an invented loading indicator. */
@@ -38,8 +41,13 @@
 @media (max-width:920px) { .ws-pair-grid { grid-template-columns: minmax(0,1fr); } }
 @media (min-width:601px) and (max-width:920px) { .vault-side-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: start; } }
 @media (max-width:600px) {
-  .ph-editor { min-height: 216px; }.ph-settings { min-height: 202px; }.ph-metrics { min-height: 130px; }.ph-bench { min-height: 405px; }.ph-engine { min-height: 144px; }
+  .ws-file-layout { margin-top: 0; }.ph-intake > span { min-height: 208px; }
+  .ph-metrics { min-height: 130px; }.ph-bench { min-height: 405px; }.ph-engine { min-height: 144px; }
   .panel-bar { min-height: 43px; padding-block: 6px; }
   .segment-track { margin-top: 5px; }
   .ws-button.ws-primary { min-height: 36px; }
+}
+
+@media (min-width:540px) and (max-width:1024px) and (max-height:520px) {
+  .ws-file-layout { margin-top: 0; }.ph-intake { gap: 9px; padding: 14px 16px; }.ph-intake > span { margin-block: 0; min-height: 88px; }
 }

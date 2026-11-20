@@ -6,7 +6,7 @@ import { useUsage } from './UsageSession';
 const Vault = createContext<VaultSession | null>(null);
 const Source = createContext<ReturnType<typeof useSourceSession> | null>(null);
 
-// Switching sections should not discard an editor draft, in-flight operation or download.
+// Switching sections should not discard an attached file, in-flight operation or download.
 // These controllers live only as long as the workspace is open. Nothing is serialized.
 export function ToolSessions({ children }: { children: ReactNode }) {
   const { record } = useUsage();

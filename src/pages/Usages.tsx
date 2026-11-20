@@ -40,7 +40,7 @@ export function Usages() {
         <tbody>{rows.map(r => <tr key={r.id}><th scope="row">{operationLabels[r.operation]}</th><td>{formatSize(r.input)}</td><td>{formatSize(r.output)}</td><td><time dateTime={new Date(r.time).toISOString()}>{new Date(r.time).toLocaleTimeString('en-GB')}</time></td></tr>)}</tbody></table></div>}
       {!rows.length && <div className="usage-empty"><strong>{usage.count ? 'No matching operations' : 'No usage yet'}</strong>
         <p>{usage.count ? 'Select another tool to see its runs.' : 'Completed builds and file operations appear here.'}</p>
-        {!usage.count && <div><Link className="ws-button" to="/obfuscate">Build source <ArrowUpRight size={12} /></Link><Link className="ws-button" to="/vault">Open Vault <ArrowUpRight size={12} /></Link></div>}</div>}
+        {!usage.count && <div><Link className="ws-button" to="/obfuscate">Obfuscate file <ArrowUpRight size={12} /></Link><Link className="ws-button" to="/vault">Open Vault <ArrowUpRight size={12} /></Link></div>}</div>}
       <footer>Last 50 runs · No filenames or contents recorded</footer>
     </section>
   </div>;

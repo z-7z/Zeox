@@ -14,8 +14,9 @@ test('touch drawer gives the page its full width in portrait and short landscape
   expect(b!.y).toBeGreaterThan(a!.y + a!.height); expect(b!.y + b!.height).toBeLessThan(568);
   expect(legend!.x).toBeGreaterThanOrEqual(pie!.x + pie!.width); expect(legend!.y + legend!.height).toBeLessThan(b!.y + b!.height);
   await open.tap(); await sidebar(page).getByRole('link', { name: 'Obfuscate' }).tap();
-  await expect(page.getByRole('textbox', { name: 'Source code' })).toBeVisible();
-  expect(await page.getByRole('button', { name: 'Build output' }).evaluate(el => el.getBoundingClientRect().bottom)).toBeLessThan(568);
+  await expect(page.getByRole('button', { name: 'Choose file' })).toBeVisible();
+  await expect(page.getByRole('textbox')).toHaveCount(0);
+  expect(await page.getByRole('button', { name: 'Obfuscate file' }).evaluate(el => el.getBoundingClientRect().bottom)).toBeLessThan(568);
   await open.tap(); await sidebar(page).getByRole('link', { name: 'Vault' }).tap();
   const submit = page.getByRole('button', { name: 'Encrypt file', exact: true }); await expect(submit).toBeVisible();
   expect(await submit.evaluate(el => el.getBoundingClientRect().bottom)).toBeLessThan(568);

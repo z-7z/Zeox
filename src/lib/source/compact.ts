@@ -17,7 +17,7 @@ function encodeLiteral(token: string) {
 
 export function compactSource(source: string, options: Options): string {
   if (byteLength(source) > SOURCE_LIMIT) throw new Error('Source must be 512 KiB or smaller.');
-  if (!source.trim()) throw new Error('Paste a script, open a source file, or load the example first.');
+  if (!source.trim()) throw new Error('The attached script is empty. Choose a file with Lua or Luau source.');
   if (source.includes('\0')) throw new Error('Choose a UTF-8 text script, not a binary file.');
   const longOpen = /\[(=*)\[/y;
   function longEnd(pos: number): number | null {

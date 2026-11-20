@@ -50,7 +50,7 @@ offline HTML export use the same grid and static six-slot template.
 Keep the inset desktop frame and one left rail. On a phone, stack the
 charts full width, keep pie and legend side by side, and keep the active page title in
 the compact toolbar on every route. Do not substitute tool posters or a top tab strip.
-Obfuscate keeps input, settings and read-only output in order on phones;
+Obfuscate is file-only: one script intake, optional settings, then a downloadable file;
 Vault is a file and passphrase workbench; Usages is an exportable report.
 Keep build/encrypt within the first phone screen without disabling zoom.
 Animate **artwork inside cards**, not metrics, text, hit targets or bounds.
@@ -87,11 +87,12 @@ frame, gutters and one toolbar H1. `workspace/panels.css`, `PanelHeader` and
 `PanelDialog` own widget type, toolbars, buttons, segmented tracks and modal
 presentation. Import them through the shared layout, not a lazy page.
 
-Pair tool panels on desktop and stack them when narrow. Different data and
-workflows are appropriate; separate themes, pearl summary strips, oversized
-page intros, and local overrides of the card material are not. Keep readable
-syntax ink, opaque editor/password surfaces, real session data and native
-controls. Do not copy sample charts onto tool pages to fill empty space.
+Use a single focused upload panel for Obfuscate. Pair report or Vault panels
+on desktop and stack them when narrow. Different data and workflows are
+appropriate; separate themes, pearl summary strips, oversized page intros,
+and local overrides of the card material are not. Keep file names legible,
+password surfaces opaque, session data real and controls native. Do not copy
+sample charts onto tool pages to fill empty space.
 Inspect at 320px, 390px, a short landscape height and desktop; check focus,
 touch targets, safe-area padding, contrast, scroll and visible text.
 

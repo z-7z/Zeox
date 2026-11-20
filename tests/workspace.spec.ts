@@ -1,10 +1,8 @@
-import { expect, test, type Download, type Locator } from '@playwright/test';
+import { expect, test, type Download } from '@playwright/test';
 
+import { attach, downloadOutput } from './attachments';
 import { go, openSidebar, sidebar } from './navigation';
 
-// Read the rendered lines of these small fixtures exactly, including their
-// trailing empty line. A contenteditable code view has no textarea.value.
-const codeText = (editor: Locator) => editor.locator('.cm-line').allTextContents().then(lines => lines.join('\n'));
 async function text(download: Download) {
   const stream = await download.createReadStream(); if (!stream) throw new Error('Missing file');
   const chunks = []; for await (const chunk of stream) chunks.push(chunk); return Buffer.concat(chunks).toString('utf8');
@@ -62,28 +60,25 @@ test('local source file builds offline, downloads under a distinct name, and sur
   const original = '--!strict\n-- scratch\nlocal  msg = [=[  -- ملف\ntext  ]=]\nreturn    msg\n';
   const expected = '--!strict\nlocal msg = [=[  -- ملف\ntext  ]=]\nreturn msg\n';
   await page.goto('/obfuscate', { waitUntil: 'networkidle' }); await context.setOffline(true);
-  await page.getByLabel('Open Lua or Luau source').setInputFiles({ name: 'ملف.lua', mimeType: 'text/plain', buffer: Buffer.from(original) });
-  await expect.poll(() => codeText(page.getByLabel('Source code'))).toBe(original);
-  await page.getByRole('button', { name: 'Build output' }).click();
-  await expect.poll(() => codeText(page.getByLabel('Build output', { exact: true }))).toBe(expected);
-  const waiting = page.waitForEvent('download'); await page.getByRole('link', { name: 'Download', exact: true }).click();
-  const file = await waiting; expect(file.suggestedFilename()).toBe('ملف.obf.lua'); expect(await text(file)).toBe(expected);
+  await attach(page, 'ملف.lua', original); await expect(page.getByRole('group', { name: 'Source file' })).toContainText('ملف.lua');
+  await page.getByRole('button', { name: 'Obfuscate file' }).click();
+  const file = await downloadOutput(page); expect(file.name).toBe('ملف.obf.lua'); expect(file.bytes.toString()).toBe(expected);
   expect(await page.evaluate(() => [localStorage.length, sessionStorage.length])).toEqual([0, 0]);
   await context.setOffline(false); await go(page, 'Usages');
   await expect(page.getByRole('region', { name: 'Completed runs' })).toContainText('1');
   await expect(page.getByRole('table').getByRole('row').nth(1)).toContainText('Source build');
   await expect(page.getByRole('table')).not.toContainText('ملف');
-  await go(page, 'Obfuscate'); await expect.poll(() => codeText(page.getByLabel('Build output', { exact: true }))).toBe(expected);
-  await page.getByLabel('Encode text literals').uncheck();
-  await page.getByLabel('Remove comments').uncheck(); await page.getByLabel('Compact spacing').uncheck();
-  await expect(page.getByRole('link', { name: 'Download', exact: true })).toHaveCount(0);
-  await page.getByLabel('Source code').press('Control+Enter');
-  await expect.poll(() => codeText(page.getByLabel('Build output', { exact: true }))).toBe(original);
+  await go(page, 'Obfuscate'); await expect(page.getByRole('status')).toContainText('ملف.obf.lua');
+  await page.locator('summary').click();
+  for (const name of ['Encode text literals', 'Remove comments', 'Compact spacing']) await page.getByRole('checkbox', { name }).uncheck();
+  await expect(page.getByRole('link', { name: 'Download file' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Obfuscate file' }).click();
+  expect(await downloadOutput(page)).toEqual({ name: 'ملف.compact.lua', bytes: Buffer.from(original) });
 });
 
 test('usage counts successes only, filters and exports metadata, resets without losing a Vault download', async ({ page }) => {
   await page.goto('/obfuscate');
-  await page.getByRole('button', { name: 'Build output' }).click(); await go(page, 'Vault');
+  await attach(page); await page.getByRole('button', { name: 'Obfuscate file' }).click(); await go(page, 'Vault');
   await page.getByRole('button', { name: 'Encrypt file', exact: true }).click(); await expect(page.getByRole('alert')).toContainText('Choose a file first');
   await page.getByRole('button', { name: 'Use sample' }).click();
   const pass = page.getByLabel('Passphrase', { exact: true }), secret = 'not stored in the ledger'; await pass.fill(secret);
@@ -105,19 +100,19 @@ test('usage counts successes only, filters and exports metadata, resets without 
   await page.reload(); await expect(page.getByRole('link', { name: 'Download .zeox' })).toHaveCount(0);
 });
 
-test('editor validation never replaces a good draft or counts failed builds', async ({ page }) => {
-  await page.goto('/obfuscate');
-  const picker = page.getByLabel('Open Lua or Luau source');
+test('invalid attachments preserve a good file and failed builds do not count', async ({ page }) => {
+  await page.goto('/obfuscate'); await attach(page, 'good.luau');
+  const intake = page.getByRole('group', { name: 'Source file' }); await expect(intake).toContainText('good.luau');
   for (const [name, buffer, message] of [
-    ['place.rbxl', Buffer.alloc(1), 'Open a .luau or .lua'], ['bad.lua', Buffer.from([255]), 'UTF-8'],
+    ['place.rbxl', Buffer.alloc(1), 'Choose a .lua or .luau'], ['bad.lua', Buffer.from([255]), 'UTF-8'],
     ['binary.luau', Buffer.from([0]), 'not a text script'], ['huge.lua', Buffer.alloc(512 * 1024 + 1), '512 KiB'],
+    ['empty.luau', Buffer.from('  \r\n'), 'empty'],
   ] as const) {
-    await picker.setInputFiles({ name, buffer, mimeType: 'application/octet-stream' }); await expect(page.getByRole('alert')).toContainText(message);
-    await expect.poll(() => codeText(page.getByLabel('Source code'))).toMatch(/local settings/);
+    await attach(page, name, buffer); await expect(page.getByRole('alert')).toContainText(message);
+    await expect(intake).toContainText('good.luau'); await expect(page.getByRole('alert')).toContainText('previous file is still attached');
   }
-  const src = page.getByLabel('Source code'); await src.fill('return [=[unfinished'); await src.press('Control+Enter');
-  await expect(page.getByRole('alert')).toContainText('no closing bracket');
-  await expect(page.getByLabel('Build output', { exact: true })).toHaveCount(0);
+  await attach(page, 'unfinished.lua', 'return [=[unfinished'); await page.getByRole('button', { name: 'Obfuscate file' }).click();
+  await expect(page.getByRole('alert')).toContainText('no closing bracket'); await expect(page.getByRole('link', { name: 'Download file' })).toHaveCount(0);
   await go(page, 'Usages'); await expect(page.getByText('No usage yet')).toBeVisible();
-  await go(page, 'Obfuscate'); await expect.poll(() => codeText(src)).toBe('return [=[unfinished');
+  await go(page, 'Obfuscate'); await expect(intake).toContainText('unfinished.lua');
 });
