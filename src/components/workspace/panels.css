@@ -1,7 +1,6 @@
 /* Shared working surfaces. The same rules load on every direct route;
    no tool depends on visiting the Dashboard to pick up its typography. */
 .ws-pair-grid { display: grid; grid-template-columns: var(--db-columns); flex: 1; }
-.vault-side-grid { display: flex; flex-direction: column; min-width: 0; border-left: 1px solid var(--db-line); }
 .panel-inset { padding: var(--db-pad); }
 .panel-head, .panel-head h2, .panel-actions { display: flex; align-items: center; }
 .panel-head { justify-content: space-between; min-height: 18px; gap: 5px; }
@@ -20,7 +19,6 @@
 .ph-intake { overflow: hidden; display: grid; gap: 16px; padding: clamp(16px, 2.6vw, 38px); }
 .ph-intake i { width: 86px; height: 12px; }.ph-intake b { width: min(220px,70%); height: 34px; }.ph-intake > span { margin-block: 16px; min-height: 262px; opacity: .65; }
 .ph-metrics { min-height: 184px; }.ph-ledger { min-height: 220px; }
-.ph-bench { min-height: 440px; }.ph-engine { flex: 1; min-height: 185px; }.ph-log { min-height: 118px; }
 /* Etched tracks encode a quantity, never an invented loading indicator. */
 .segment-track { display: block; position: relative; width: 100%; height: 3px; margin-top: 7px; background: #2c2c2c; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='3'%3E%3Crect width='5.5' height='3' rx='1.2'/%3E%3C/svg%3E") 0 0 / 8px 3px repeat-x; }
 .segment-track > span { display: block; height: 100%; background: #b6b6b6; }
@@ -37,11 +35,10 @@
 .ws-dialog-header { display: flex; justify-content: space-between; align-items: center; gap: 7px; }
 .ws-dialog-header h2 { font-size: 18px; font-weight: 540; letter-spacing: -.04em; }
 @media (max-width:1000px) { .panel-head h2 { font-size: 13px; } }
-@media (max-width:920px) { .ws-pair-grid { grid-template-columns: minmax(0,1fr); align-content: start; }.vault-side-grid { border-left: 0; border-top: 1px solid var(--db-line); } }
-@media (min-width:601px) and (max-width:920px) { .vault-side-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: start; } }
+@media (max-width:920px) { .ws-pair-grid { grid-template-columns: minmax(0,1fr); align-content: start; } }
 @media (max-width:600px) {
   .ws-file-layout { margin-top: 0; }.ph-intake > span { min-height: 208px; }
-  .ph-metrics { min-height: 130px; }.ph-bench { min-height: 405px; }.ph-engine { min-height: 144px; }
+  .ph-metrics { min-height: 130px; }
   .panel-bar { min-height: 43px; padding-block: 6px; }
   .segment-track { margin-top: 5px; }
   .ws-button.ws-primary { min-height: 36px; }

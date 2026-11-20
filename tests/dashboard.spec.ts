@@ -34,6 +34,31 @@ test('sample period, chart cursor and accessible detail tables stay in sync with
   await go(page,'Dashboard'); await expect(period).toHaveValue('7');
 });
 
+test('chart inspection and date spacing follow the plot when its width changes', async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 768 }); await page.goto('/dashboard');
+  const plot = page.getByRole('slider'), axis = page.locator('.trend-x');
+  await page.getByLabel('Sample period').selectOption('7'); await expect(axis.locator('.x-tick')).toHaveCount(6);
+  const before = (await plot.boundingBox())!.width;
+  await plot.press('Home'); await plot.press('ArrowRight');
+  await page.getByRole('button', { name: 'Hide sidebar' }).click();
+  await expect(plot).toHaveAttribute('aria-valuenow', '2');
+  const wide = (await plot.boundingBox())!; expect(wide.width).toBeGreaterThan(before + 40);
+  await plot.click({ position: { x: Math.floor(wide.width) - 1, y: 12 } });
+  await expect(plot).toHaveAttribute('aria-valuetext', 'May 15, 92 MB');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect.poll(() => axis.locator('.x-tick').count()).toBeLessThan(6);
+  await plot.click({ position: { x: 1, y: 12 } }); await expect(plot).toHaveAttribute('aria-valuetext', 'May 9, 86 MB');
+  for (let day = 1; day <= 7; day++) {
+    await expect(plot).toHaveAttribute('aria-valuenow', String(day));
+    expect(await axis.evaluate(el => {
+      const {left, right} = el.getBoundingClientRect();
+      const labels = Array.from(el.children, child => child.getBoundingClientRect()).sort((a,b) => a.left - b.left);
+      return labels.every((r,i) => r.left >= left - 1 && r.right <= right + 1 && (!i || r.left >= labels[i-1].right));
+    })).toBe(true);
+    if (day < 7) await plot.press('ArrowRight');
+  }
+});
+
 test('quick actions open the actual tools, with real counts and recent operations in the session pane', async ({ page }) => {
   await page.goto('/');
   const summary = page.getByRole('region', { name: 'Session summary' }); await expect(summary.getByText('No runs yet')).toBeVisible();
@@ -53,23 +78,31 @@ test('quick actions open the actual tools, with real counts and recent operation
 
 test('loading state and offline export share the full-width report panes, without scripts, requests or session data', async ({ page, context }) => {
   // Hold only the lazy page module so the actual in-app fallback is observable.
+  await page.setViewportSize({ width: 1366, height: 768 });
   let release!: () => void; const hold = new Promise<void>(resolve => { release = resolve; });
   await page.route(/\/(?:src\/pages\/Dashboard\.tsx|assets\/Dashboard-[^/]+\.js)(?:\?.*)?$/, async route => { await hold; await route.continue(); });
   await page.goto('/dashboard', { waitUntil: 'commit' });
-  const loading = page.getByRole('status', { name: 'Opening dashboard' }); let tiles: string;
-  try { await expect(loading.locator('.sk-card')).toHaveCount(7); await expect(loading.locator('.overview-side .sk-card')).toHaveCount(3); tiles = await loading.innerHTML(); }
-  finally { release(); }
+  const loading = page.getByRole('status', { name: 'Opening dashboard' }); let tiles: string, reportWidth: number, trendWidth: number;
+  try {
+    await expect(loading.locator('.sk-card')).toHaveCount(7); await expect(loading.locator('.overview-side .sk-card')).toHaveCount(3);
+    tiles = await loading.innerHTML(); reportWidth = (await loading.boundingBox())!.width; trendWidth = (await loading.locator('.ov-trend').boundingBox())!.width;
+    expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBe(768);
+  } finally { release(); }
   await expect(page.getByRole('slider')).toBeVisible(); await page.waitForLoadState('networkidle'); await context.setOffline(true);
+  expect((await page.locator('.ov-trend').boundingBox())!.width).toBeCloseTo(trendWidth, 0);
   const [file] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Download skeleton' }).click()]);
   expect(file.suggestedFilename()).toBe('zeox-overview-skeleton.html'); const stream = await file.createReadStream(); const chunks = [];
   for await (const chunk of stream!) chunks.push(chunk); const html = Buffer.concat(chunks).toString();
   expect(html).not.toMatch(/<script|<link|https?:\/\/|settings\.luau|game-config/); expect(html).not.toMatch(/shimmer|backdrop-filter|gradient\(|max-width:1500px/);
   const standalone = await context.newPage(), requests: string[] = []; standalone.on('request', req => requests.push(req.url()));
+  // The standalone report has no app rail or toolbar. Compare at equal content width.
+  await standalone.setViewportSize({ width: reportWidth, height: 768 });
   await standalone.setContent(html); expect(await standalone.locator('.db-skeleton').innerHTML()).toBe(tiles);
   await expect(standalone.locator('.sk-card')).toHaveCount(7);
   expect(await standalone.locator('.overview-grid').evaluate(el => el.getBoundingClientRect().width)).toBe(await standalone.evaluate(() => document.documentElement.clientWidth));
   const side = standalone.locator('.overview-side'), trend = standalone.locator('.ov-trend');
-  expect((await side.boundingBox())!.x).toBeCloseTo((await trend.boundingBox())!.width, 0);
+  expect((await side.boundingBox())!.x).toBeCloseTo(trendWidth, 0);
+  expect((await trend.boundingBox())!.width).toBeCloseTo(trendWidth, 0);
   await standalone.setViewportSize({ width: 390, height: 844 }); expect((await side.boundingBox())!.x).toBe(0); expect((await side.boundingBox())!.y).toBeGreaterThan((await trend.boundingBox())!.y);
   expect(await standalone.locator('.sk-card').first().evaluate(el => getComputedStyle(el, '::after').content)).toBe('none');
   expect(requests).toEqual([]);

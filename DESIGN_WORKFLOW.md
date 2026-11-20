@@ -82,8 +82,12 @@ Design contract for an external template importer (not shipped in the dashboard 
 ## One surface system across the workspace
 
 `workspace/material.css` owns opaque fills, type colors, hairlines and the
-shared desktop column ratio. `Shell` owns the viewport, rail and one toolbar
-H1. `workspace/panels.css`, `PanelHeader` and `PanelDialog` own shared tool
+two desktop splits. Give Dashboard's plot and Vault's file workbench the
+space left by a bounded right inspector (`--db-work-columns`). Keep the
+wider details column (`--db-columns`) for Obfuscate and Usages. Match each
+route's loading geometry to its own split, including when the rail is hidden.
+`Shell` owns the viewport, rail and one toolbar H1.
+`workspace/panels.css`, `PanelHeader` and `PanelDialog` own shared tool
 controls and modals. Individual routes arrange their own contents; never put
 example analytics on tool pages to fill space.
 

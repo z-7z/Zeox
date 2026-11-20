@@ -13,9 +13,9 @@ The header marks the charts as **sample data**. The 7- and 30-day windows end Ma
 
 ## Layout and surfaces
 
-The desktop reference is a continuous report, not a grid of floating cards. The collapsible 68px rail, top toolbar, full-width content and right inspector use opaque fills and hairline dividers. Source, Vault and Usages use the same desktop columns as Dashboard, with file requirements, cipher status or an operation breakdown in the side pane. At narrow widths the report stacks, file actions stay reachable, and the rail is normally closed. Browser zoom, native scrolling, safe-area insets and forced colors remain supported.
+The desktop reference is a continuous report, not a grid of floating cards. The collapsible 68px rail, top toolbar, full-width content and right inspector use opaque fills and hairline dividers. Dashboard and Vault reserve a bounded 240–368px column for their summaries on desktop. The chart and file workbench take the remaining width, including space freed by hiding the rail. Date labels follow the actual plot width. Obfuscate and Usages retain their wider settings/report columns. On phones the panes stack and the rail is normally closed; in short landscape windows Vault places the file and passphrase steps side by side so the submit action stays in view. Browser zoom, native scrolling, safe-area insets and forced colors remain supported.
 
-`workspace/material.css` owns the matte tokens; `workspace/workspace.css` owns the viewport shell. `workspace/panels.css` supplies tool surfaces and controls; `dashboard/layout.css` is shared by the real report, its lazy fallback and its offline export. Skeletons are static. The motion switch and the OS reduced-motion preference control interface transitions; neither enables lighting or other glass effects.
+`workspace/material.css` owns the matte tokens; `workspace/workspace.css` owns the viewport shell. `workspace/panels.css` supplies tool surfaces and controls. `dashboard/layout.css` is shared by the report, its lazy fallback and its offline export; `vault/layout.css` is shared by the file workbench and its loading state. Skeletons are static. The motion switch and the OS reduced-motion preference control interface transitions; neither enables lighting or other glass effects.
 
 ## Source tools and local state
 

@@ -126,6 +126,24 @@ test('session log is metadata only, clearable and transient', async ({ page }) =
   await expect(page.getByRole('region', { name: 'Session activity' })).toContainText('No files processed yet');
 });
 
+test('the expanded file surface and responsive step layout preserve an in-progress job', async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 768 }); await page.goto('/vault');
+  const browse = page.getByRole('button', { name: 'Browse files' }), width = (await browse.boundingBox())!.width;
+  const [picker] = await Promise.all([page.waitForEvent('filechooser'), browse.click({ position: { x: Math.floor(width) - 6, y: 15 } })]);
+  const name = 'مشهد-workbench.rbxl';
+  await picker.setFiles({ name, mimeType: 'application/octet-stream', buffer: Buffer.from([0,255,13,10]) });
+  await fillSecret(page, true);
+  const replace = page.getByRole('button', { name: 'Replace selected file' });
+  await page.getByRole('button', { name: 'Hide sidebar' }).click(); expect((await replace.boundingBox())!.width).toBeGreaterThan(width + 40);
+  await page.setViewportSize({ width: 844, height: 390 });
+  const file = (await page.locator('.vt-file-step').boundingBox())!, key = (await page.locator('.vt-key-step').boundingBox())!;
+  expect(key.y).toBe(file.y); expect(key.x).toBeGreaterThan(file.x + file.width);
+  await expect(replace).toContainText(name); await expect(page.getByLabel('Passphrase', { exact: true })).toHaveValue(secret);
+  const submit = page.getByRole('button', { name: 'Encrypt file', exact: true });
+  expect(await submit.evaluate(el => el.getBoundingClientRect().bottom)).toBeLessThanOrEqual(390);
+  await submit.click(); await expect(page.getByRole('link', { name: 'Download .zeox' })).toHaveAttribute('download', name + '.zeox');
+});
+
 test('mobile studio fits the viewport, guide restores focus, and motion can be disabled', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/vault');

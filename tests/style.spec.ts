@@ -25,7 +25,20 @@ for (const [width,height] of [[390,844],[1280,720],[1366,768],[1536,864],[1920,1
       expect(geometry.x).toBe(0); expect(geometry.y).toBe(0); expect(geometry.shellWidth).toBe(geometry.client); expect(geometry.scrollWidth).toBe(geometry.client);
       expect(geometry.shellHeight).toBeGreaterThanOrEqual(height); expect(geometry.right).toBe(geometry.client);
       expect(geometry.contentLeft).toBe(geometry.left); expect(geometry.contentRight).toBe(geometry.right);
-      if (width >= 1280) { expect(geometry.left).toBe(68); expect(geometry.shellHeight).toBeLessThanOrEqual(height+1); } else expect(geometry.left).toBe(0);
+      if (width >= 1280) {
+        expect(geometry.left).toBe(68); expect(geometry.shellHeight).toBeLessThanOrEqual(height+1);
+        const available = geometry.right - geometry.left;
+        if (section === 'Dashboard' || section === 'Vault') {
+          const side = (await page.locator(section === 'Dashboard' ? '.overview-side' : '.vault-side-grid').boundingBox())!;
+          const working = (await page.locator(section === 'Dashboard' ? '.trend-plot' : '.vt-drop-button').boundingBox())!;
+          expect(side.width).toBeLessThanOrEqual(Math.min(available * .23, 370));
+          expect(side.x + side.width).toBeCloseTo(geometry.right, 0);
+          expect(working.width).toBeGreaterThan(available * .70); // usable pointer target, not just its containing pane
+        } else {
+          const details = (await page.locator(section === 'Usages' ? '.usage-mix' : '.src-job-side').boundingBox())!;
+          expect(details.width / available).toBeCloseTo(1 / 3.25, 2);
+        }
+      } else expect(geometry.left).toBe(0);
       expect(await matte(page)).toBe(true); await expect(page.locator('section.ws-panel').first()).toHaveCSS('background-color','rgb(13, 13, 14)');
       const nav = await openSidebar(page); await expect(nav.getByRole('link')).toHaveText(['','','','']); await expect(nav.locator('svg')).toHaveCount(4);
       for (const name of sections) await expect(nav.getByRole('link',{name,exact:true})).toHaveAttribute('title',name);
@@ -60,11 +73,14 @@ test('slow tool entries keep the toolbar and show non-interactive matching panel
     let release!: () => void; const gate = new Promise<void>(r => { release = r; });
     await page.route(chunk, async route => { await gate; await route.continue(); });
     await page.goto('/' + label.toLowerCase(), { waitUntil: 'commit' });
+    let dropWidth = 0;
     try {
       const loading = page.getByRole('status', { name: `Opening ${label}` });
       expect(await matte(page)).toBe(true); await expect(loading.locator('.sk-card')).toHaveCount(label === 'Obfuscate' ? 1 : 3); await expect(loading.getByRole('button')).toHaveCount(0);
       await expect(page.getByRole('heading', { level: 1, name: label })).toBeVisible();
+      if (label === 'Vault') dropWidth = (await loading.locator('.vt-drop').boundingBox())!.width;
     } finally { release(); }
     await expect(page.locator('main section.ws-panel')).toHaveCount(label === 'Obfuscate' ? 1 : 3); await page.unroute(chunk);
+    if (label === 'Vault') expect((await page.locator('.vt-drop').boundingBox())!.width).toBeCloseTo(dropWidth, 0);
   }
 });

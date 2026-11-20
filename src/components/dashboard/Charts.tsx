@@ -1,4 +1,4 @@
-import { useState, type KeyboardEvent, type PointerEvent } from 'react';
+import { useLayoutEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 import { ArrowDown, ArrowRight, ArrowUp, ChartNoAxesCombined, Files, List } from 'lucide-react';
 import { dayLabel } from './period';
 import { change, number, type Report } from './sample';
@@ -18,6 +18,28 @@ export function Metrics({ report: { current: c, previous: p, period } }: { repor
   return <section className="ws-panel ov-kpis" aria-label="Period summary"><dl>{items.map(item => <div key={item.label}>
     <dt>{item.label}</dt><dd><strong>{item.value}</strong><span className="ov-comparison"><Delta amount={item.delta} points={item.points} /><small className="kpi-period">vs prior {period} days</small></span></dd>
   </div>)}</dl></section>;
+}
+
+// Use the plot width (not the viewport): hiding the rail also frees space for dates.
+function DateAxis({ rows, selected }: { rows: Report['rows']; selected: number }) {
+  const ref = useRef<HTMLDivElement>(null), [width, setWidth] = useState(0);
+  useLayoutEffect(() => {
+    const el = ref.current!;
+    setWidth(el.clientWidth);
+    const observer = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  const last = rows.length - 1, labelWidth = 54;
+  const count = Math.max(2, Math.min(rows.length, 9, Math.floor(width / 120) + 1));
+  const left = (i: number) => Math.max(0, Math.min(width - labelWidth, i / last * width - labelWidth / 2));
+  const activeLeft = left(selected);
+  return <div ref={ref} className="trend-x" aria-hidden="true">{Array.from({ length: count }, (_, i) => {
+    const day = Math.round(i * last / (count - 1)), x = left(day);
+    // Leave room for the selected-date pill, including when clamped to either end.
+    return Math.abs(x - activeLeft) < labelWidth + 4 ? null :
+      <span key={day} className="x-tick" style={{ left: x, width: labelWidth }}>{dayLabel(rows[day].time)}</span>;
+  })}<b style={{ left: activeLeft, width: labelWidth }}>{dayLabel(rows[selected].time)}</b></div>;
 }
 
 export function VolumeTrend({ report, inspect }: { report: Report; inspect: Inspect }) {
@@ -51,10 +73,7 @@ export function VolumeTrend({ report, inspect }: { report: Report; inspect: Insp
         <i className="trend-cursor" style={{ left: `${x}%` }} /><i className="trend-point" style={{ left: `${x}%`, top: `${y}%` }} />
         <span className="trend-tip" aria-hidden="true" style={{ left: `clamp(0px, calc(${x}% ${x >= 50 ? '- var(--tip-width) -' : '+'} 10px), calc(100% - var(--tip-width)))`, top: `clamp(0px, calc(${y}% - 22px), calc(100% - 51px))` }}>
           <span>{dayLabel(active.time)}</span><small><i />Input <b>{active.mb} MB</b></small></span>
-      </div><div className="trend-x" aria-hidden="true">{Array.from({ length: 5 }, (_, i) => {
-        const at = Math.round(i * last / 4), left = at / last * 100;
-        return <span key={i} className={`x-tick tick-${i}`} style={{ left: `${left}%`, transform: `translateX(-${left}%)`, visibility: Math.abs(left - x) < 13 ? 'hidden' : undefined }}>{dayLabel(rows[at].time)}</span>;
-      })}<b style={{ left: `clamp(0px, calc(${x}% - 27px), calc(100% - 54px))` }}>{dayLabel(active.time)}</b></div></div>
+      </div><DateAxis rows={rows} selected={index} /></div>
     </div>
   </section>;
 }

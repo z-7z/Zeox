@@ -18,8 +18,12 @@ test('touch drawer gives the page its full width in portrait and short landscape
   await open.tap(); await sidebar(page).getByRole('link', { name: 'Vault' }).tap();
   const submit = page.getByRole('button', { name: 'Encrypt file', exact: true }); await expect(submit).toBeVisible();
   expect(await submit.evaluate(el => el.getBoundingClientRect().bottom)).toBeLessThan(568);
-  await page.setViewportSize({ width: 844, height: 390 });
-  await expect(open).toBeVisible(); await expect(sidebar(page)).toHaveCount(0);
+  for (const [width,height] of [[568,320],[844,390]]) {
+    await page.setViewportSize({ width, height });
+    await expect(open).toBeVisible(); await expect(sidebar(page)).toHaveCount(0);
+    expect(await submit.evaluate(el => el.getBoundingClientRect().bottom)).toBeLessThanOrEqual(height);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+  }
   await open.tap(); await expect((await openSidebar(page)).getByRole('link')).toHaveCount(4);
   await sidebar(page).getByRole('link', { name: 'Usages' }).tap(); await expect(page.getByRole('dialog')).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(844);

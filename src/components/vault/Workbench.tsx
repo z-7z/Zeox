@@ -44,25 +44,30 @@ export function Workbench({ s }: { s: VaultSession }) {
       <div className="vt-result-actions">{s.url && <a ref={download} href={s.url} download={result.name} className="ws-button ws-primary"><ArrowDownToLine size={15} />{encrypt ? 'Download .zeox' : 'Download original'}</a>}
         <button type="button" className="ws-button" onClick={() => { s.reset(); requestAnimationFrame(() => browse.current?.focus({ preventScroll: true })); }}><RotateCcw size={13} />Process another file</button></div>
     </div> : <form noValidate onSubmit={e => { e.preventDefault(); void s.run(); }} aria-busy={busy}>
-      <div className="vt-bench-fields"><div className="vt-field-heading"><SectionLabel no="01" title={encrypt ? 'Source file' : 'Encrypted archive'} />
-        {encrypt && <button type="button" className="ws-quiet" onClick={s.sample} disabled={busy}>Use sample<ArrowUpRight size={12} /></button>}</div>
-        <input ref={input} type="file" aria-label={encrypt ? 'Choose a source file' : 'Choose a .zeox archive'} hidden disabled={busy} accept={encrypt ? SOURCE_ACCEPT : '.zeox'} onChange={e => { s.selectFile(Array.from(e.currentTarget.files || [])); e.currentTarget.value = ''; }} />
-        <div className={`vt-drop${dragging ? ' is-dragging' : ''}${s.file ? ' has-file' : ''}${s.problem?.field === 'file' ? ' has-error' : ''}`}
-          onDragEnter={e => { e.preventDefault(); if (!busy && e.dataTransfer.types.includes('Files')) { dragDepth.current++; setDragging(true); } }}
-          onDragLeave={e => { e.preventDefault(); if (--dragDepth.current <= 0) { dragDepth.current = 0; setDragging(false); } }} onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = busy ? 'none' : 'copy'; }} onDrop={onDrop}>
-          <button ref={browse} type="button" className="vt-drop-button" disabled={busy} onClick={() => input.current?.click()} aria-label={s.file ? 'Replace selected file' : 'Browse files'} aria-describedby={s.problem?.field === 'file' ? 'vt-error' : undefined}>
-            <FileArt selected={!!s.file} /><span className="vt-drop-copy">{s.file ? <><strong>{s.file.name}</strong><small>{formatSize(s.file.size)} <b>·</b> {dragging ? 'Release to replace' : 'Click to replace'}</small></>
-              : <><strong>{dragging ? 'Release to select this file' : <>Drop your file or <em>browse files</em></>}</strong><small>{encrypt ? 'Luau, Lua & Roblox files' : 'Zeox archives (.zeox)'}<b>·</b>25 MB max{encrypt ? '' : ' source'}</small></>}</span>
-          </button>
-          {s.file && <button type="button" className="vt-remove" aria-label="Remove selected file" disabled={busy} onClick={s.removeFile}><X size={15} /></button>}
+      <div className="vt-bench-fields">
+        <div className="vt-file-step">
+          <div className="vt-field-heading"><SectionLabel no="01" title={encrypt ? 'Source file' : 'Encrypted archive'} />
+            {encrypt && <button type="button" className="ws-quiet" onClick={s.sample} disabled={busy}>Use sample<ArrowUpRight size={12} /></button>}</div>
+          <input ref={input} type="file" aria-label={encrypt ? 'Choose a source file' : 'Choose a .zeox archive'} hidden disabled={busy} accept={encrypt ? SOURCE_ACCEPT : '.zeox'} onChange={e => { s.selectFile(Array.from(e.currentTarget.files || [])); e.currentTarget.value = ''; }} />
+          <div className={`vt-drop${dragging ? ' is-dragging' : ''}${s.file ? ' has-file' : ''}${s.problem?.field === 'file' ? ' has-error' : ''}`}
+            onDragEnter={e => { e.preventDefault(); if (!busy && e.dataTransfer.types.includes('Files')) { dragDepth.current++; setDragging(true); } }}
+            onDragLeave={e => { e.preventDefault(); if (--dragDepth.current <= 0) { dragDepth.current = 0; setDragging(false); } }} onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = busy ? 'none' : 'copy'; }} onDrop={onDrop}>
+            <button ref={browse} type="button" className="vt-drop-button" disabled={busy} onClick={() => input.current?.click()} aria-label={s.file ? 'Replace selected file' : 'Browse files'} aria-describedby={s.problem?.field === 'file' ? 'vt-error' : undefined}>
+              <FileArt selected={!!s.file} /><span className="vt-drop-copy">{s.file ? <><strong>{s.file.name}</strong><small>{formatSize(s.file.size)} <b>·</b> {dragging ? 'Release to replace' : 'Click to replace'}</small></>
+                : <><strong>{dragging ? 'Release to select this file' : <>Drop your file or <em>browse files</em></>}</strong><small>{encrypt ? 'Luau, Lua & Roblox files' : 'Zeox archives (.zeox)'}<b>·</b>25 MB max{encrypt ? '' : ' source'}</small></>}</span>
+            </button>
+            {s.file && <button type="button" className="vt-remove" aria-label="Remove selected file" disabled={busy} onClick={s.removeFile}><X size={15} /></button>}
+          </div>
         </div>
-        <div className="vt-field-heading vt-pass-heading"><SectionLabel no="02" title="Passphrase" /><span className="vt-key-hint"><KeyRound size={11} />NEVER STORED</span></div>
-        <div className={`vt-pass-grid${encrypt ? '' : ' single'}`}>
-          <label className="vt-input-wrap"><KeyRound size={15} /><span className="sr-only">Passphrase</span><input ref={pass} type={visible ? 'text' : 'password'} placeholder={encrypt ? 'Enter passphrase' : 'Archive passphrase'} value={s.passphrase} onChange={e => s.editPass(e.target.value)} maxLength={1024} autoComplete={encrypt ? 'new-password' : 'current-password'} spellCheck={false} autoCapitalize="none" disabled={busy} aria-describedby="vt-pass-help" aria-invalid={s.problem?.field === 'pass'} /></label>
-          {encrypt && <label className="vt-input-wrap"><CheckCheck size={15} /><span className="sr-only">Confirm passphrase</span><input ref={confirm} type={visible ? 'text' : 'password'} placeholder="Confirm passphrase" value={s.confirmation} onChange={e => s.editConfirm(e.target.value)} maxLength={1024} autoComplete="new-password" spellCheck={false} autoCapitalize="none" disabled={busy} aria-invalid={s.problem?.field === 'confirm'} /></label>}
-          <button type="button" className="vt-reveal" aria-label={visible ? 'Hide passphrase' : 'Show passphrase'} aria-pressed={visible} onClick={() => setVisible(v => !v)} disabled={busy}>{visible ? <EyeOff size={15} /> : <Eye size={15} />}</button>
+        <div className="vt-key-step">
+          <div className="vt-field-heading"><SectionLabel no="02" title="Passphrase" /><span className="vt-key-hint"><KeyRound size={11} />NEVER STORED</span></div>
+          <div className={`vt-pass-grid${encrypt ? '' : ' single'}`}>
+            <label className="vt-input-wrap"><KeyRound size={15} /><span className="sr-only">Passphrase</span><input ref={pass} type={visible ? 'text' : 'password'} placeholder={encrypt ? 'Enter passphrase' : 'Archive passphrase'} value={s.passphrase} onChange={e => s.editPass(e.target.value)} maxLength={1024} autoComplete={encrypt ? 'new-password' : 'current-password'} spellCheck={false} autoCapitalize="none" disabled={busy} aria-describedby="vt-pass-help" aria-invalid={s.problem?.field === 'pass'} /></label>
+            {encrypt && <label className="vt-input-wrap"><CheckCheck size={15} /><span className="sr-only">Confirm passphrase</span><input ref={confirm} type={visible ? 'text' : 'password'} placeholder="Confirm passphrase" value={s.confirmation} onChange={e => s.editConfirm(e.target.value)} maxLength={1024} autoComplete="new-password" spellCheck={false} autoCapitalize="none" disabled={busy} aria-invalid={s.problem?.field === 'confirm'} /></label>}
+            <button type="button" className="vt-reveal" aria-label={visible ? 'Hide passphrase' : 'Show passphrase'} aria-pressed={visible} onClick={() => setVisible(v => !v)} disabled={busy}>{visible ? <EyeOff size={15} /> : <Eye size={15} />}</button>
+          </div>
+          <p className="vt-pass-help" id="vt-pass-help">{encrypt ? 'Use 12 or more characters. Lost passphrases cannot be recovered.' : 'Use the same passphrase that was used to encrypt this archive.'}</p>
         </div>
-        <p className="vt-pass-help" id="vt-pass-help">{encrypt ? 'Use 12 or more characters. Lost passphrases cannot be recovered.' : 'Use the same passphrase that was used to encrypt this archive.'}</p>
         {s.problem && <p className="vt-error" id="vt-error" role="alert"><CircleAlert size={14} />{s.problem.message}</p>}
       </div>
       <div className="vt-action-bar"><span className="vt-local-proof"><ShieldCheck size={14} />{busy ? 'Processing locally' : 'No upload'}</span>

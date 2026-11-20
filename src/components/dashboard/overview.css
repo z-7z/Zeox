@@ -7,7 +7,7 @@
 .ov-comparison { flex-wrap: wrap; gap: 3px 5px; color: var(--db-dim); }.ov-comparison small, .ov-heading small { font-size: 11px; }.ov-delta { font-size: 11px; font-weight: 530; gap: 4px; white-space: nowrap; }
 .ov-delta svg { stroke-width: 2.4 !important; border-radius: 50%; padding: 1px; }.ov-delta.is-up { color: var(--db-up); }.ov-delta.is-down { color: var(--db-down); }.is-up svg { background: #17392e; }.is-down svg { background: #402329; }
 .ov-heading, .exports-count { justify-content: space-between; gap: 8px; }.ov-heading h2 { gap: 7px; font-size: 13px; font-weight: 500; color: #d4d4d6; }.ov-heading svg { color: var(--db-muted); }.ov-heading small { color: var(--db-dim); }
-.trend-head { justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: clamp(20px,3.6vh,44px); }
+.trend-head { justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: clamp(16px,2.4vh,32px); }
 .trend-head strong { font-size: clamp(26px,2.25vw,42px); }.trend-head h2 { margin-top: 5px; }.trend-tools { gap: 8px; }.trend-tools .ws-icon-button { width: 30px; height: 30px; }
 .trend-axes { display: grid; grid-template-columns: auto minmax(0,1fr); gap: 14px; flex: 1; min-height: 145px; }
 .trend-y { display: flex; flex-direction: column; justify-content: space-between; text-align: right; padding-bottom: 34px; margin-block: -6px; font: 11px/12px var(--db-mono); color: var(--db-dim); }
@@ -15,13 +15,13 @@
 .trend-plot > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }.trend-line, .trend-rule { fill: none; vector-effect: non-scaling-stroke; }.trend-line { stroke: #a7a7ab; stroke-width: 1.55; }.trend-rule { stroke: #232325; stroke-width: .7; }
 .trend-cursor, .trend-point, .trend-tip { position: absolute; pointer-events: none; }.trend-cursor { inset-block: 0; border-left: 1px solid #5a5a5d; }.trend-point { width: 7px; height: 7px; border-radius: 50%; background: #d5d5d7; transform: translate(-50%,-50%); }
 .trend-tip { width: var(--tip-width); border: 1px solid #313134; background: #202022; border-radius: 4px; padding: 6px 9px; font-size: 11px; color: #eee; }.trend-tip small { display: flex; align-items: center; gap: 4px; margin-top: 3px; font-size: 10.5px; color: var(--db-muted); }.trend-tip small i { width: 6px; height: 6px; border-radius: 50%; background: #aaa; }.trend-tip b { margin-left: auto; font-weight: 550; color: #e2e2e4; }
-.trend-x { position: relative; height: 34px; font-size: 11px; color: var(--db-muted); }.trend-x > * { position: absolute; top: 11px; white-space: nowrap; }.trend-x b { width: 54px; top: 7px; padding: 3px 0; background: #e6e6e7; color: #151516; text-align: center; border-radius: 12px; font-weight: 540; }
+.trend-x { position: relative; height: 34px; font-size: 11px; color: var(--db-muted); }.trend-x > * { position: absolute; top: 11px; white-space: nowrap; text-align: center; }.trend-x b { top: 7px; padding: 3px 0; background: #e6e6e7; color: #151516; border-radius: 12px; font-weight: 540; }
 .gauge-face { position: relative; width: min(96%,clamp(192px,31vh,430px)); margin: auto; padding-top: 8px; }.gauge-face svg { display: block; width: 100%; height: auto; }.gauge-copy { position: absolute; top: 58%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
 .gauge-copy > span { width: 33px; height: 33px; display: grid; place-items: center; margin: 0 auto 6px; border-radius: 50%; background: #212123; color: #bdbdc0; }.gauge-copy > span svg { width: 16px; height: 16px; }.gauge-copy small { color: var(--db-muted); font-size: 12px; }.gauge-copy strong { display: block; font-weight: 550; font-size: clamp(19px,1.8vw,30px); letter-spacing: -.05em; line-height: 1.2; }
 .ov-key { gap: 8px 16px; flex-wrap: wrap; color: var(--db-muted); font-size: 11px; }.ov-key > span { gap: 5px; }.ov-key i { width: 6px; height: 6px; background: #bcbcbf; border-radius: 50%; }.ov-key span:nth-child(2) i { background: #5b5b60; }.ov-key span:nth-child(3) i { background: #39393d; }
 .ov-gauge .ov-key { justify-content: center; padding: 5px 0 14px; }.gauge-detail.ws-button { width: 100%; min-height: 32px; }
-.exports-count { align-items: baseline; margin: 5px 0 13px; }.exports-count small { color: var(--db-muted); font-size: 11px; }.exports-track { display: flex; gap: 2px; height: 18px; margin-bottom: 9px; }.exports-track i { flex: 1; background: #353538; }.exports-track i.filled { background: #a6a6aa; }
-.ov-session h3 { margin: clamp(16px,2.8vh,38px) 0 5px; font-size: clamp(21px,1.8vw,32px); font-weight: 520; line-height: 1.2; letter-spacing: -.045em; }.ov-session p { max-width: 34ch; color: var(--db-muted); font-size: 14px; line-height: 1.55; }.ov-text-link { display: inline-flex; align-items: center; gap: 5px; min-height: 32px; margin-top: 9px; font-size: 12px; color: #d2d2d5; }.ov-text-link:hover { text-decoration: underline; }
+.exports-count { align-items: baseline; margin: 5px 0 13px; }.exports-count small { color: var(--db-muted); font-size: 11px; }.exports-track { display: flex; gap: min(2px,.5%); height: 18px; margin-bottom: 9px; }.exports-track i { flex: 1; background: #353538; }.exports-track i.filled { background: #a6a6aa; }
+.ov-session h3 { margin: clamp(13px,1.8vh,24px) 0 5px; font-size: clamp(21px,1.8vw,32px); font-weight: 520; line-height: 1.2; letter-spacing: -.045em; }.ov-session p { max-width: 34ch; color: var(--db-muted); font-size: 14px; line-height: 1.55; }.ov-text-link { display: inline-flex; align-items: center; gap: 5px; min-height: 32px; margin-top: 9px; font-size: 12px; color: #d2d2d5; }.ov-text-link:hover { text-decoration: underline; }
 .live-label { display: inline-flex; align-items: center; gap: 5px; }.live-label::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--db-up); }
 .session-recent { margin-top: 8px; }.session-recent li { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; padding-block: 3px; color: #cacacd; font-size: 12px; }.session-recent small { color: var(--db-dim); font-family: var(--db-mono); }
 .ov-stat { margin: 8px 0 clamp(14px,2.3vh,25px); }.ov-stat small { font-size: 12px; color: var(--db-muted); font-weight: 450; letter-spacing: normal; }.ov-mix .ws-quiet { min-height: 24px; }
@@ -31,14 +31,17 @@
 @media (max-width:600px) {
   .ov-kpis dl > div { padding: 2px 10px; }.ov-kpis dt { font-size: 11px; }.ov-kpis strong { font-size: clamp(16px,5vw,24px); margin: 5px 0; white-space: nowrap; }
   .kpi-period { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }.trend-axes { gap: 8px; min-height: 153px; }.trend-head { margin-bottom: 17px; }.trend-tools { gap: 2px; }.trend-tools .ov-comparison { flex-direction: column; align-items: flex-end; }.trend-tools small { font-size: 10px; }.trend-head h2 { font-size: 12px; }
-  .trend-plot { --tip-width: 91px; }.trend-tip { padding: 5px 6px; }.trend-x, .trend-y { font-size: 10px; }.trend-x .tick-1, .trend-x .tick-3 { display: none; }
+  .trend-plot { --tip-width: 91px; }.trend-tip { padding: 5px 6px; }.trend-x, .trend-y { font-size: 10px; }
   .ov-gauge { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(0,1fr); gap: 0 12px; }.ov-gauge .ov-heading { grid-column: 1 / -1; }.gauge-face { grid-row: span 2; width: min(100%,188px); }.gauge-copy > span { width: 23px; height: 23px; margin-bottom: 2px; }.gauge-copy small { font-size: 10px; }.gauge-copy strong { font-size: 18px; }
   .ov-gauge .ov-key { flex-direction: column; align-items: flex-start; align-self: end; gap: 7px; padding-bottom: 10px; }.gauge-detail { align-self: start; }.ov-session h3 { margin-top: 14px; }.action-list > * { min-height: 40px; }
 }
 
-@media (min-width:921px) and (max-height:920px) { .overview-side > * { padding-block: clamp(12px,1.85vh,18px); } }
 @media (min-width:921px) and (max-height:730px) {
   .gauge-face { width: min(92%,clamp(150px,27vh,204px)); padding-top: 3px; }.ov-gauge .ov-key { padding: 3px 0 8px; }
   .action-list > * { padding-block: 6px; }.ov-exports { min-height: 0; }.exports-count { margin-bottom: 8px; }
   .ov-session h3 { margin-top: 12px; }.trend-head { margin-bottom: 18px; }
+}
+
+@media (min-width:540px) and (max-width:1024px) and (max-height:520px) {
+  .ov-kpis strong { margin-block: 3px; }.trend-head { margin-bottom: 8px; }.trend-axes { min-height: 88px; }
 }

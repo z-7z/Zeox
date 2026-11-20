@@ -3,6 +3,9 @@
   --db-canvas: #0b0b0c; --db-card: #0d0d0e; --db-rail: #111112; --db-line: #252526;
   --db-ink: #f2f2f2; --db-muted: #a9a9ad; --db-dim: #99999d; --db-up: #64c5a4; --db-down: #ed949a;
   --db-pad: clamp(20px, 2.1vw, 44px); --db-radius: 5px; --db-columns: minmax(0, 2.25fr) minmax(270px, 1fr);
+  /* The report plot and Vault intake get the remainder after a bounded inspector. */
+  --db-work-columns: minmax(0, 1fr) clamp(240px, 22%, 368px);
+  --db-inspector-pad: clamp(16px, 1.5vw, 28px);
   --db-mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
   color-scheme: dark; color: var(--db-ink); background: var(--db-canvas); font-variant-numeric: tabular-nums;
 }
