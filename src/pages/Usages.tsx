@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { ArrowDownToLine, ArrowUpRight, ChartNoAxesColumnIncreasing, ListFilter, ListOrdered, RotateCcw } from 'lucide-react';
+import { ArrowDownToLine, ArrowUpRight, ChartNoAxesColumnIncreasing, ListOrdered, ListFilter, RotateCcw } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { PageHeading } from '../components/workspace/PageHeading';
+import { PanelHeader } from '../components/workspace/PanelHeader';
 import { operationLabels, useUsage, type Operation } from '../components/workspace/UsageSession';
 import { formatSize } from '../lib/vault/container';
 import { downloadText } from '../lib/download';
@@ -15,28 +15,33 @@ export function Usages() {
     downloadText('zeox-session-usage.csv', 'text/csv;charset=utf-8', ['Time (UTC),Operation,Input bytes,Output bytes', ...rows.map(r => `${new Date(r.time).toISOString()},${operationLabels[r.operation]},${r.input},${r.output}`)].join('\r\n') + '\r\n');
   }
   const stats = [['Completed runs', String(usage.count)], ['Data processed', formatSize(usage.input)], ['Data generated', formatSize(usage.output)]];
-  return <div className="usage-report">
-    <PageHeading title="Usages" eyebrow="Session report" description="Builds and file operations in this tab." actions={<button className="ws-button" onClick={() => setConfirm(true)} disabled={!usage.count}><RotateCcw size={13} />Reset</button>} />
-    {confirm && <div className="usage-confirm" role="group" aria-label="Confirm usage reset"><p>Clear these counters and the usage log? Your files are unaffected.</p>
-      <button className="ws-button" onClick={() => setConfirm(false)}>Cancel</button><button className="ws-button ws-primary" onClick={() => { usage.clear(); setConfirm(false); setFilter('all'); }}>Clear usage</button></div>}
-    <div className="glass-card usage-totals"><div className="usage-totals-head"><span><ChartNoAxesColumnIncreasing size={13} />Session totals</span><small>Since last reset</small></div>
-      <div className="usage-metrics">{stats.map(([name, value]) => <section key={name} aria-label={name}><h2>{name}</h2><strong>{value}</strong></section>)}</div></div>
-    <div className="usage-columns">
-      <section className="glass-card usage-ledger" aria-labelledby="ledger-title"><header><h2 id="ledger-title"><ListOrdered size={16} />Activity ledger</h2>
-        <div className="usage-controls"><label><ListFilter size={13} /><select aria-label="Filter usage log" value={filter} onChange={e => setFilter(e.target.value as typeof filter)}>
-          <option value="all">All tools</option><option value="compact">Obfuscate</option><option value="vault">Vault</option></select></label>
-          <button className="ws-button" onClick={exportRows} disabled={!rows.length}><ArrowDownToLine size={13} />Export log</button></div></header>
-        {rows.length > 0 && <div className="usage-table-wrap"><table><thead><tr><th scope="col">Operation</th><th scope="col">Input</th><th scope="col">Output</th><th scope="col">Local time</th></tr></thead>
-          <tbody>{rows.map(r => <tr key={r.id}><th scope="row">{operationLabels[r.operation]}</th><td>{formatSize(r.input)}</td><td>{formatSize(r.output)}</td><td><time dateTime={new Date(r.time).toISOString()}>{new Date(r.time).toLocaleTimeString('en-GB')}</time></td></tr>)}</tbody></table></div>}
-        {!rows.length && <div className="usage-empty"><strong>{usage.count ? 'No matching operations' : 'No usage yet'}</strong>
-          <p>{usage.count ? 'Select another tool to see its runs.' : 'Completed builds and file operations appear here.'}</p>
-          {!usage.count && <div><Link to="/obfuscate">Build source <ArrowUpRight size={12} /></Link><Link to="/vault">Open Vault <ArrowUpRight size={12} /></Link></div>}</div>}
-        <footer>Last 50 runs · No filenames or contents recorded</footer>
-      </section>
-      <section className="glass-card usage-mix" aria-labelledby="mix-title"><h2 id="mix-title">By operation</h2><p>Share of completed runs</p>
-        <ul>{(Object.keys(operationLabels) as Operation[]).map((op, i) => <li key={op}><div><span>{operationLabels[op]}</span><b>{usage.byTool[op]}</b></div>
-          <span className="usage-meter" aria-hidden="true"><i style={{ width: `${usage.count ? usage.byTool[op] / usage.count * 100 : 0}%`, opacity: 1 - i * .22 }} /></span></li>)}</ul>
-      </section>
-    </div><p className="usage-note">Session totals clear when you refresh this page.</p>
+  return <div className="ws-pair-grid">
+    <section className="glass-card usage-totals" aria-labelledby="totals-title">
+      <PanelHeader id="totals-title" title="Session totals" icon={ChartNoAxesColumnIncreasing} meta="This tab" bar>
+        <button className="ws-button" onClick={() => setConfirm(true)} disabled={!usage.count || confirm}><RotateCcw size={13} />Reset</button>
+      </PanelHeader>
+      <div className="usage-metrics">{stats.map(([name, value]) => <section key={name} aria-label={name}><strong>{value}</strong><h3>{name}</h3></section>)}</div>
+      {confirm ? <div className="usage-confirm" role="group" aria-label="Confirm usage reset"><p>Clear counters and the log? Your files are unaffected.</p>
+        <button className="ws-button" onClick={() => setConfirm(false)}>Cancel</button><button className="ws-button ws-primary" onClick={() => { usage.clear(); setConfirm(false); setFilter('all'); }}>Clear usage</button></div>
+        : <p className="usage-note">Successful operations since the last reset. Totals clear on refresh.</p>}
+    </section>
+    <section className="glass-card panel-inset usage-mix" aria-labelledby="mix-title">
+      <PanelHeader id="mix-title" title="By operation" icon={ListFilter} meta="Completed runs" />
+      <ul>{(Object.keys(operationLabels) as Operation[]).map((op, i) => <li key={op}><div>{operationLabels[op]}<b>{usage.byTool[op]}</b></div>
+        <span className="segment-track" aria-hidden="true"><span style={{ width: `${usage.count ? usage.byTool[op] / usage.count * 100 : 0}%`, opacity: 1 - i * .22 }} /></span></li>)}</ul>
+    </section>
+    <section className="glass-card ws-full-row usage-ledger" aria-labelledby="ledger-title">
+      <PanelHeader id="ledger-title" title="Activity ledger" icon={ListOrdered} bar>
+        <select className="ws-button usage-filter" aria-label="Filter usage log" value={filter} onChange={e => setFilter(e.target.value as typeof filter)}>
+          <option value="all">All tools</option><option value="compact">Obfuscate</option><option value="vault">Vault</option></select>
+        <button className="ws-button" onClick={exportRows} disabled={!rows.length}><ArrowDownToLine size={13} />Export log</button>
+      </PanelHeader>
+      {rows.length > 0 && <div className="usage-table-wrap"><table><thead><tr><th scope="col">Operation</th><th scope="col">Input</th><th scope="col">Output</th><th scope="col">Local time</th></tr></thead>
+        <tbody>{rows.map(r => <tr key={r.id}><th scope="row">{operationLabels[r.operation]}</th><td>{formatSize(r.input)}</td><td>{formatSize(r.output)}</td><td><time dateTime={new Date(r.time).toISOString()}>{new Date(r.time).toLocaleTimeString('en-GB')}</time></td></tr>)}</tbody></table></div>}
+      {!rows.length && <div className="usage-empty"><strong>{usage.count ? 'No matching operations' : 'No usage yet'}</strong>
+        <p>{usage.count ? 'Select another tool to see its runs.' : 'Completed builds and file operations appear here.'}</p>
+        {!usage.count && <div><Link className="ws-button" to="/obfuscate">Build source <ArrowUpRight size={12} /></Link><Link className="ws-button" to="/vault">Open Vault <ArrowUpRight size={12} /></Link></div>}</div>}
+      <footer>Last 50 runs · No filenames or contents recorded</footer>
+    </section>
   </div>;
 }

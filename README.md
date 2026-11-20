@@ -15,7 +15,9 @@ The former `/dashboard/overview` and `/showcase` URLs redirect to Dashboard. The
 
 ## Motion and surfaces
 
-The cards use translucent graphite or pearl fills, curved highlight edges and local artwork. Shared material tokens live in `src/components/workspace/material.css`. Browsers without backdrop filtering get solid fills; reduced-transparency and increased-contrast preferences also remove blur. On phones, the charts stack at full width, with the pie beside its legend. The editor scrolls internally and the file picker leaves room for passphrase inputs. The viewport remains zoomable.
+Dashboard is the visual reference for **all four sections**: the same inset near-black frame, compact title in the toolbar, gutters, 8px graphite panels, fine corner marks and restrained glass. `src/components/workspace/material.css` defines the surfaces; `PanelHeader`, `PanelDialog` and `panels.css` supply shared headings, controls, dialogs and dotted tracks. Individual tools arrange their own content without switching themes or introducing a second page header. Browsers without backdrop filtering get solid fills; reduced-transparency and increased-contrast preferences also remove blur. On phones, the charts stack at full width, with the pie beside its legend. The editor scrolls internally and the file picker leaves room for passphrase inputs. The viewport remains zoomable.
+
+Obfuscate retains syntax colors inside the opaque editor. Usages shows actual session totals and a segmented operation mix above the ledger. Vault uses the same etched linework for its archive mark; the guide lives beside the cipher status.
 
 The Dashboard's ribbon light, etched pie and portraits move **inside** stationary cards. Continuous artwork pauses offscreen. The sidebar motion switch applies throughout the workspace; the OS reduced-motion preference takes precedence.
 
@@ -47,6 +49,6 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. The suite covers rail and drawer navigation, mobile widths, motion/transparency preferences, skeleton and usage CSV downloads, live token styling, editor undo and size limits, source transformations, local usage accounting, and independent decryption / offline round trips for all six Vault file types.
+`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. The suite compares rendered surface and toolbar styles across direct routes, and covers rail and drawer navigation, mobile widths, motion/transparency preferences, skeleton and usage CSV downloads, live token styling, editor undo and size limits, source transformations, local usage accounting, and independent decryption / offline round trips for all six Vault file types.
 
 Deploy `dist/` to a static HTTPS host. `vercel.json` rewrites the application routes to `index.html`, serves static assets unchanged, and sets a same-origin content security policy. The font and imagery are served locally. See `DESIGN_WORKFLOW.md` for the design contract and `public/licenses/` for the font and editor notices.

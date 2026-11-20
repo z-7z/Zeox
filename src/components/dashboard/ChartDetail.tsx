@@ -1,5 +1,4 @@
-import { useLayoutEffect, useRef } from 'react';
-import { X } from 'lucide-react';
+import { PanelDialog } from '../workspace/PanelDialog';
 import { formatSize } from '../../lib/vault/container';
 import { days, formats, hour, hourlyKB, inputs, number, stages, total, type Chart } from './sample';
 
@@ -16,16 +15,10 @@ function detail(chart: Chart) {
 
 /** Read-only chart inspection, not a workspace command menu. */
 export function ChartDetail({ selection, close }: { selection: Selection; close: () => void }) {
-  const ref = useRef<HTMLDialogElement>(null), { title, headings, rows } = detail(selection.chart);
-  useLayoutEffect(() => {
-    const el = ref.current!, opener = document.activeElement, overflow = document.body.style.overflow;
-    el.showModal(); document.body.style.overflow = 'hidden';
-    return () => { el.close(); document.body.style.overflow = overflow; if (opener instanceof HTMLElement && opener.isConnected) opener.focus({ preventScroll: true }); };
-  }, []);
-  return <dialog ref={ref} className="chart-detail" aria-labelledby="chart-detail-title" onCancel={e => { e.preventDefault(); close(); }} onClick={e => { if (e.target === e.currentTarget) close(); }}>
-    <div><header><h2 id="chart-detail-title">{title}</h2><button className="ws-icon-button" onClick={close} aria-label="Close chart details"><X size={17} /></button></header>
-      <p>Sample chart data. Your actual tool activity is in Usages.</p>
-      <table><thead><tr>{headings.map(h => <th key={h} scope="col">{h}</th>)}</tr></thead><tbody>{rows.map(([name, amount, share], i) =>
-        <tr key={name} className={selection.row === i ? 'chosen-row' : undefined}><th scope="row">{name}</th><td>{amount}</td><td>{share}</td></tr>)}</tbody></table>
-    </div></dialog>;
+  const { title, headings, rows } = detail(selection.chart);
+  return <PanelDialog className="chart-detail" title={title} titleId="chart-detail-title" close={close} closeLabel="Close chart details">
+    <p>Sample chart data. Your actual tool activity is in Usages.</p>
+    <table><thead><tr>{headings.map(h => <th key={h} scope="col">{h}</th>)}</tr></thead><tbody>{rows.map(([name, amount, share], i) =>
+      <tr key={name} className={selection.row === i ? 'chosen-row' : undefined}><th scope="row">{name}</th><td>{amount}</td><td>{share}</td></tr>)}</tbody></table>
+  </PanelDialog>;
 }

@@ -3,9 +3,11 @@ import { Check } from 'lucide-react';
 import { Outlet, useLocation, useOutletContext } from 'react-router-dom';
 import { DashboardSkeleton } from '../dashboard/Skeleton';
 import { Shell } from './Shell';
+import { ToolSkeleton } from './ToolSkeleton';
 import { sectionFor } from './sections';
 import { useMotion } from './motion';
 import './material.css';
+import './panels.css';
 import './workspace.css';
 
 interface PageState { notify: (message: string) => void; motion: boolean }
@@ -28,7 +30,7 @@ export function WorkspaceLayout() {
     return () => window.clearTimeout(timer.current);
   }, [active, pathname]);
   return <Shell active={active} motion={motion}>
-    <Suspense fallback={active.id === 'dashboard' ? <DashboardSkeleton /> : <p role="status" className="ws-loading">Opening {active.label}…</p>}>
+    <Suspense fallback={active.id === 'dashboard' ? <DashboardSkeleton /> : <ToolSkeleton section={active} />}>
       <Outlet context={{ notify, motion: motion.enabled } satisfies PageState} />
     </Suspense>
     {notice && <div className="ws-toast" role="status"><Check size={14} />{notice}</div>}

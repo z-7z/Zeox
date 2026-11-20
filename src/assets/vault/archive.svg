@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 112" fill="none" stroke-linejoin="round">
+  <defs>
+    <pattern id="hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(42)"><rect width="4" height="4" fill="#191919"/><path d="M.8 0v4" stroke="#929292" stroke-width="1.2"/></pattern>
+    <pattern id="lines" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="#161616"/><path d="M0 1h4" stroke="#575757"/></pattern>
+    <g id="tray"><path d="m11 34 53-25 53 25-53 26z" fill="url(#hatch)" stroke="#949494"/><path d="m11 34 53 26v7L11 41z" fill="url(#lines)" stroke="#737373"/><path d="m64 60 53-26v7L64 67z" fill="#282828" stroke="#777"/></g>
+  </defs>
+  <use href="#tray" y="36"/><use href="#tray" y="18"/><use href="#tray"/>
+  <path d="m49 33 15-7 15 7-15 7z" fill="#161616" stroke="#c1c1c1"/>
+  <path d="m61 33 3-1.5 3 1.5-3 1.5z" fill="#e2e2e2"/>
+</svg>
