@@ -16,7 +16,7 @@ function Circuit({ active }: { active: boolean }) {
 }
 export function EnginePanel({ session, openGuide }: { session: VaultSession; openGuide: () => void }) {
   const { phase, supported } = session;
-  return <section className="glass-card panel-inset vt-engine" aria-label="Cipher engine"><PanelHeader title="Cipher engine" icon={CircuitBoard}>
+  return <section className="ws-panel panel-inset vt-engine" aria-label="Cipher engine"><PanelHeader title="Cipher engine" icon={CircuitBoard}>
     <span className={`vt-status${phase ? ' working' : !supported ? ' unavailable' : ''}`}><i />{!supported ? 'Unavailable' : phase ? 'Working' : 'Ready'}</span>
     <button className="ws-button" onClick={openGuide} aria-label="Open studio guide" aria-haspopup="dialog"><BookOpen size={13} />Guide</button></PanelHeader>
     <Circuit active={!!phase} />
@@ -30,7 +30,7 @@ export function EventRow({ event }: { event: SessionEvent }) {
   return <li className="vt-event"><span className="vt-event-icon"><Icon size={15} /></span><span className="vt-event-body"><strong>{event.name}</strong><small>{sealed ? 'Encrypted' : 'Restored'} <b>·</b> {formatSize(event.size)}</small></span><time dateTime={new Date(event.time).toISOString()}>{time(event.time)}</time></li>;
 }
 export function SessionPanel({ events, openLog }: { events: SessionEvent[]; openLog: () => void }) {
-  return <section className="glass-card panel-inset vt-log-panel" aria-label="Session activity"><PanelHeader title="Session activity" icon={History}><button onClick={openLog} className="ws-quiet" aria-haspopup="dialog" aria-label="Open session log" title="Open session log">Log<ArrowUpRight size={13} /></button></PanelHeader>
+  return <section className="ws-panel panel-inset vt-log-panel" aria-label="Session activity"><PanelHeader title="Session activity" icon={History}><button onClick={openLog} className="ws-quiet" aria-haspopup="dialog" aria-label="Open session log" title="Open session log">Log<ArrowUpRight size={13} /></button></PanelHeader>
     {events.length ? <ul className="vt-latest">{events.slice(0, 2).map(e => <EventRow event={e} key={e.id} />)}</ul> : <div className="vt-log-empty"><span><ArrowDownLeft size={18} /></span><div><strong>No files processed yet</strong><p>Completed operations will appear here.</p></div></div>}
   </section>;
 }

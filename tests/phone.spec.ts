@@ -7,12 +7,10 @@ test('touch drawer gives the page its full width in portrait and short landscape
   await page.setViewportSize({ width: 320, height: 568 }); await page.goto('/');
   const open = page.getByRole('button', { name: 'Open sidebar' });
   await expect(open).toHaveAttribute('aria-expanded', 'false'); await expect(sidebar(page)).toHaveCount(0);
-  // The funnel and pie stack at full width, with room for the legend next to the pie.
-  const funnel = page.getByRole('region', { name: 'Export rate' }), mix = page.getByRole('region', { name: 'Total files' });
-  const [a, b, pie, legend] = await Promise.all([funnel.boundingBox(), mix.boundingBox(), mix.locator('.hatched-pie').boundingBox(), mix.locator('ul').boundingBox()]);
-  expect(a!.width).toBeGreaterThanOrEqual(290); expect(b!.width).toBe(a!.width); expect(b!.x).toBe(a!.x);
-  expect(b!.y).toBeGreaterThan(a!.y + a!.height); expect(b!.y + b!.height).toBeLessThan(568);
-  expect(legend!.x).toBeGreaterThanOrEqual(pie!.x + pie!.width); expect(legend!.y + legend!.height).toBeLessThan(b!.y + b!.height);
+  // The narrow report stacks: the trend and gauge each get the entire canvas.
+  const trend = page.getByRole('region', { name: 'Daily processed volume' }), gauge = page.getByRole('region', { name: 'File distribution' });
+  const [a,b] = await Promise.all([trend.boundingBox(),gauge.boundingBox()]); expect(a!.x).toBe(0); expect(a!.width).toBe(320); expect(b!.width).toBe(a!.width);
+  expect(b!.y).toBeGreaterThanOrEqual(a!.y + a!.height); await expect(page.getByLabel('Sample period')).toBeInViewport();
   await open.tap(); await sidebar(page).getByRole('link', { name: 'Obfuscate' }).tap();
   await expect(page.getByRole('button', { name: 'Choose file' })).toBeVisible();
   await expect(page.getByRole('textbox')).toHaveCount(0);

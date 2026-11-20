@@ -1,8 +1,7 @@
 /* Shared working surfaces. The same rules load on every direct route;
    no tool depends on visiting the Dashboard to pick up its typography. */
-.ws-pair-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--db-gap); }
-.vault-side-grid { display: flex; flex-direction: column; gap: var(--db-gap); min-width: 0; }
-.ws-full-row { grid-column: 1 / -1; }
+.ws-pair-grid { display: grid; grid-template-columns: var(--db-columns); flex: 1; }
+.vault-side-grid { display: flex; flex-direction: column; min-width: 0; border-left: 1px solid var(--db-line); }
 .panel-inset { padding: var(--db-pad); }
 .panel-head, .panel-head h2, .panel-actions { display: flex; align-items: center; }
 .panel-head { justify-content: space-between; min-height: 18px; gap: 5px; }
@@ -16,8 +15,8 @@
 .tool-placeholder { overflow: hidden; display: flex; flex-direction: column; gap: var(--db-pad); }
 .tool-placeholder > i { height: 10px; width: min(95px,40%); }
 .tool-placeholder > span { flex: 1; width: 76%; min-height: 8px; opacity: .65; }
-/* Shared by the lazy upload route and its single, centered fallback. */
-.ws-file-layout { width: min(100%, 912px); margin: clamp(8px, 3.8vh, 42px) auto 0; }
+/* Full-width upload workspace and its lazy-entry fallback. */
+.ws-file-layout { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 .ph-intake { overflow: hidden; display: grid; gap: 16px; padding: clamp(16px, 2.6vw, 38px); }
 .ph-intake i { width: 86px; height: 12px; }.ph-intake b { width: min(220px,70%); height: 34px; }.ph-intake > span { margin-block: 16px; min-height: 262px; opacity: .65; }
 .ph-metrics { min-height: 184px; }.ph-ledger { min-height: 220px; }
@@ -26,19 +25,19 @@
 .segment-track { display: block; position: relative; width: 100%; height: 3px; margin-top: 7px; background: #2c2c2c; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='3'%3E%3Crect width='5.5' height='3' rx='1.2'/%3E%3C/svg%3E") 0 0 / 8px 3px repeat-x; }
 .segment-track > span { display: block; height: 100%; background: #b6b6b6; }
 .ws-button, .ws-quiet { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 28px; padding: 5px 9px; border-radius: 5px; font-family: inherit; font-size: 11.5px; font-weight: 500; line-height: 1.35; white-space: nowrap; }
-.ws-button { background: #1e1e1e; border: 1px solid #373737; color: #e5e5e5; box-shadow: inset 0 1px 0 #ffffff09; }
+.ws-button { background: #1e1e1e; border: 1px solid #373737; color: #e5e5e5;  }
 .ws-button:hover:not(:disabled) { background: #282828; border-color: #515151; }
 .ws-button.ws-primary { min-height: 34px; padding-inline: 13px; background: #f0f0f0; color: #151515; border-color: #fff; }
 .ws-button.ws-primary:hover:not(:disabled) { background: white; }
 .ws-quiet { color: #b7b7b7; padding-inline: 5px; }
 .ws-quiet:hover:not(:disabled) { color: white; background: #222; }
-.ws-dialog { position: fixed; inset: 0; margin: auto; width: min(var(--dialog-width,410px),calc(100% - 24px)); max-height: calc(100dvh - 24px); overflow: auto; scrollbar-width: thin; padding: 0; border: 1px solid #404040; border-radius: 12px; color: #ededed; background: #151515; box-shadow: 0 18px 80px #0008; }
+.ws-dialog { position: fixed; inset: 0; margin: auto; width: min(var(--dialog-width,410px),calc(100% - 24px)); max-height: calc(100dvh - 24px); overflow: auto; scrollbar-width: thin; padding: 0; border: 1px solid #404040; border-radius: 6px; color: #ededed; background: #151515;  }
 .ws-dialog::backdrop { background: #000a; }
 .ws-dialog-content { padding: 16px; }
 .ws-dialog-header { display: flex; justify-content: space-between; align-items: center; gap: 7px; }
 .ws-dialog-header h2 { font-size: 18px; font-weight: 540; letter-spacing: -.04em; }
 @media (max-width:1000px) { .panel-head h2 { font-size: 13px; } }
-@media (max-width:920px) { .ws-pair-grid { grid-template-columns: minmax(0,1fr); } }
+@media (max-width:920px) { .ws-pair-grid { grid-template-columns: minmax(0,1fr); align-content: start; }.vault-side-grid { border-left: 0; border-top: 1px solid var(--db-line); } }
 @media (min-width:601px) and (max-width:920px) { .vault-side-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: start; } }
 @media (max-width:600px) {
   .ws-file-layout { margin-top: 0; }.ph-intake > span { min-height: 208px; }
@@ -51,3 +50,13 @@
 @media (min-width:540px) and (max-width:1024px) and (max-height:520px) {
   .ws-file-layout { margin-top: 0; }.ph-intake { gap: 9px; padding: 14px 16px; }.ph-intake > span { margin-block: 0; min-height: 88px; }
 }
+
+/* Full-width report panes. Also position the slots before the route CSS arrives. */
+@media (min-width:921px) {
+  .usage-page { grid-template-areas: 'totals mix' 'ledger mix'; grid-template-rows: auto 1fr; }
+  .usage-totals, .usage-page .ph-metrics:first-child { grid-area: totals; }.usage-mix, .usage-page .ph-metrics:nth-child(2) { grid-area: mix; border-left: 1px solid var(--db-line); }
+  .usage-ledger, .ph-ledger { grid-area: ledger; border-top: 1px solid var(--db-line); }
+  .ph-upload { flex: 1; display: grid; grid-template-columns: var(--db-columns); }.ph-controls { border-left: 1px solid var(--db-line); padding: var(--db-pad); }
+  .ph-controls i { width: 84px; height: 12px; }.ph-controls span { margin-top: 16px; height: 104px; }.ph-intake { grid-template-rows: auto auto 1fr; }
+}
+@media (max-width:920px) { .usage-page > * + * { border-top: 1px solid var(--db-line); } }

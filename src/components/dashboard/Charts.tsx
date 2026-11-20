@@ -1,64 +1,86 @@
-import { useId, useState } from 'react';
-import { compact, formats, number, period, stages, total, type Inspect } from './sample';
-import { StatusCard } from './StatusCard';
-import { FunnelRibbon } from './FunnelRibbon';
+import { useState, type KeyboardEvent, type PointerEvent } from 'react';
+import { ArrowDown, ArrowRight, ArrowUp, ChartNoAxesCombined, Files, List } from 'lucide-react';
+import { dayLabel } from './period';
+import { change, number, type Report } from './sample';
+import type { Inspect } from './ChartDetail';
 
-export function FunnelCard({ inspect }: { inspect: Inspect }) {
-  const shares = stages.map(s => s.value / stages[0].value);
-  return <StatusCard label="Export rate" value={`${(shares[3] * 100).toFixed(1)}%`} change={0.4} period={period}
-    description={<>{compact(stages[3].value)} saves from {compact(stages[0].value)} opens<span className="flow-period"><span className="copy-dot">·</span>{period} days</span></>}>
-    <div className="funnel-plot" role="group" aria-label="Sample export funnel">
-      <FunnelRibbon shares={shares} />
-      <div className="funnel-stages">{stages.map((stage, i) => <button type="button" key={stage.name} className="funnel-stage"
-        onClick={() => inspect('flow', i)} aria-label={`${stage.name}: ${number(stage.value)}, ${Math.round(shares[i] * 100)}% of opens. Inspect stage.`}>
-        <span className="stage-total">{compact(stage.value)}</span>
-        <span className="stage-rate">{Math.round(shares[i] * 100)}%</span>
-        <span className="stage-name">{stage.name}</span>
-      </button>)}</div>
-    </div>
-  </StatusCard>;
+function Delta({ amount, points = false }: { amount: number; points?: boolean }) {
+  const positive = amount >= 0, Icon = positive ? ArrowUp : ArrowDown;
+  return <span className={`ov-delta ${positive ? 'is-up' : 'is-down'}`}><Icon size={11} aria-hidden="true" />{positive ? '+' : '−'}{Math.abs(amount).toFixed(1)}{points ? ' pp' : '%'}</span>;
+}
+export function Metrics({ report: { current: c, previous: p, period } }: { report: Report }) {
+  const rate = c.saved / c.files * 100, average = c.mb / c.files;
+  const items = [
+    { label: 'Export rate', value: `${rate.toFixed(1)}%`, delta: rate - p.saved / p.files * 100, points: true },
+    { label: 'Files processed', value: number(c.files), delta: change(c.files, p.files) },
+    { label: 'Avg. input size', value: `${average.toFixed(2)} MB`, delta: change(average, p.mb / p.files) },
+  ];
+  return <section className="ws-panel ov-kpis" aria-label="Period summary"><dl>{items.map(item => <div key={item.label}>
+    <dt>{item.label}</dt><dd><strong>{item.value}</strong><span className="ov-comparison"><Delta amount={item.delta} points={item.points} /><small className="kpi-period">vs prior {period} days</small></span></dd>
+  </div>)}</dl></section>;
 }
 
-const swatches = ['#dedede', '#aaaaaa', '#838383', '#606060', '#454545'];
-const inks = ['#a0a0a0', '#8a8a8a', '#737373', '#626262', '#515151'];
-const angles = [42, 90, 0, -42, 0];
-const rad = (deg: number) => deg * Math.PI / 180;
-function point(angle: number) { return `${132 + 124 * Math.cos(rad(angle))},${132 + 124 * Math.sin(rad(angle))}`; }
-
-export function FormatsCard({ inspect }: { inspect: Inspect }) {
-  const prefix = useId();
-  const [active, setActive] = useState<number | null>(null);
-  const files = total(formats.map(s => s.value));
-  let start = -180;
-  return <StatusCard label="Total files" value={number(files)} change={0.5} period={period}
-    description={`File distribution in the last ${period} days`}>
-    <div className="mix-body" onMouseLeave={() => setActive(null)}>
-      <svg className="hatched-pie" viewBox="0 0 264 264" aria-hidden="true">
-        <defs>{inks.map((ink, i) => <pattern key={i} id={`${prefix}-h${i}`} width={i === 0 ? 4 : 4.8} height={i === 0 ? 4 : 4.8} patternUnits="userSpaceOnUse" patternTransform={`rotate(${angles[i]})`}>
-          <rect width="5" height="5" fill="#171717" />
-          {i < 4 ? <path d="M.8 0v5" stroke={ink} strokeWidth={i === 0 ? 1.35 : 1.5} /> : <circle cx="2" cy="2" r="1" fill={ink} />}
-        </pattern>)}</defs>
-        <g className="pie-drift"><g className="pie-plate">{formats.map(({ name, value }, i) => {
-          const end = start + value / files * 360;
-          const mid = rad((start + end) / 2);
-          const d = `M132,132 L${point(start)} A124,124 0 ${end - start > 180 ? 1 : 0} 1 ${point(end)} Z`;
-          start = end;
-          const offset = active === i ? 4 : 1.3;
-          return <path key={name} d={d} fill={`url(#${prefix}-h${i})`} stroke="var(--db-card)" strokeWidth="2.3" strokeLinejoin="round"
-            className={active !== null && active !== i ? 'pie-wedge is-muted' : 'pie-wedge'}
-            style={{ transform: `translate(${Math.cos(mid) * offset}px, ${Math.sin(mid) * offset}px)` }}
-            onMouseEnter={() => setActive(i)} onClick={() => inspect('formats', i)} />;
-        })}</g></g>
-        <g className="pie-orbit" fill="none" aria-hidden="true" pointerEvents="none"><circle cx="132" cy="132" r="130" stroke="#7c7c7c" strokeWidth=".8" strokeDasharray="62 755" />
-          <circle cx="132" cy="132" r="130" stroke="#555" strokeWidth=".8" strokeDasharray="24 793" strokeDashoffset="-340" /></g>
-      </svg>
-      <ul className="mix-legend">{formats.map((s, i) => <li key={s.name}>
-        <button type="button" className={`legend-entry${active === i ? ' is-highlighted' : ''}`} onMouseEnter={() => setActive(i)}
-          onFocus={() => setActive(i)} onBlur={() => setActive(null)} onClick={() => inspect('formats', i)}>
-          <i style={{ backgroundColor: swatches[i] }} /><span>{s.name}</span>
-          <span className="legend-percent">{(s.value / files * 100).toFixed(1)}%</span><span className="legend-count">{number(s.value)}</span>
-        </button>
-      </li>)}</ul>
+export function VolumeTrend({ report, inspect }: { report: Report; inspect: Inspect }) {
+  const { rows } = report, last = rows.length - 1, latest = rows[last];
+  const [index, setIndex] = useState(last);
+  const active = rows[index], x = index / last * 100, ceiling = Math.ceil(Math.max(...rows.map(d => d.mb)) / 20) * 20;
+  const y = (1 - active.mb / ceiling) * 100;
+  const pts = rows.map((r, i) => ({ x: i / last * 1000, y: (1 - r.mb / ceiling) * 200 }));
+  const line = pts.reduce((path, p, i) => {
+    if (!i) return `M0 ${p.y}`;
+    const prev = pts[i - 1], mid = (prev.x + p.x) / 2;
+    return `${path} C${mid} ${prev.y} ${mid} ${p.y} ${p.x} ${p.y}`;
+  }, '');
+  function pick(e: PointerEvent<HTMLDivElement>) {
+    const box = e.currentTarget.getBoundingClientRect(); setIndex(Math.max(0, Math.min(last, Math.round((e.clientX - box.left) / box.width * last))));
+  }
+  function key(e: KeyboardEvent<HTMLDivElement>) {
+    const next: Record<string, number> = { ArrowLeft: index - 1, ArrowDown: index - 1, ArrowRight: index + 1, ArrowUp: index + 1, Home: 0, End: last };
+    if (e.key in next) { e.preventDefault(); setIndex(Math.max(0, Math.min(last, next[e.key]))); }
+  }
+  return <section className="ws-panel ov-trend" aria-labelledby="volume-title">
+    <header className="trend-head"><div><strong>{latest.mb} <span>MB</span></strong><h2 id="volume-title">Daily processed volume</h2></div>
+      <div className="trend-tools"><span className="ov-comparison"><Delta amount={change(latest.mb, rows[0].mb)} /><small>over {report.period} days</small></span>
+        <button type="button" className="ws-icon-button" aria-label="View daily volume table" title="View daily volume table" onClick={() => inspect('volume', index)}><List size={16} /></button></div>
+    </header>
+    <div className="trend-axes"><div className="trend-y" aria-hidden="true">{[5,4,3,2,1,0].map(n => <span key={n}>{n * ceiling / 5}</span>)}</div>
+      <div className="trend-graph"><div className="trend-plot" role="slider" tabIndex={0} aria-label="Inspect daily processed volume" aria-valuemin={1} aria-valuemax={rows.length} aria-valuenow={index + 1} aria-valuetext={`${dayLabel(active.time)}, ${active.mb} MB`}
+        onPointerDown={pick} onPointerMove={e => { if (e.pointerType === 'mouse' || e.buttons) pick(e); }} onKeyDown={key}>
+        <svg viewBox="0 0 1000 200" preserveAspectRatio="none" aria-hidden="true"><path d={`${line} V200 H0Z`} fill="#171719" />
+          {[0,40,80,120,160,200].map(h => <path key={h} d={`M0 ${h}H1000`} className="trend-rule" />)}<path d={line} className="trend-line" /></svg>
+        <i className="trend-cursor" style={{ left: `${x}%` }} /><i className="trend-point" style={{ left: `${x}%`, top: `${y}%` }} />
+        <span className="trend-tip" aria-hidden="true" style={{ left: `clamp(0px, calc(${x}% ${x >= 50 ? '- var(--tip-width) -' : '+'} 10px), calc(100% - var(--tip-width)))`, top: `clamp(0px, calc(${y}% - 22px), calc(100% - 51px))` }}>
+          <span>{dayLabel(active.time)}</span><small><i />Input <b>{active.mb} MB</b></small></span>
+      </div><div className="trend-x" aria-hidden="true">{Array.from({ length: 5 }, (_, i) => {
+        const at = Math.round(i * last / 4), left = at / last * 100;
+        return <span key={i} className={`x-tick tick-${i}`} style={{ left: `${left}%`, transform: `translateX(-${left}%)`, visibility: Math.abs(left - x) < 13 ? 'hidden' : undefined }}>{dayLabel(rows[at].time)}</span>;
+      })}<b style={{ left: `clamp(0px, calc(${x}% - 27px), calc(100% - 54px))` }}>{dayLabel(active.time)}</b></div></div>
     </div>
-  </StatusCard>;
+  </section>;
+}
+
+export function FileGauge({ report, inspect }: { report: Report; inspect: Inspect }) {
+  const scripts = report.formats[0].value + report.formats[1].value, count = report.current.files, ticks = 56;
+  return <section className="ws-panel ov-gauge" aria-label="File distribution"><header className="ov-heading"><h2><Files size={15} />File distribution</h2><small>Sample</small></header>
+    <div className="gauge-face"><svg viewBox="0 0 240 204" role="img" aria-label={`${number(scripts)} script files and ${number(count - scripts)} other files`}>
+      {Array.from({ length: ticks }, (_, i) => <line key={i} x1="120" y1="12" x2="120" y2="34" transform={`rotate(${-132 + i * 264 / (ticks - 1)} 120 116)`} stroke={i < Math.round(scripts / count * ticks) ? '#bcbcbf' : '#39393b'} strokeWidth="3.6" />)}
+    </svg><div className="gauge-copy"><span><Files size={16} /></span><small>Total files</small><strong>{number(count)}</strong></div></div>
+    <div className="ov-key"><span><i />Scripts</span><span><i />Other formats</span></div>
+    <button type="button" className="ws-button gauge-detail" onClick={() => inspect('formats')}>View breakdown <ArrowRight size={13} /></button>
+  </section>;
+}
+export function ExportsMeter({ report: { current } }: { report: Report }) {
+  const pct = current.saved / current.files * 100;
+  return <section className="ws-panel ov-exports" aria-label="Saved outputs"><h2>Saved outputs</h2><div className="exports-count"><strong>{number(current.saved)}</strong><small>{pct.toFixed(1)}% of files</small></div>
+    <div className="exports-track" aria-hidden="true">{Array.from({ length: 80 }, (_, i) => <i key={i} className={i < Math.round(pct * .8) ? 'filled' : undefined} />)}</div>
+    <div className="ov-key"><span><i />Saved</span><span><i />Not saved</span></div>
+  </section>;
+}
+
+export function OperationMix({ report, inspect }: { report: Report; inspect: Inspect }) {
+  return <section className="ws-panel ov-mix" aria-label="Operation mix"><header className="ov-heading"><h2><ChartNoAxesCombined size={15} />Operation mix</h2><button className="ws-quiet" onClick={() => inspect('operations')}>Details <ArrowRight size={12} /></button></header>
+    <strong className="ov-stat">{number(report.current.files)} <small>operations</small></strong>
+    <div className="mix-bands">{report.operations.map(({ label, value }) => <div key={label} style={{ flexGrow: value }}><span>{(value / report.current.files * 100).toFixed(1)}%</span><i /></div>)}</div>
+    <div className="ov-key">{report.operations.map(op => <span key={op.label}><i />{op.label}</span>)}</div>
+  </section>;
 }

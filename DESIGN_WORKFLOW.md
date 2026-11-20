@@ -2,7 +2,7 @@
 
 This document defines the reusable workflow for any AI (or human) changing
 Zeox interfaces. It combines the Skeleton Download System, vendored AI Design
-Skills, and the glass card design system.
+Skills, and the matte workspace design system.
 
 ## Workflow (run in order, every time)
 
@@ -10,7 +10,7 @@ Skills, and the glass card design system.
    the component inventory before touching anything. Preserve unrelated
    working code.
 2. **Understand the existing Zeox design system.** The active workspace shares
-   its material and navigation in `src/components/workspace/` and its
+   its opaque surfaces and navigation in `src/components/workspace/` and its
    dashboard/skeleton grid in `src/components/dashboard/layout.css`.
 3. **Read relevant AI Design Skills.** Vendored skills live in `skills/`.
    Read `skills/landing-page-design/SKILL.md` before any landing page, page
@@ -23,7 +23,7 @@ Skills, and the glass card design system.
 5. **Select suitable design patterns and components.** Match patterns to the
    actual purpose of each page. Do not reuse one layout everywhere.
 6. **Create the interface using the existing architecture.** Reuse `Shell`,
-   `PanelHeader`, `PanelDialog`, the `.glass-card` material, session providers
+   `PanelHeader`, `PanelDialog`, the `.ws-panel` surface, session providers
    and the four routed sections.
 7. **Review** visual quality, responsiveness (390px check), accessibility
    (focus rings, semantic HTML, alt text), and consistency.
@@ -39,22 +39,23 @@ current-page indication, Escape/backdrop dismissal and keyboard focus return.
 Never add a second top strip, command search, simulated accounts or sales.
 `/dashboard/overview` and `/showcase` are compatibility redirects.
 
-Keep the reference Dashboard composition: **two large charts above four small
-cards**, in order: layered funnel, hatched pie with legend, dotted tracks,
-three portraits, 7×24 heatmap, quick-action rows. Reuse the drawings in
-`src/components/dashboard/`; change the material on the cards, not the art.
-The charts are visibly marked as samples; the portrait card shows actual
-in-tab runs, and quick actions lead to real tools. The loading state and
-offline HTML export use the same grid and static six-slot template.
+Follow the attached desktop report reference, not its surrounding image matte:
+**edge-to-edge viewport, icons-only left rail, three KPIs, wide line chart,
+segmented radial summary at right, two compact summaries below**. Use Zeox
+file and session data, not imitation sales figures. Clearly distinguish the
+dated sample report from live tab-local runs. Match the static skeleton and
+script-free export to these panes. Do not restore the old ribbon/pie tiles.
 
-Keep the inset desktop frame and one left rail. On a phone, stack the
-charts full width, keep pie and legend side by side, and keep the active page title in
-the compact toolbar on every route. Do not substitute tool posters or a top tab strip.
-Obfuscate is file-only: one script intake, optional settings, then a downloadable file;
-Vault is a file and passphrase workbench; Usages is an exportable report.
-Keep build/encrypt within the first phone screen without disabling zoom.
-Animate **artwork inside cards**, not metrics, text, hit targets or bounds.
-Honor both the sidebar motion switch and `prefers-reduced-motion`.
+All four routes use the viewport width and at least its height, with natural
+scrolling when needed. No inset mock window, desktop max-width, backdrop
+filters, shiny borders, glows or shimmer. Use solid graphite active states
+and fine rules between panes. Give each nav icon an accessible name and a
+native hover title. Keep the toolbar usable when the rail is hidden.
+
+On narrow screens, stack the panes without horizontal scrolling. Obfuscate
+is file-only; Vault is a file and passphrase workbench; Usages is an
+exportable report. Keep build/encrypt within the first portrait phone screen
+without disabling zoom. Respect the motion switch and reduced-motion setting.
 
 ## Skeleton Download System
 
@@ -78,23 +79,18 @@ Design contract for an external template importer (not shipped in the dashboard 
   package installation. Avoid unnecessary installations.
 - `cleanup()` discards the temp workspace and never touches imported files.
 
-## One Dashboard style across every section
+## One surface system across the workspace
 
-Treat the approved Dashboard as the baseline, not another page to restyle.
-`workspace/material.css` owns graphite fills, 8px corners, hairlines, corner
-marks, density and reduced-transparency/contrast fallbacks. `Shell` owns the
-frame, gutters and one toolbar H1. `workspace/panels.css`, `PanelHeader` and
-`PanelDialog` own widget type, toolbars, buttons, segmented tracks and modal
-presentation. Import them through the shared layout, not a lazy page.
+`workspace/material.css` owns opaque fills, type colors, hairlines and the
+shared desktop column ratio. `Shell` owns the viewport, rail and one toolbar
+H1. `workspace/panels.css`, `PanelHeader` and `PanelDialog` own shared tool
+controls and modals. Individual routes arrange their own contents; never put
+example analytics on tool pages to fill space.
 
-Use a single focused upload panel for Obfuscate. Pair report or Vault panels
-on desktop and stack them when narrow. Different data and workflows are
-appropriate; separate themes, pearl summary strips, oversized page intros,
-and local overrides of the card material are not. Keep file names legible,
-password surfaces opaque, session data real and controls native. Do not copy
-sample charts onto tool pages to fill empty space.
-Inspect at 320px, 390px, a short landscape height and desktop; check focus,
-touch targets, safe-area padding, contrast, scroll and visible text.
+Check phone portrait and landscape as well as laptop, 1920px and wider PC
+windows. Verify no desktop gutters around the app or horizontal overflow,
+with the rail open and closed. Test real uploads, downloads, chart controls,
+keyboard focus, readable empty states and direct-entry loading.
 
 ## Icons
 

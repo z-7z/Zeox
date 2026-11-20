@@ -19,13 +19,14 @@ for (const width of [320, 390, 1440]) {
     await expect(page.locator('body')).not.toContainText(/campaign|purchase rate|orders|sales|workspace commands/i);
     for (const section of ['Dashboard', 'Obfuscate', 'Usages', 'Vault']) {
       const nav = await openSidebar(page), links = nav.getByRole('link');
-      await expect(links).toHaveText(['Dashboard', 'Obfuscate', 'Usages', 'Vault']);
+      expect(await links.evaluateAll(els => els.map(el => el.getAttribute('aria-label')))).toEqual(['Dashboard', 'Obfuscate', 'Usages', 'Vault']);
+      await expect(links).toHaveText(['','','','']);
       const boxes = await links.evaluateAll(es => es.map(el => { const b = el.getBoundingClientRect(); return [b.left, b.top, b.bottom]; }));
       expect(boxes[0][0]).toBeLessThan(width * .1);
       for (let i=1; i<boxes.length; i++) { expect(boxes[i][0]).toBeCloseTo(boxes[0][0]); expect(boxes[i][1]).toBeGreaterThanOrEqual(boxes[i-1][2]); }
       await nav.getByRole('link', { name: section, exact: true }).click(); await expect(page).toHaveURL(new RegExp('/'+section.toLowerCase()+'$'));
       await expect(page.getByRole('heading', { level: 1, name: section === 'Dashboard' ? 'Overview' : section, exact: true })).toBeVisible();
-      if (mobile) await expect(sidebar(page)).toHaveCount(0); else await expect(nav.locator('[aria-current=page]')).toHaveText(section);
+      if (mobile) await expect(sidebar(page)).toHaveCount(0); else await expect(nav.locator('[aria-current=page]')).toHaveAccessibleName(section);
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
     }
     if (mobile) await openSidebar(page);
@@ -38,22 +39,15 @@ for (const width of [320, 390, 1440]) {
   });
 }
 
-test('glass artwork moves inside stable cards, pauses offscreen and respects both motion switches', async ({ page }) => {
+test('interface motion remains optional; the report and loading surfaces never shine', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 }); await page.goto('/');
-  const card = page.getByRole('region', { name: 'Export rate' }), art = card.locator('.ribbon-surface').first();
-  await expect(card).toHaveCSS('backdrop-filter', 'blur(16px)'); await expect(art).toHaveCSS('animation-name', 'ribbon-breathe');
-  await expect(card.locator('.ribbon-sheen')).toHaveCSS('animation-name', 'ribbon-scan');
-  await expect(page.locator('.pie-drift')).toHaveCSS('animation-name', 'pie-drift');
-  const bounds = await card.boundingBox(), transform = await art.evaluate(el => getComputedStyle(el).transform);
-  await expect.poll(() => art.evaluate(el => getComputedStyle(el).transform)).not.toBe(transform); expect(await card.boundingBox()).toEqual(bounds);
-  await page.setViewportSize({ width: 390, height: 260 }); await page.getByRole('button', { name: 'Download skeleton' }).scrollIntoViewIfNeeded();
-  await expect(art).toHaveCSS('animation-play-state', 'paused');
+  await expect(page.locator('.ov-trend')).toHaveCSS('backdrop-filter', 'none'); await expect(page.locator('.trend-line')).toHaveCSS('animation-name', 'none');
   await openSidebar(page); const toggle = page.getByRole('button', { name: 'Enable animation' });
-  await toggle.click(); await expect(toggle).toHaveAttribute('aria-pressed', 'false'); await expect(art).toHaveCSS('animation-name', 'none');
+  await toggle.click(); await expect(toggle).toHaveAttribute('aria-pressed', 'false'); await expect(page.locator('.db-scene')).toHaveAttribute('data-motion', 'off');
   await go(page, 'Vault'); await expect(page.locator('.vt-file-art img')).toHaveCSS('animation-name', 'none');
   await page.emulateMedia({ reducedMotion: 'reduce' }); await go(page, 'Dashboard'); await openSidebar(page);
   await expect(page.getByRole('button', { name: 'Motion reduced by system preference' })).toBeDisabled();
-  await page.keyboard.press('Escape'); await expect(art).toHaveCSS('animation-name', 'none');
+  await page.keyboard.press('Escape'); await expect(page.locator('.ov-gauge')).toHaveCSS('background-image', 'none');
 });
 
 test('local source file builds offline, downloads under a distinct name, and survives section changes', async ({ page, context }) => {

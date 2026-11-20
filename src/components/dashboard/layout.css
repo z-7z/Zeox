@@ -1,19 +1,22 @@
-/* Only the overview geometry lives here. All sections and the offline export
-   inherit the same card material and spacing from workspace/material.css. */
-.db-grid {
-  --rows-height: calc(100svh - 2 * var(--inset,20px) - 57px - 3 * var(--db-gap) - 2px);
-  --db-stat-height: clamp(266px,min(28.5vw,calc(var(--rows-height) * .54)),425px);
-  --db-small-height: clamp(245px,min(24.4vw,calc(var(--rows-height) * .46)),362px);
-  display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: var(--db-gap);
+/* Live overview and script-free skeleton share these same pane boundaries. */
+.overview-grid { flex: 1; min-width: 0; display: grid; grid-template-columns: var(--db-columns); grid-template-areas: 'kpis side' 'trend side' 'notes side'; grid-template-rows: auto minmax(280px,1fr) auto; min-height: calc(100svh - var(--bar-height, 0px)); }
+.ov-kpis { grid-area: kpis; min-height: clamp(116px, 15.6vh, 188px); border-bottom: 1px solid var(--db-line); }
+.ov-trend { grid-area: trend; min-width: 0; display: flex; flex-direction: column; padding: var(--db-pad); }
+.overview-notes { grid-area: notes; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); min-height: clamp(200px, 27vh, 330px); border-top: 1px solid var(--db-line); }
+.overview-notes > *, .overview-side > * { min-width: 0; padding: var(--db-pad); }
+.overview-notes > * + * { border-left: 1px solid var(--db-line); }
+.overview-side { grid-area: side; display: flex; flex-direction: column; min-width: 0; border-left: 1px solid var(--db-line); }
+.overview-side > * + * { border-top: 1px solid var(--db-line); }
+.ov-gauge { flex: 1; display: flex; flex-direction: column; }.ov-exports { min-height: 128px; }
+@media (min-width:921px) and (max-height:820px) { .overview-side > *, .overview-notes > *, .ov-trend { padding-block: 19px; } }
+@media (min-width:921px) and (max-height:730px) { .ov-kpis { min-height: 98px; }.overview-notes { min-height: 162px; }.overview-grid { grid-template-rows: auto minmax(240px,1fr) auto; } }
+@media (max-width:920px) {
+  .overview-grid { grid-template-columns: minmax(0,1fr); grid-template-areas: 'kpis' 'trend' 'side' 'notes'; grid-template-rows: auto auto auto auto; }
+  .ov-trend { min-height: 326px; }.overview-side { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); border-left: 0; border-top: 1px solid var(--db-line); }
+  .ov-gauge { grid-row: span 2; }.overview-side > * + * { border-left: 1px solid var(--db-line); }.overview-side > .ov-exports { border-top: 0; }
 }
-.db-card { overflow: hidden; display: flex; flex-direction: column; }
-.status-card { grid-column: span 2; height: var(--db-stat-height); }
-.widget-card { min-height: var(--db-small-height); padding: var(--db-pad); }
-@media (max-width:1000px) {
-  .db-grid { grid-template-columns: repeat(2,minmax(0,1fr)); --db-stat-height: 272px; --db-small-height: 238px; }
-  .status-card { grid-column: auto; }
-}
-@media (max-width:920px) { .status-card { grid-column: 1/-1; } }
 @media (max-width:600px) {
-  .db-grid { grid-template-columns: minmax(0,1fr); --db-stat-height: clamp(218px,62vw,262px); --db-small-height: 232px; }
+  .ov-kpis { min-height: 99px; }.ov-trend { min-height: 268px; }.overview-side, .overview-notes { grid-template-columns: minmax(0,1fr); }
+  .overview-side > * + *, .overview-side > .ov-exports, .overview-notes > * + * { border-left: 0; border-top: 1px solid var(--db-line); }
+  .ov-exports { min-height: 0; }.ov-gauge { grid-row: auto; }.overview-notes { min-height: 0; }
 }

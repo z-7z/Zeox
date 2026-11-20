@@ -2,6 +2,8 @@ import { Suspense, useEffect, useRef, useState } from 'react';
 import { Check } from 'lucide-react';
 import { Outlet, useLocation, useOutletContext } from 'react-router-dom';
 import { DashboardSkeleton } from '../dashboard/Skeleton';
+import { ReportControls } from '../dashboard/ReportControls';
+import type { SamplePeriod } from '../dashboard/period';
 import { Shell } from './Shell';
 import { ToolSkeleton } from './ToolSkeleton';
 import { sectionFor } from './sections';
@@ -10,11 +12,12 @@ import './material.css';
 import './panels.css';
 import './workspace.css';
 
-interface PageState { notify: (message: string) => void; motion: boolean }
+interface PageState { notify: (message: string) => void; motion: boolean; period: SamplePeriod }
 export const useWorkspacePage = () => useOutletContext<PageState>();
 
 export function WorkspaceLayout() {
   const { pathname } = useLocation(), active = sectionFor(pathname), motion = useMotion();
+  const [period, setPeriod] = useState<SamplePeriod>(30);
   const [notice, setNotice] = useState('');
   const timer = useRef<number>(), previous = useRef(pathname);
   function notify(message: string) {
@@ -29,9 +32,9 @@ export function WorkspaceLayout() {
     }
     return () => window.clearTimeout(timer.current);
   }, [active, pathname]);
-  return <Shell active={active} motion={motion}>
+  return <Shell active={active} motion={motion} notify={notify} controls={active.id === 'dashboard' ? <ReportControls period={period} setPeriod={setPeriod} /> : undefined}>
     <Suspense fallback={active.id === 'dashboard' ? <DashboardSkeleton /> : <ToolSkeleton section={active} />}>
-      <Outlet context={{ notify, motion: motion.enabled } satisfies PageState} />
+      <Outlet context={{ notify, motion: motion.enabled, period } satisfies PageState} />
     </Suspense>
     {notice && <div className="ws-toast" role="status"><Check size={14} />{notice}</div>}
   </Shell>;

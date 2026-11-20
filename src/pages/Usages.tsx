@@ -15,8 +15,8 @@ export function Usages() {
     downloadText('zeox-session-usage.csv', 'text/csv;charset=utf-8', ['Time (UTC),Operation,Input bytes,Output bytes', ...rows.map(r => `${new Date(r.time).toISOString()},${operationLabels[r.operation]},${r.input},${r.output}`)].join('\r\n') + '\r\n');
   }
   const stats = [['Completed runs', String(usage.count)], ['Data processed', formatSize(usage.input)], ['Data generated', formatSize(usage.output)]];
-  return <div className="ws-pair-grid">
-    <section className="glass-card usage-totals" aria-labelledby="totals-title">
+  return <div className="ws-pair-grid usage-page">
+    <section className="ws-panel usage-totals" aria-labelledby="totals-title">
       <PanelHeader id="totals-title" title="Session totals" icon={ChartNoAxesColumnIncreasing} meta="This tab" bar>
         <button className="ws-button" onClick={() => setConfirm(true)} disabled={!usage.count || confirm}><RotateCcw size={13} />Reset</button>
       </PanelHeader>
@@ -25,12 +25,13 @@ export function Usages() {
         <button className="ws-button" onClick={() => setConfirm(false)}>Cancel</button><button className="ws-button ws-primary" onClick={() => { usage.clear(); setConfirm(false); setFilter('all'); }}>Clear usage</button></div>
         : <p className="usage-note">Successful operations since the last reset. Totals clear on refresh.</p>}
     </section>
-    <section className="glass-card panel-inset usage-mix" aria-labelledby="mix-title">
+    <section className="ws-panel panel-inset usage-mix" aria-labelledby="mix-title">
       <PanelHeader id="mix-title" title="By operation" icon={ListFilter} meta="Completed runs" />
       <ul>{(Object.keys(operationLabels) as Operation[]).map((op, i) => <li key={op}><div>{operationLabels[op]}<b>{usage.byTool[op]}</b></div>
         <span className="segment-track" aria-hidden="true"><span style={{ width: `${usage.count ? usage.byTool[op] / usage.count * 100 : 0}%`, opacity: 1 - i * .22 }} /></span></li>)}</ul>
+      <dl className="usage-scope"><div><dt>Scope</dt><dd>Current tab</dd></div><div><dt>Ledger limit</dt><dd>50 runs</dd></div><div><dt>Filenames</dt><dd>Not recorded</dd></div></dl>
     </section>
-    <section className="glass-card ws-full-row usage-ledger" aria-labelledby="ledger-title">
+    <section className="ws-panel usage-ledger" aria-labelledby="ledger-title">
       <PanelHeader id="ledger-title" title="Activity ledger" icon={ListOrdered} bar>
         <select className="ws-button usage-filter" aria-label="Filter usage log" value={filter} onChange={e => setFilter(e.target.value as typeof filter)}>
           <option value="all">All tools</option><option value="compact">Obfuscate</option><option value="vault">Vault</option></select>

@@ -1,47 +1,13 @@
-/* The approved Dashboard material, used by every panel and the offline
-   skeleton. Section styles own layout, never a second palette or rim. */
+/* One opaque canvas. Dividers, not floating cards or lighting, separate panes. */
 .db-scene {
-  --db-ink: #f6f6f6; --db-muted: #aaa; --db-dim: #9a9a9a; --db-line: #2b2b2b;
-  --db-card: #0f0f0f; --db-radius: 8px; --db-gap: clamp(13px,1.18vw,20px); --db-pad: clamp(15px,1.35vw,22px);
+  --db-canvas: #0b0b0c; --db-card: #0d0d0e; --db-rail: #111112; --db-line: #252526;
+  --db-ink: #f2f2f2; --db-muted: #a9a9ad; --db-dim: #99999d; --db-up: #64c5a4; --db-down: #ed949a;
+  --db-pad: clamp(20px, 2.1vw, 44px); --db-radius: 5px; --db-columns: minmax(0, 2.25fr) minmax(270px, 1fr);
   --db-mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
-  color-scheme: dark; color: var(--db-ink); font-variant-numeric: tabular-nums;
+  color-scheme: dark; color: var(--db-ink); background: var(--db-canvas); font-variant-numeric: tabular-nums;
 }
-.glass-card {
-  --glass-sheen: linear-gradient(115deg,#ffffff03,transparent 50%);
-  position: relative; min-width: 0; isolation: isolate; border: 1px solid var(--db-line); border-radius: var(--db-radius);
-  background: var(--glass-sheen), var(--db-card); box-shadow: inset 0 1px #ffffff04;
-}
-@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass-card { background: var(--glass-sheen), rgb(14 14 14 / .78); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
-}
-@supports (mask-composite: exclude) {
-  .glass-card:not(.sk-card)::before {
-    content: ''; pointer-events: none; position: absolute; z-index: 1; inset: -1px; padding: 1px; border-radius: inherit; opacity: .25;
-    background: linear-gradient(135deg,#ffffff62,transparent 22%,transparent 60%,#ffffff29 92%,transparent);
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
-  }
-}
-/* Corner marks belong to the surface, not to a particular illustration. */
-.glass-card:not(.sk-card)::after {
-  content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; border: 1px solid #707070;
-  mask: radial-gradient(circle at top left,#000 10px,transparent 11px),radial-gradient(circle at top right,#000 10px,transparent 11px),radial-gradient(circle at bottom left,#000 10px,transparent 11px),radial-gradient(circle at bottom right,#000 10px,transparent 11px);
-}
-@media (max-width:600px) { .db-scene { --db-gap: 10px; --db-pad: 13px; } }
-@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
-  .glass-card { background: var(--db-card); -webkit-backdrop-filter: none; backdrop-filter: none; }
-  .db-scene .ws-bar, .db-scene .ws-drawer { background: #171717; -webkit-backdrop-filter: none; backdrop-filter: none; }
-}
-@media (forced-colors: active) {
-  .glass-card { background: Canvas; color: CanvasText; border: 1px solid CanvasText; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
-  .glass-card:not(.sk-card)::before, .glass-card:not(.sk-card)::after { content: none; }
-}
-
-/* Shared, non-interactive loading material (also embedded in offline HTML). */
-.sk-shape { display: block; background: #272727; border-radius: 3px; }
-.sk-card::after {
-  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
-  background: linear-gradient(106deg, transparent 34%, #ffffff08 47%, #ffffff0e 50%, #ffffff08 53%, transparent 66%);
-  transform: translateX(-105%); animation: db-shimmer 1.65s ease-in-out infinite;
-}
-@keyframes db-shimmer { from { transform: translateX(-105%); } to { transform: translateX(105%); } }
-@media (prefers-reduced-motion: reduce) { .sk-card::after { animation: none; } }
+.ws-panel { position: relative; min-width: 0; background: var(--db-card); }
+.sk-shape { display: block; border-radius: 2px; background: #262628; }
+@media (max-width:600px) { .db-scene { --db-pad: 16px; } }
+@media (prefers-contrast: more) { .db-scene { --db-line: #57575a; --db-muted: #d3d3d3; --db-dim: #c1c1c1; } }
+@media (forced-colors: active) { .db-scene { --db-line: CanvasText; --db-up: CanvasText; --db-down: CanvasText; }.ws-panel { background: Canvas; } }

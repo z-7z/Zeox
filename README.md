@@ -1,25 +1,21 @@
 # Zeox Workspace
 
-A local, monochrome workspace for Lua source and file protection. It has exactly four destinations in a **vertical left sidebar**. On desktop, the header button hides or restores the rail. On phones, it opens a left-hand drawer; selecting a section, tapping the backdrop or pressing Escape dismisses it. There is no command palette or horizontal tab strip.
+A local workspace for Lua source and file protection. Its matte canvas fills the browser viewport at every size; there is no framed desktop mockup, width cap, glass, shine or blur. A **vertical icon rail** on the left contains four named links. The header button hides/restores it, or opens the same icon rail as a modal drawer on phones. Current-page state, native hover titles, keyboard focus and Escape/backdrop dismissal work without visible navigation labels. An optional desktop full-screen button uses the browser API only when available and explicitly requested.
 
 | Section | Route | What it does |
 | --- | --- | --- |
-| **Dashboard** | `/`, `/dashboard` | The reference ribbon and hatched pie above four smaller cards. Inspect the sample charts, see the live session, or open a tool. **Download skeleton** saves the same six-slot loading layout as standalone, script-free HTML. |
+| **Dashboard** | `/`, `/dashboard` | A three-metric strip above an inspectable daily volume chart. A segmented file gauge, saved-file meter, actions, live session summary and operation mix complete the report. **Download skeleton** saves this layout as static, offline HTML. |
 | **Obfuscate** | `/obfuscate` | Attach one UTF-8 `.lua` or `.luau` script (512 KiB max), build it on device, and download a separate file. No paste box, code editor or source preview. |
 | **Usages** | `/usages` | Actual successful source builds, encryptions and decryptions **in this tab**. Counters cover all successful runs; the filterable ledger and CSV contain the last 50 runs, with times and byte counts only. |
 | **Vault** | `/vault` | Encrypt and restore Luau, Lua 5.1 and Roblox Studio files byte-for-byte. |
 
-The charts are a **labeled sample**, not telemetry: their fixed values preserve the illustrated export funnel, file mix, dotted input tracks and hourly heatmap even on an empty tab. **This session** (the card with the three original portraits) reads the real Usages ledger and shows up to three recent runs. **Quick actions** opens the script uploader, Vault, Usages or the offline skeleton; none of these actions simulate an account or a sale.
+The header marks the charts as **sample data**. The 7- and 30-day windows end May 15, 2026; the period picker updates the dates, comparisons, charts and detail tables together. Point at the volume chart or use the arrow, Home and End keys when focused. **This session** is separate: its count and up to three recent runs come from Usages in this tab. Quick actions open the real tools. There are no simulated accounts, sales or remote analytics. `/dashboard/overview` and `/showcase` redirect to Dashboard.
 
-The former `/dashboard/overview` and `/showcase` URLs redirect to Dashboard. There is no storefront, team/account system, remote analytics or demo sales snapshot.
+## Layout and surfaces
 
-## Motion and surfaces
+The desktop reference is a continuous report, not a grid of floating cards. The collapsible 68px rail, top toolbar, full-width content and right inspector use opaque fills and hairline dividers. Source, Vault and Usages use the same desktop columns as Dashboard, with file requirements, cipher status or an operation breakdown in the side pane. At narrow widths the report stacks, file actions stay reachable, and the rail is normally closed. Browser zoom, native scrolling, safe-area insets and forced colors remain supported.
 
-Dashboard is the visual reference for **all four sections**: the same inset near-black frame, compact title in the toolbar, gutters, 8px graphite panels, fine corner marks and restrained glass. `src/components/workspace/material.css` defines the surfaces; `PanelHeader`, `PanelDialog` and `panels.css` supply shared headings, controls, dialogs and dotted tracks. Individual tools arrange their content within that frame: one file job on Obfuscate, paired work surfaces on Vault and Usages. Browsers without backdrop filtering get solid fills; reduced-transparency and increased-contrast preferences also remove blur. On phones, the charts stack at full width, with the pie beside its legend. The upload target works by touch, keyboard or drag and drop; the Vault file picker leaves room for passphrase inputs. The viewport remains zoomable.
-
-Obfuscate uses a single, dark file intake with numbered Attach / Build / Save states. Usages shows actual session totals and a segmented operation mix above the ledger. Vault uses the same etched linework for its archive mark; the guide lives beside the cipher status.
-
-The Dashboard's ribbon light, etched pie and portraits move **inside** stationary cards. Continuous artwork pauses offscreen. The sidebar motion switch applies throughout the workspace; the OS reduced-motion preference takes precedence.
+`workspace/material.css` owns the matte tokens; `workspace/workspace.css` owns the viewport shell. `workspace/panels.css` supplies tool surfaces and controls; `dashboard/layout.css` is shared by the real report, its lazy fallback and its offline export. Skeletons are static. The motion switch and the OS reduced-motion preference control interface transitions; neither enables lighting or other glass effects.
 
 ## Source tools and local state
 
@@ -49,6 +45,6 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. The suite compares rendered surface and toolbar styles across direct routes, and covers rail and drawer navigation, mobile widths, motion/transparency preferences, skeleton and usage CSV downloads, keyboard file selection, drag/drop, validation and replacement, download bytes and size limits, source transformations, local usage accounting, and independent decryption / offline round trips for all six Vault file types.
+`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. The suite checks edge-to-edge desktop layouts up to 2560px, icon-only accessible navigation, opaque surfaces, sample-period changes and chart inspection across direct routes, and covers rail and drawer navigation, mobile widths, motion/transparency preferences, skeleton and usage CSV downloads, keyboard file selection, drag/drop, validation and replacement, download bytes and size limits, source transformations, local usage accounting, and independent decryption / offline round trips for all six Vault file types.
 
 Deploy `dist/` to a static HTTPS host. `vercel.json` rewrites the application routes to `index.html`, serves static assets unchanged, and sets a same-origin content security policy. The font and imagery are served locally. See `DESIGN_WORKFLOW.md` for the design contract and `public/licenses/` for the font license.
