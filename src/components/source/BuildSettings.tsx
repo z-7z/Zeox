@@ -1,4 +1,5 @@
-import { ArrowRight, CornerDownLeft } from 'lucide-react';
+import { ArrowRight, CornerDownLeft, SlidersHorizontal } from 'lucide-react';
+import { PanelHeader } from '../workspace/PanelHeader';
 import type { Options } from '../../lib/source/compact';
 import type { SourceSession } from './session';
 
@@ -10,8 +11,8 @@ const transforms: { key: keyof Options; label: string; hint: string }[] = [
 
 export function BuildSettings({ tool, reading }: { tool: SourceSession; reading: boolean }) {
   const count = transforms.filter(({ key }) => tool.options[key]).length;
-  return <section className="glass-card src-panel src-recipe" aria-labelledby="recipe-title">
-    <header className="src-panel-head"><span className="src-step" aria-hidden="true">02</span><h2 id="recipe-title">Build settings</h2><small>{count} of 3 on</small></header>
+  return <section className="glass-card src-recipe" aria-labelledby="recipe-title">
+    <PanelHeader id="recipe-title" title="Build settings" icon={SlidersHorizontal} meta={`${count} of 3 on`} bar />
     <fieldset className="src-transforms" disabled={reading}><legend className="db-sr">Source transformations</legend>
       {transforms.map(({ key, label, hint }) => <label key={key} className="src-transform">
         <span><strong id={`opt-${key}`}>{label}</strong><small id={`hint-${key}`}>{hint}</small></span>

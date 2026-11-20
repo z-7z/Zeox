@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type DragEvent } from 'react';
 import { ArrowDownToLine, ArrowRight, ArrowUpRight, FolderLock, CheckCheck, CircleAlert, Eye, EyeOff, FileCode2, KeyRound, LoaderCircle, LockKeyhole, RotateCcw, ShieldCheck, UnlockKeyhole, X } from 'lucide-react';
 import { formatSize, SOURCE_ACCEPT, type Mode } from '../../lib/vault/container';
 import { phaseLabel, type VaultSession } from './session';
+import { PanelHeader } from '../workspace/PanelHeader';
 import { FileArt } from './StudioChrome';
 
 function SectionLabel({ no, title }: { no: string; title: string }) {
@@ -32,19 +33,19 @@ export function Workbench({ s }: { s: VaultSession }) {
     if (!busy) s.selectFile(Array.from(e.dataTransfer.files));
   }
   const result = s.result;
-  return <section className="glass-card vt-panel vt-workbench" id="workbench" aria-labelledby="bench-title" tabIndex={-1}>
-    <div className="vt-bench-head"><h2 id="bench-title"><span className="vt-title-icon"><FolderLock size={18} /></span>File workbench</h2>
-      <ModeSwitch mode={s.mode} change={s.switchMode} disabled={busy} /></div>
+  return <section className="glass-card vt-workbench" id="workbench" aria-labelledby="bench-title" tabIndex={-1}>
+    <PanelHeader title="File workbench" id="bench-title" icon={FolderLock} bar>
+      <ModeSwitch mode={s.mode} change={s.switchMode} disabled={busy} /></PanelHeader>
     {!s.supported && <div className="vt-warning" role="alert"><CircleAlert size={15} />This browser needs HTTPS and Web Crypto to process files locally.</div>}
     {result ? <div className="vt-result" key="result"><div className="vt-result-mark"><ShieldCheck size={30} /></div>
       <p className="vt-eyebrow">OPERATION COMPLETE</p><h3>{encrypt ? 'File encrypted' : 'File restored'}</h3>
       <p>{encrypt ? 'Save the archive and keep your passphrase. Your original is unchanged.' : 'Save the restored file before closing this tab.'}</p>
       <div className="vt-output"><FileCode2 size={17} /><strong>{result.name}</strong><small>{formatSize(result.blob.size)}</small></div>
-      <div className="vt-result-actions">{s.url && <a ref={download} href={s.url} download={result.name} className="vt-primary"><ArrowDownToLine size={15} />{encrypt ? 'Download .zeox' : 'Download original'}</a>}
-        <button type="button" className="vt-secondary" onClick={() => { s.reset(); requestAnimationFrame(() => browse.current?.focus({ preventScroll: true })); }}><RotateCcw size={13} />Process another file</button></div>
+      <div className="vt-result-actions">{s.url && <a ref={download} href={s.url} download={result.name} className="ws-button ws-primary"><ArrowDownToLine size={15} />{encrypt ? 'Download .zeox' : 'Download original'}</a>}
+        <button type="button" className="ws-button" onClick={() => { s.reset(); requestAnimationFrame(() => browse.current?.focus({ preventScroll: true })); }}><RotateCcw size={13} />Process another file</button></div>
     </div> : <form noValidate onSubmit={e => { e.preventDefault(); void s.run(); }} aria-busy={busy}>
       <div className="vt-bench-fields"><div className="vt-field-heading"><SectionLabel no="01" title={encrypt ? 'Source file' : 'Encrypted archive'} />
-        {encrypt && <button type="button" className="vt-sample" onClick={s.sample} disabled={busy}>Use sample<ArrowUpRight size={12} /></button>}</div>
+        {encrypt && <button type="button" className="ws-quiet" onClick={s.sample} disabled={busy}>Use sample<ArrowUpRight size={12} /></button>}</div>
         <input ref={input} type="file" aria-label={encrypt ? 'Choose a source file' : 'Choose a .zeox archive'} hidden disabled={busy} accept={encrypt ? SOURCE_ACCEPT : '.zeox'} onChange={e => { s.selectFile(Array.from(e.currentTarget.files || [])); e.currentTarget.value = ''; }} />
         <div className={`vt-drop${dragging ? ' is-dragging' : ''}${s.file ? ' has-file' : ''}${s.problem?.field === 'file' ? ' has-error' : ''}`}
           onDragEnter={e => { e.preventDefault(); if (!busy && e.dataTransfer.types.includes('Files')) { dragDepth.current++; setDragging(true); } }}
@@ -65,7 +66,7 @@ export function Workbench({ s }: { s: VaultSession }) {
         {s.problem && <p className="vt-error" id="vt-error" role="alert"><CircleAlert size={14} />{s.problem.message}</p>}
       </div>
       <div className="vt-action-bar"><span className="vt-local-proof"><ShieldCheck size={14} />{busy ? 'Processing locally' : 'No upload'}</span>
-        <button className="vt-primary" type="submit" disabled={busy || !s.supported}>{s.phase ? <><LoaderCircle size={15} className="vt-spinner" />{phaseLabel[s.phase]}…</> : <>{encrypt ? <LockKeyhole size={14} /> : <UnlockKeyhole size={14} />}{encrypt ? 'Encrypt file' : 'Decrypt file'}<ArrowRight size={15} /></>}</button>
+        <button className="ws-button ws-primary" type="submit" disabled={busy || !s.supported}>{s.phase ? <><LoaderCircle size={15} className="vt-spinner" />{phaseLabel[s.phase]}…</> : <>{encrypt ? <LockKeyhole size={14} /> : <UnlockKeyhole size={14} />}{encrypt ? 'Encrypt file' : 'Decrypt file'}<ArrowRight size={15} /></>}</button>
       </div></form>}
     <span className="sr-only" role="status">{s.phase ? phaseLabel[s.phase] : result ? (encrypt ? 'File encrypted. Download ready.' : 'File restored. Download ready.') : s.file ? `${s.file.name} selected` : ''}</span>
   </section>;

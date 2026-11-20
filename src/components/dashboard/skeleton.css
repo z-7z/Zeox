@@ -1,9 +1,3 @@
-.sk-shape { display: block; background: #272727; border-radius: 3px; }
-.sk-card::after {
-  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
-  background: linear-gradient(106deg, transparent 34%, #ffffff08 47%, #ffffff0e 50%, #ffffff08 53%, transparent 66%);
-  transform: translateX(-105%); animation: db-shimmer 1.65s ease-in-out infinite;
-}
 .sk-head { position: relative; padding: var(--db-pad); border-bottom: 1px solid var(--db-line); }
 .sk-metric { height: 29px; width: 78px; }
 .sk-caption { height: 10px; width: min(62%, 230px); margin-top: 10px; }
@@ -24,5 +18,3 @@
 .sk-center > div .sk-shape { width: 40px; height: 40px; border-radius: 50%; margin: 0 -3px; border: 2px solid var(--db-card); }
 .sk-heat .sk-metric { margin: 26px 0 18px; }
 .sk-matrix { flex: 1; margin-bottom: 19px; background-image: linear-gradient(var(--db-card) 1px, transparent 1px), linear-gradient(90deg, var(--db-card) 1px, transparent 1px); background-size: 100% calc(100% / 7), calc(100% / 24) 100%; }
-@keyframes db-shimmer { from { transform: translateX(-105%); } to { transform: translateX(105%); } }
-@media (prefers-reduced-motion: reduce) { .sk-card::after { animation: none; } }

@@ -63,20 +63,21 @@ export function Shell({ active, motion, children }: { active: Section; motion: M
   const trigger = useRef<HTMLButtonElement>(null);
   const visible = narrow ? drawer : rail;
   const Toggle = narrow ? Menu : visible ? PanelLeftClose : PanelLeftOpen;
-  return <div className="db-scene" data-section={active.id} data-motion={motion.enabled ? 'on' : 'off'}>
+  return <div className="db-scene" data-motion={motion.enabled ? 'on' : 'off'}>
     <a className="ws-skip" href="#workspace-main">Skip to content</a>
     <div className="ws-window">
       {narrow ? <Drawer open={drawer} close={() => setDrawer(false)} active={active} motion={motion} trigger={trigger} /> :
         <aside id="workspace-sidebar" className="ws-rail" aria-label="Sidebar" hidden={!rail}>
-          <div className="ws-rail-brand" aria-hidden="true"><ZeoxMark /></div><Sections active={active} /><MotionButton motion={motion} />
+          <Link className="ws-rail-brand" to="/dashboard" aria-label="Zeox home"><ZeoxMark /></Link><Sections active={active} /><MotionButton motion={motion} />
         </aside>}
       <div className="ws-frame"><header className="ws-bar">
         <button ref={trigger} type="button" className="ws-icon-button" aria-label={visible ? 'Hide sidebar' : 'Open sidebar'} title={visible ? 'Hide sidebar' : 'Open sidebar'}
           aria-expanded={visible} aria-controls="workspace-sidebar" aria-haspopup={narrow ? 'dialog' : undefined}
           onClick={() => narrow ? setDrawer(v => !v) : setRail(v => !v)}><Toggle size={18} /></button>
-        {active.id === 'dashboard' ? <h1 className="ws-overview-title">Overview</h1> : <>
-          <Link to="/dashboard" className="ws-wordmark" aria-label="Zeox home">Zeox</Link><span className="ws-breadcrumb" aria-hidden="true">/</span><span className="ws-location">{active.label}</span></>}
-        <span className="ws-device"><i aria-hidden="true" />{active.id === 'dashboard' ? 'Sample charts' : 'On device'}</span>
+        <h1 className="ws-section-title">{active.id === 'dashboard' ? 'Overview' : active.label}</h1>
+        <div className="ws-bar-end">{(narrow || !rail) && active.id !== 'dashboard' &&
+          <Link to="/dashboard" className="ws-icon-button ws-home" aria-label="Zeox home" title="Dashboard"><ZeoxMark /></Link>}
+          <span className="ws-device"><i aria-hidden="true" />{active.id === 'dashboard' ? 'Sample charts' : 'On device'}</span></div>
       </header>
         <main id="workspace-main" className="ws-main" tabIndex={-1}>{children}</main>
       </div>

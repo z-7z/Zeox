@@ -3,7 +3,7 @@ import { FileCode2, FolderOpen, RotateCcw } from 'lucide-react';
 import { CodeEditor } from '../components/source/CodeEditor';
 import { BuildSettings } from '../components/source/BuildSettings';
 import { OutputFile } from '../components/source/OutputFile';
-import { PageHeading } from '../components/workspace/PageHeading';
+import { PanelHeader } from '../components/workspace/PanelHeader';
 import { useSourceTool } from '../components/workspace/ToolSessions';
 import { useWorkspacePage } from '../components/workspace/WorkspaceLayout';
 import { byteLength, SOURCE_LIMIT } from '../lib/source/compact';
@@ -31,22 +31,17 @@ export function Obfuscate() {
   const { name, source } = tool;
   const stats = useMemo(() => ({ lines: source ? source.split(/\r\n|\r|\n/).length : 0, size: formatSize(byteLength(source)) }), [source]);
   const outputName = name.replace(/\.(luau?)$/i, tool.options.encodeText ? '.obf.$1' : '.compact.$1');
-  return <div className="src-studio">
-    <PageHeading title="Obfuscate" eyebrow="Source studio" description="Build a separate copy of your Lua or Luau script."
-      actions={<span className="src-spec">UTF-8 <i />512 KiB max</span>} />
-    <div className="src-desk">
-      <section className="glass-card src-panel src-input" aria-label="Source editor" aria-busy={reading}>
-        <header className="src-panel-head"><span className="src-step" aria-hidden="true">01</span><h2>Source</h2>
-          <div className="src-file-actions"><button className="src-quiet" onClick={tool.sample} disabled={reading} aria-label="Load example source">Example</button>
-            <button className="ws-button" disabled={reading} onClick={() => picker.current?.click()}><FolderOpen size={13} />{reading ? 'Reading…' : 'Open file'}</button></div></header>
-        <input ref={picker} hidden type="file" disabled={reading} accept=".lua,.luau" aria-label="Open Lua or Luau source" onChange={e => { const file = e.currentTarget.files?.[0]; e.currentTarget.value = ''; if (file) void readFile(file); }} />
-        <div className="src-surface"><div className="src-filebar"><FileCode2 size={13} /><code title={name}>{name}</code><span>{/\.luau$/i.test(name) ? 'Luau' : 'Lua 5.1'}</span></div>
-          <CodeEditor key={tool.documentId} value={source} filename={name} label="Source code" disabled={reading} onEdit={tool.edit} onBuild={tool.build} onLimit={() => tool.reject('Source must be 512 KiB or smaller.')} /></div>
-        <footer className="src-input-foot"><span>{stats.lines} {stats.lines === 1 ? 'line' : 'lines'} <i />{stats.size}<span className="src-mobile-cap"> / 512 KiB</span></span><button className="src-quiet" disabled={!source || reading} onClick={() => tool.edit('', 'untitled.luau')} aria-label="Clear source"><RotateCcw size={11} />Clear</button></footer>
-        {tool.issue?.field === 'source' && <p className="src-error" role="alert">{tool.issue.message}</p>}
-      </section>
-      <BuildSettings tool={tool} reading={reading} />
-      <OutputFile result={tool.result} name={outputName} notify={notify} />
-    </div>
+  return <div className="ws-pair-grid">
+    <section className="glass-card src-input" aria-label="Source editor" aria-busy={reading}>
+      <PanelHeader title="Source" icon={FileCode2} bar><button className="ws-quiet" onClick={tool.sample} disabled={reading} aria-label="Load example source">Example</button>
+        <button className="ws-button" disabled={reading} onClick={() => picker.current?.click()}><FolderOpen size={13} />{reading ? 'Reading…' : 'Open file'}</button></PanelHeader>
+      <input ref={picker} hidden type="file" disabled={reading} accept=".lua,.luau" aria-label="Open Lua or Luau source" onChange={e => { const file = e.currentTarget.files?.[0]; e.currentTarget.value = ''; if (file) void readFile(file); }} />
+      <div className="src-surface"><div className="src-filebar"><FileCode2 size={13} /><code title={name}>{name}</code><span>{/\.luau$/i.test(name) ? 'Luau' : 'Lua 5.1'} · UTF-8</span></div>
+        <CodeEditor key={tool.documentId} value={source} filename={name} label="Source code" disabled={reading} onEdit={tool.edit} onBuild={tool.build} onLimit={() => tool.reject('Source must be 512 KiB or smaller.')} /></div>
+      <footer className="src-input-foot"><span>{stats.lines} {stats.lines === 1 ? 'line' : 'lines'} <i />{stats.size} / 512 KiB</span><button className="ws-quiet" disabled={!source || reading} onClick={() => tool.edit('', 'untitled.luau')} aria-label="Clear source"><RotateCcw size={11} />Clear</button></footer>
+      {tool.issue?.field === 'source' && <p className="src-error" role="alert">{tool.issue.message}</p>}
+    </section>
+    <BuildSettings tool={tool} reading={reading} />
+    <OutputFile result={tool.result} name={outputName} notify={notify} />
   </div>;
 }

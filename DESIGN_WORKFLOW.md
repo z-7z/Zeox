@@ -23,8 +23,8 @@ Skills, and the glass card design system.
 5. **Select suitable design patterns and components.** Match patterns to the
    actual purpose of each page. Do not reuse one layout everywhere.
 6. **Create the interface using the existing architecture.** Reuse `Shell`,
-   `PageHeading`, the `.glass-card` material, session providers and the four
-   routed sections.
+   `PanelHeader`, `PanelDialog`, the `.glass-card` material, session providers
+   and the four routed sections.
 7. **Review** visual quality, responsiveness (390px check), accessibility
    (focus rings, semantic HTML, alt text), and consistency.
 8. **Report the changes made.**
@@ -48,8 +48,8 @@ in-tab runs, and quick actions lead to real tools. The loading state and
 offline HTML export use the same grid and static six-slot template.
 
 Keep the inset desktop frame and one left rail. On a phone, stack the
-charts full width, keep pie and legend side by side, and put Overview in
-the compact toolbar. Do not substitute tool posters or a top tab strip.
+charts full width, keep pie and legend side by side, and keep the active page title in
+the compact toolbar on every route. Do not substitute tool posters or a top tab strip.
 Obfuscate keeps input, settings and read-only output in order on phones;
 Vault is a file and passphrase workbench; Usages is an exportable report.
 Keep build/encrypt within the first phone screen without disabling zoom.
@@ -78,13 +78,20 @@ Design contract for an external template importer (not shipped in the dashboard 
   package installation. Avoid unnecessary installations.
 - `cleanup()` discards the temp workspace and never touches imported files.
 
-## Card design system (soft glass)
+## One Dashboard style across every section
 
-Use a neutral black/white palette, translucent material, subtle refraction
-at the rim, and a static light field behind the cards. Keep an opaque,
-high-contrast surface behind code and passphrase inputs. Reuse shared
-rounded surfaces and the solid fallback for unsupported blur, reduced
-transparency and increased contrast. No moving full-page backgrounds.
+Treat the approved Dashboard as the baseline, not another page to restyle.
+`workspace/material.css` owns graphite fills, 8px corners, hairlines, corner
+marks, density and reduced-transparency/contrast fallbacks. `Shell` owns the
+frame, gutters and one toolbar H1. `workspace/panels.css`, `PanelHeader` and
+`PanelDialog` own widget type, toolbars, buttons, segmented tracks and modal
+presentation. Import them through the shared layout, not a lazy page.
+
+Pair tool panels on desktop and stack them when narrow. Different data and
+workflows are appropriate; separate themes, pearl summary strips, oversized
+page intros, and local overrides of the card material are not. Keep readable
+syntax ink, opaque editor/password surfaces, real session data and native
+controls. Do not copy sample charts onto tool pages to fill empty space.
 Inspect at 320px, 390px, a short landscape height and desktop; check focus,
 touch targets, safe-area padding, contrast, scroll and visible text.
 

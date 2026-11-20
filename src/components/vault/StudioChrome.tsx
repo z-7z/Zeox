@@ -1,5 +1,5 @@
 import { FileCode2, Upload } from 'lucide-react';
-import art from '../../assets/vault/vault-core.webp';
+import art from '../../assets/vault/archive.svg';
 
 export type StudioModal = 'guide' | 'log' | null;
 export function FormatMark({ type }: { type: 'Luau' | 'Lua 5.1' | 'Roblox' }) {
@@ -11,6 +11,6 @@ export function FormatMark({ type }: { type: 'Luau' | 'Lua 5.1' | 'Roblox' }) {
 /** Keep the illustration inside the file card, never in the page chrome. */
 export function FileArt({ selected = false }: { selected?: boolean }) {
   return <span className={`vt-file-art${selected ? ' is-selected' : ''}`} aria-hidden="true">
-    <img src={art} width="480" height="432" alt="" /><span>{selected ? <FileCode2 size={12} /> : <Upload size={12} />}</span>
+    <img src={art} width="128" height="112" alt="" /><span>{selected ? <FileCode2 size={12} /> : <Upload size={12} />}</span>
   </span>;
 }

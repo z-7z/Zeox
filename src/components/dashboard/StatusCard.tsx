@@ -1,4 +1,4 @@
-import { ArrowDownRight, ArrowUpRight, Minus, type LucideIcon } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 interface StatusCardProps { label: string; value: string; description: ReactNode; change: number; period: number; children: ReactNode }
@@ -16,8 +16,4 @@ export function StatusCard({ label, value, description, change, period, children
     </header>
     {children}
   </section>;
-}
-
-export function WidgetHeading({ icon: Icon, name, meta }: { icon: LucideIcon; name: string; meta?: string }) {
-  return <header className="widget-heading"><h2><Icon size={14} aria-hidden="true" />{name}</h2>{meta && <span>{meta}</span>}</header>;
 }
