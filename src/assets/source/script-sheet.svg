@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 148 112" fill="none" stroke-linejoin="round">
+  <defs>
+    <pattern id="ruling" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(36)"><rect width="4" height="4" fill="#292929"/><path d="M0 0v4" stroke="#898989" stroke-width="1.4"/></pattern>
+    <linearGradient id="paper" x2="0.84" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#f4f4f4"/><stop offset="1" stop-color="#a5a5a5"/></linearGradient>
+  </defs>
+  <g stroke="#555" stroke-width="1"><path d="M8 29h6m-3-3v6m121 46h6m-3-3v6"/><path d="M13 86h22m79-56h21" stroke-dasharray="2 3"/></g>
+  <g transform="rotate(-15 70 58)"><path d="M37 17h43l16 16v62H37z" fill="url(#ruling)" stroke="#8d8d8d"/><path d="M80 17v16h16" stroke="#a2a2a2"/></g>
+  <g transform="rotate(9 78 56)">
+    <path d="M49 12h45l17 17v67H49z" fill="#383838" stroke="#9d9d9d"/>
+    <path d="M47 9h46l16 17v67H47z" fill="url(#paper)" stroke="#eaeaea"/>
+    <path d="M93 9v17h16" fill="#666" stroke="#888"/>
+    <path d="M56 21h17m-17 5h10" stroke="#777" stroke-width="1.6"/>
+    <path d="m67 42-7 6 7 6m19-12 7 6-7 6m-7-16-5 20" stroke="#282828" stroke-width="2.8" stroke-linecap="square"/>
+    <path d="M56 70h42m-42 5h31m-31 5h38" stroke="#858585" stroke-width="1.5"/>
+  </g>
+</svg>

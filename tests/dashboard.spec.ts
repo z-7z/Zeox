@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { attach } from './attachments';
 import { go, openSidebar, sidebar } from './navigation';
 
 test('reference artwork has two large cards above the four original widget shapes', async ({ page }) => {
@@ -42,7 +43,8 @@ test('sample charts open accessible detail tables and return focus without recor
 test('quick actions open the actual tools, with real counts and recent operations in the portrait card', async ({ page }) => {
   await page.goto('/');
   const summary = page.getByRole('region', { name: 'Session summary' }); await expect(summary.getByText('No runs yet')).toBeVisible();
-  await page.getByRole('link', { name: 'Open editor' }).click(); await page.getByRole('button', { name: 'Build output' }).click();
+  await page.getByRole('link', { name: 'Obfuscate file' }).click(); await attach(page);
+  await page.getByRole('button', { name: 'Obfuscate file' }).click();
   await go(page, 'Dashboard'); await expect(summary.getByText('1 completed run', { exact: true })).toBeVisible();
   const recent = summary.getByRole('list', { name: 'Recent runs' }); await expect(recent.getByRole('listitem')).toContainText('Source build');
   await page.getByRole('link', { name: 'Open vault' }).click(); await page.getByRole('button', { name: 'Use sample' }).click();
@@ -79,14 +81,15 @@ test('loading state and offline export share all six slots, without scripts, req
   expect(requests).toEqual([]);
 });
 
-test('desktop sidebar can disappear entirely without losing a draft or changing routes', async ({ page }) => {
-  await page.goto('/obfuscate'); const editor = page.getByRole('textbox', { name: 'Source code' }); await editor.fill('return 12');
+test('desktop sidebar can disappear entirely without losing an attachment or changing routes', async ({ page }) => {
+  await page.goto('/obfuscate'); await attach(page, 'tune.lua');
+  const intake = page.getByRole('group', { name: 'Source file' }); await expect(intake).toContainText('tune.lua');
   const before = await page.locator('.ws-frame').boundingBox(); await page.getByRole('button', { name: 'Hide sidebar' }).click();
   await expect(sidebar(page)).toHaveCount(0); await expect(page.getByRole('button', { name: 'Open sidebar' })).toHaveAttribute('aria-expanded', 'false');
   expect((await page.locator('.ws-frame').boundingBox())!.width).toBeGreaterThan(before!.width + 50);
-  await editor.press('End'); await editor.press('/'); await expect(editor).toHaveText('return 12/'); await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.keyboard.press('/'); await expect(intake).toContainText('tune.lua'); await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.getByRole('link', { name: 'Zeox home' }).click(); await expect(sidebar(page)).toHaveCount(0);
-  await page.getByRole('link', { name: 'Open editor' }).click(); await expect(editor).toHaveText('return 12/');
+  await page.getByRole('link', { name: 'Obfuscate file' }).click(); await expect(intake).toContainText('tune.lua');
   await openSidebar(page); await expect(sidebar(page).locator('[aria-current=page]')).toHaveText('Obfuscate');
 });
 
@@ -110,5 +113,6 @@ test('reduced transparency uses opaque surfaces while controls and artwork stay 
   await cdp.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-transparency', value: 'reduce' }] });
   await page.goto('/'); const card = page.getByRole('region', { name: 'Export rate' });
   await expect(card).toHaveCSS('backdrop-filter', 'none'); await expect(card).toHaveCSS('background-color', 'rgb(15, 15, 15)');
-  await page.getByRole('link', { name: 'Open editor' }).click(); await expect(page.getByRole('textbox', { name: 'Source code' }).locator('.sx-keyword').first()).toBeVisible();
+  await page.getByRole('link', { name: 'Obfuscate file' }).click(); await expect(page.getByRole('button', { name: 'Choose file' })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Script obfuscator' })).toHaveCSS('backdrop-filter', 'none');
 });

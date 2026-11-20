@@ -1,5 +1,5 @@
 import { useState, type CSSProperties } from 'react';
-import { ArrowDownToLine, ArrowUpRight, Braces, ChartNoAxesColumn, ChevronRight, Clock3, FolderLock, Timer, UsersRound, Zap } from 'lucide-react';
+import { ArrowDownToLine, ArrowUpRight, FileUp, ChartNoAxesColumn, ChevronRight, Clock3, FolderLock, Timer, UsersRound, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { operationLabels, useUsage } from '../workspace/UsageSession';
 import { formatSize } from '../../lib/vault/container';
@@ -49,7 +49,7 @@ export function VolumeCard({ inspect }: { inspect: Inspect }) {
 }
 
 const actions = [
-  { to: '/obfuscate', name: 'Open editor', description: 'Build Lua or Luau source.', icon: Braces },
+  { to: '/obfuscate', name: 'Obfuscate file', description: 'Attach a Lua or Luau script.', icon: FileUp },
   { to: '/vault', name: 'Open vault', description: 'Seal or restore a file.', icon: FolderLock },
   { to: '/usages', name: 'View usages', description: 'Review your session log.', icon: ChartNoAxesColumn },
 ];
