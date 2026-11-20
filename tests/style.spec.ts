@@ -1,51 +1,57 @@
 import { expect, test, type Page } from '@playwright/test';
-import { go } from './navigation';
+import { go, openSidebar } from './navigation';
 
 const sections = ['Dashboard', 'Obfuscate', 'Usages', 'Vault'] as const;
-async function appearance(page: Page, section: typeof sections[number]) {
+async function pageReady(page: Page, section: typeof sections[number]) {
+  await expect(page.locator('main section.ws-panel')).toHaveCount(section === 'Dashboard' ? 7 : section === 'Obfuscate' ? 1 : 3);
   await expect(page.getByRole('banner').getByRole('heading', { level: 1 })).toHaveText(section === 'Dashboard' ? 'Overview' : section);
-  await expect(page.locator('h1')).toHaveCount(1);
-  const cards = page.locator('main section.glass-card'); await expect(cards).toHaveCount(section === 'Dashboard' ? 6 : section === 'Obfuscate' ? 1 : 3);
-  return cards.evaluateAll(els => {
-    const css = (selector: string) => getComputedStyle(document.querySelector(selector)!);
-    const title = css('h1'), main = css('main'), canvas = css('.ws-window');
-    const bounds = els[0].getBoundingClientRect();
-    const head = document.querySelector('.panel-head h2'), frame = document.querySelector('main')!.getBoundingClientRect();
-    return { frame: [canvas.background, main.padding, title.font], widgetType: head && [getComputedStyle(head).font, getComputedStyle(head).color],
-      centered: Math.abs((bounds.left + bounds.right) - (frame.left + frame.right)) < 2,
-      start: [bounds.x, bounds.y, bounds.width].map(Math.round),
-      surfaces: els.map(el => {
-        const style = getComputedStyle(el), corners = getComputedStyle(el, '::after');
-        return { fill: style.background, edge: style.border, radius: style.borderRadius, shadow: style.boxShadow, blur: style.backdropFilter, marks: corners.maskImage };
-      }) };
-  });
+  await expect(page.locator('h1')).toHaveCount(1); await page.evaluate(() => document.fonts.ready);
 }
-
-for (const width of [390, 1440]) {
-  test(`direct tool entries and tab switches keep the Dashboard material and alignment at ${width}px`, async ({ page }) => {
-    await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
-    await page.goto('/dashboard'); const reference = await appearance(page, 'Dashboard');
-    const surface = reference.surfaces[0]; expect(surface.radius).toBe('8px'); expect(surface.marks).not.toBe('none');
-    for (const section of sections.slice(1)) {
-      // A full navigation deliberately drops all previously loaded route CSS.
-      await page.goto('/' + section.toLowerCase()); const tool = await appearance(page, section);
-      expect(tool.frame).toEqual(reference.frame);
-      if (section === 'Obfuscate') expect(tool.centered).toBe(true); // One centered file job, not a pair of editor panels.
-      else { expect(tool.start).toEqual(reference.start); expect(tool.widgetType).toEqual(reference.widgetType); }
-      tool.surfaces.forEach(style => expect(style).toEqual(surface));
+async function matte(page: Page) {
+  return page.locator('.ws-window,.ws-panel,.ws-bar,.ws-rail,.ws-sections a,.ws-drawer,.ws-dialog,.sk-card').evaluateAll(els => els.every(el =>
+    [null,'::before','::after'].every(pseudo => { const s = getComputedStyle(el,pseudo); return s.backdropFilter === 'none' && s.boxShadow === 'none' && s.backgroundImage === 'none'; })));
+}
+for (const [width,height] of [[390,844],[1280,720],[1366,768],[1536,864],[1920,1080],[2560,1440]]) {
+  test(`all four routes use the whole viewport and a matte icon rail at ${width}×${height}`, async ({ page }) => {
+    await page.setViewportSize({width,height});
+    for (const section of sections) {
+      await page.goto('/'+section.toLowerCase()); await pageReady(page,section);
+      const geometry = await page.evaluate(() => {
+        const rect = (s:string) => document.querySelector(s)!.getBoundingClientRect();
+        const shell=rect('.ws-window'),main=rect('main'),content=rect('main > :first-child'),root=document.documentElement;
+        return { x:shell.x,y:shell.y, shellWidth:shell.width, shellHeight:shell.height, client:root.clientWidth, scrollWidth:root.scrollWidth,
+          left:main.left,right:main.right,contentLeft:content.left,contentRight:content.right };
+      });
+      expect(geometry.x).toBe(0); expect(geometry.y).toBe(0); expect(geometry.shellWidth).toBe(geometry.client); expect(geometry.scrollWidth).toBe(geometry.client);
+      expect(geometry.shellHeight).toBeGreaterThanOrEqual(height); expect(geometry.right).toBe(geometry.client);
+      expect(geometry.contentLeft).toBe(geometry.left); expect(geometry.contentRight).toBe(geometry.right);
+      if (width >= 1280) { expect(geometry.left).toBe(68); expect(geometry.shellHeight).toBeLessThanOrEqual(height+1); } else expect(geometry.left).toBe(0);
+      expect(await matte(page)).toBe(true); await expect(page.locator('section.ws-panel').first()).toHaveCSS('background-color','rgb(13, 13, 14)');
+      const nav = await openSidebar(page); await expect(nav.getByRole('link')).toHaveText(['','','','']); await expect(nav.locator('svg')).toHaveCount(4);
+      for (const name of sections) await expect(nav.getByRole('link',{name,exact:true})).toHaveAttribute('title',name);
+      await expect(nav.locator('[aria-current=page]')).toHaveAccessibleName(section);
+      if (width===390) { await expect(page.getByRole('dialog')).toHaveCSS('backdrop-filter','none'); await page.keyboard.press('Escape'); }
     }
-    await go(page, 'Usages'); await go(page, 'Obfuscate'); await go(page, 'Dashboard');
-    expect(await appearance(page, 'Dashboard')).toEqual(reference);
   });
 }
 
-test('all sections use opaque graphite panels with reduced transparency', async ({ page, context }) => {
-  const cdp = await context.newCDPSession(page);
-  await cdp.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-transparency', value: 'reduce' }] });
-  for (const section of sections) {
-    await page.goto('/' + section.toLowerCase()); const { surfaces } = await appearance(page, section);
-    for (const s of surfaces) { expect(s.blur).toBe('none'); expect(s.fill).toContain('rgb(15, 15, 15)'); expect(s.fill).not.toContain('gradient'); }
-  }
+test('full screen is optional and explicit, and collapsing the rail reclaims its space', async ({ page }) => {
+  await page.goto('/dashboard'); await pageReady(page,'Dashboard'); expect(await page.evaluate(() => !!document.fullscreenElement)).toBe(false);
+  if (await page.evaluate(() => document.fullscreenEnabled)) {
+    await page.getByRole('button',{name:'Enter full screen'}).click(); await expect(page.getByRole('button',{name:'Exit full screen'})).toBeVisible();
+    expect(await page.evaluate(() => document.fullscreenElement === document.documentElement)).toBe(true);
+    await page.getByRole('button',{name:'Exit full screen'}).click(); await expect(page.getByRole('button',{name:'Enter full screen'})).toBeVisible();
+  } else await expect(page.getByRole('button',{name:'Enter full screen'})).toHaveCount(0);
+  await page.getByRole('button',{name:'Hide sidebar'}).click(); expect((await page.locator('main').boundingBox())!.x).toBe(0);
+  await page.getByRole('link',{name:'Obfuscate file'}).click(); expect((await page.locator('main').boundingBox())!.x).toBe(0);
+  await go(page,'Dashboard'); await pageReady(page,'Dashboard'); expect(await matte(page)).toBe(true);
+});
+
+test('dialogs and tools remain opaque under reduced transparency, with no light sweeps', async ({ page, context }) => {
+  const cdp=await context.newCDPSession(page); await cdp.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-transparency',value:'reduce'}]});
+  await page.goto('/dashboard'); await page.getByRole('button',{name:'View breakdown'}).click(); expect(await matte(page)).toBe(true);
+  await page.keyboard.press('Escape'); await go(page,'Vault'); await page.getByRole('button',{name:'Open studio guide'}).click(); expect(await matte(page)).toBe(true);
+  await page.keyboard.press('Escape'); await go(page,'Obfuscate'); await pageReady(page,'Obfuscate'); expect(await matte(page)).toBe(true);
 });
 
 test('slow tool entries keep the toolbar and show non-interactive matching panel slots', async ({ page }) => {
@@ -56,9 +62,9 @@ test('slow tool entries keep the toolbar and show non-interactive matching panel
     await page.goto('/' + label.toLowerCase(), { waitUntil: 'commit' });
     try {
       const loading = page.getByRole('status', { name: `Opening ${label}` });
-      await expect(loading.locator('.sk-card')).toHaveCount(label === 'Obfuscate' ? 1 : 3); await expect(loading.getByRole('button')).toHaveCount(0);
+      expect(await matte(page)).toBe(true); await expect(loading.locator('.sk-card')).toHaveCount(label === 'Obfuscate' ? 1 : 3); await expect(loading.getByRole('button')).toHaveCount(0);
       await expect(page.getByRole('heading', { level: 1, name: label })).toBeVisible();
     } finally { release(); }
-    await expect(page.locator('main section.glass-card')).toHaveCount(label === 'Obfuscate' ? 1 : 3); await page.unroute(chunk);
+    await expect(page.locator('main section.ws-panel')).toHaveCount(label === 'Obfuscate' ? 1 : 3); await page.unroute(chunk);
   }
 });

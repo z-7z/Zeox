@@ -1,24 +1,19 @@
+import { useEffect, useRef } from 'react';
 import { PanelDialog } from '../workspace/PanelDialog';
-import { formatSize } from '../../lib/vault/container';
-import { days, formats, hour, hourlyKB, inputs, number, stages, total, type Chart } from './sample';
+import { dateRange, dayLabel } from './period';
+import { number, type Report } from './sample';
 
-export interface Selection { chart: Chart; row?: number }
-function detail(chart: Chart) {
-  if (chart === 'hours') return { title: 'Volume by hour', headings: ['Day', 'Processed', 'Peak hour'],
-    rows: hourlyKB.map((row, i) => [days[i], formatSize(total(row) * 1000), hour(row.indexOf(Math.max(...row)))]) };
-  const series = chart === 'flow' ? stages : chart === 'formats' ? formats : inputs;
-  const base = chart === 'flow' ? stages[0].value : total(series.map(s => s.value));
-  return { title: { flow: 'Export funnel', formats: 'File distribution', inputs: 'Input formats' }[chart],
-    headings: chart === 'flow' ? ['Stage', 'Volume', 'Share of opens'] : ['Format', 'Files', 'Share'],
-    rows: series.map(s => [s.name, number(s.value), `${(s.value / base * 100).toFixed(1)}%`]) };
-}
-
-/** Read-only chart inspection, not a workspace command menu. */
-export function ChartDetail({ selection, close }: { selection: Selection; close: () => void }) {
-  const { title, headings, rows } = detail(selection.chart);
-  return <PanelDialog className="chart-detail" title={title} titleId="chart-detail-title" close={close} closeLabel="Close chart details">
-    <p>Sample chart data. Your actual tool activity is in Usages.</p>
-    <table><thead><tr>{headings.map(h => <th key={h} scope="col">{h}</th>)}</tr></thead><tbody>{rows.map(([name, amount, share], i) =>
-      <tr key={name} className={selection.row === i ? 'chosen-row' : undefined}><th scope="row">{name}</th><td>{amount}</td><td>{share}</td></tr>)}</tbody></table>
+export interface Selection { chart: 'volume' | 'formats' | 'operations'; row?: number }
+export type Inspect = (chart: Selection['chart'], row?: number) => void;
+export function ChartDetail({ selection, report, close }: { selection: Selection; report: Report; close: () => void }) {
+  const marker = useRef<HTMLTableRowElement>(null);
+  useEffect(() => { marker.current?.scrollIntoView({ block: 'nearest' }); }, []);
+  const { chart } = selection, volume = chart === 'volume';
+  const rows = volume ? report.rows.map(d => [dayLabel(d.time), `${d.mb} MB`, number(d.files)]) : report[chart].map(s => [s.label, number(s.value), `${(s.value / report.current.files * 100).toFixed(1)}%`]);
+  const headings = volume ? ['Day', 'Input volume', 'Files'] : [chart === 'formats' ? 'Format' : 'Operation', 'Files', 'Share'];
+  return <PanelDialog className="chart-detail" title={{ volume: 'Daily processed volume', formats: 'File distribution', operations: 'Operation mix' }[chart]} titleId="chart-detail-title" close={close} closeLabel="Close chart details">
+    <p>Sample chart data · {dateRange(report.period)}</p>
+    <div className="detail-scroll" tabIndex={0} role="region" aria-label="Chart values"><table><thead><tr>{headings.map(h => <th key={h} scope="col">{h}</th>)}</tr></thead><tbody>{rows.map(([name, value, share], i) =>
+      <tr key={name} ref={i === selection.row ? marker : undefined} className={i === selection.row ? 'chosen-row' : undefined}><th scope="row">{name}</th><td>{value}</td><td>{share}</td></tr>)}</tbody></table></div>
   </PanelDialog>;
 }

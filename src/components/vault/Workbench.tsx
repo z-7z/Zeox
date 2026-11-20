@@ -33,7 +33,7 @@ export function Workbench({ s }: { s: VaultSession }) {
     if (!busy) s.selectFile(Array.from(e.dataTransfer.files));
   }
   const result = s.result;
-  return <section className="glass-card vt-workbench" id="workbench" aria-labelledby="bench-title" tabIndex={-1}>
+  return <section className="ws-panel vt-workbench" id="workbench" aria-labelledby="bench-title" tabIndex={-1}>
     <PanelHeader title="File workbench" id="bench-title" icon={FolderLock} bar>
       <ModeSwitch mode={s.mode} change={s.switchMode} disabled={busy} /></PanelHeader>
     {!s.supported && <div className="vt-warning" role="alert"><CircleAlert size={15} />This browser needs HTTPS and Web Crypto to process files locally.</div>}

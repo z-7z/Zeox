@@ -15,7 +15,7 @@
 .vt-field-heading { min-height: 24px; margin-bottom: 9px; }
 .vt-step { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 530; letter-spacing: -.02em; }
 .vt-step > span { display: grid; place-items: center; width: 23px; height: 18px; border-radius: 4px; border: 1px solid var(--db-line); background: #191919; font: 10px/1 var(--db-mono); color: #a6a6a6; }
-.vt-drop { position: relative; border-radius: 5px; border: 1px dashed #444; isolation: isolate; background-color: #111; background-image: radial-gradient(#9999991e .8px, transparent .9px); background-size: 11px 11px; }
+.vt-drop { position: relative; border-radius: 5px; border: 1px dashed #444; isolation: isolate; background-color: #111; }
 .vt-drop:is(:hover, .is-dragging, :focus-within) { border-color: #989898; background-color: #1d1d1d; }
 .vt-drop.is-dragging { outline: 2px solid #7c7c7c; outline-offset: 2px; }
 .vt-drop.has-error { border-color: #989898; }
@@ -68,12 +68,12 @@
 .vt-circuit { position: relative; display: grid; place-items: center; margin: 12px 0 8px; min-height: 84px; flex: 1; overflow: hidden; background: #141414; border: 1px solid var(--db-line); border-radius: 5px; }
 .vt-circuit > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .vt-trace, .vt-packet { fill: none; stroke: #474747; stroke-width: 1; vector-effect: non-scaling-stroke; }
-.vt-packet { stroke: #a4a4a4; stroke-dasharray: 5 105; stroke-linecap: round; animation: vt-signal 5.4s linear infinite; }
+.vt-packet { stroke: #a4a4a4; stroke-dasharray: 5 105; stroke-linecap: round; opacity: 0; }
 .vt-packet.reverse { animation-direction: reverse; }
 .vt-packet.packet-2 { animation-delay: -1.8s; }.vt-packet.packet-4 { animation-delay: -3.6s; }
-.vt-circuit.is-active .vt-packet { stroke: #cfcfcf; stroke-width: 2; animation-duration: 1.1s; }
+.vt-circuit.is-active .vt-packet { stroke: #cfcfcf; stroke-width: 2; opacity: 1; animation: vt-signal 1.1s linear infinite; }
 .vt-chip { position: relative; padding: 4px; border: 1px solid #6b6b6b; border-radius: 8px; background: #242424; }
-.vt-chip::before, .vt-chip::after { content: ''; position: absolute; left: 6px; right: 6px; height: 3px; background: repeating-linear-gradient(90deg,#636363 0 2px,transparent 2px 6px); }
+.vt-chip::before, .vt-chip::after { content: ''; position: absolute; left: 6px; right: 6px; height: 3px; border-top: 3px dotted #636363; }
 .vt-chip::before { top: -4px; }.vt-chip::after { bottom: -4px; }
 .vt-chip-face { min-width: 49px; height: 32px; display: flex; align-items: center; justify-content: center; gap: 4px; border-radius: 2px; border: 1px solid #414141; background: #1c1c1c; color: #c0c0c0; }
 .vt-chip-face b { font: 600 10px var(--db-mono); letter-spacing: .035em; }
@@ -125,14 +125,13 @@
 .vt-clear-log { margin-top: 14px; }
 .vt-all-events { max-height: 43svh; overflow: auto; }
 
-@keyframes vt-float { 0%, 100% { transform: translateY(2px) rotate(-.7deg); } 50% { transform: translateY(-5px) rotate(.65deg); } }
 @keyframes vt-signal { from { stroke-dashoffset: 110; } to { stroke-dashoffset: 0; } }
 @keyframes vt-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes vt-pulse { to { opacity: .35; } }
 @keyframes vt-spin { to { transform: rotate(360deg); } }
 .vt-spinner { animation: vt-spin .85s linear infinite; }
 
-.vt-file-art img { display: block; width: 100%; height: auto; animation: vt-float 6s ease-in-out infinite; }
+.vt-file-art img { display: block; width: 100%; height: auto;  }
 .vt-app[data-motion=off] .vt-drop .vt-file-art { transform: none; }
 .vt-drop.has-file .vt-drop-button { padding-right: 35px; }
 @media (max-width:600px) {
@@ -148,3 +147,9 @@
   .vt-result { min-height: 250px; padding: 18px 14px; }
 }
 @media (max-width:365px) { .vt-switch button svg { display: none; } }
+
+.vt-app { flex: 1; display: flex; flex-direction: column; }.vt-log-panel { border-top: 1px solid var(--db-line); }
+@media (min-width:921px) {
+  .vt-workbench, .vt-workbench > form, .vt-bench-fields { display: flex; flex-direction: column; }.vt-workbench > form, .vt-bench-fields, .vt-result, .vt-log-panel { flex: 1; }.vt-drop { flex: 1; display: flex; }
+  .vt-action-bar { padding-block: 16px; }.vt-engine { flex: none; }.vt-circuit { min-height: clamp(128px, 19vh, 260px); margin-block: 22px; }.vt-specs > div { min-height: 34px; }
+}

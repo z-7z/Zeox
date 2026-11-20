@@ -1,8 +1,9 @@
 import { useRef } from 'react';
-import { ArrowRight, Check, CircleAlert } from 'lucide-react';
+import { ArrowRight, Check, CircleAlert, FileSliders } from 'lucide-react';
 import { AttachmentField } from '../components/source/AttachmentField';
 import { BuildSettings } from '../components/source/BuildSettings';
 import { OutputFile } from '../components/source/OutputFile';
+import { formatSize } from '../lib/vault/container';
 import { useSourceTool } from '../components/workspace/ToolSessions';
 import '../components/source/workshop.css';
 
@@ -11,7 +12,7 @@ export function Obfuscate() {
   const tool = useSourceTool(), { file, reading, result, issue } = tool;
   const step = result ? 2 : file && !reading ? 1 : 0;
   const builtHere = useRef(false);
-  return <div className="ws-file-layout"><section className="glass-card src-job" aria-labelledby="src-title">
+  return <div className="ws-file-layout"><section className="ws-panel src-job" aria-labelledby="src-title">
     <header className="src-heading">
       <div className="src-topline"><span className="src-kicker"><span aria-hidden="true">//</span> LUA + LUAU</span>
         <ol className="src-steps" aria-label="File workflow">{steps.map((label, i) => <li key={label} aria-current={i === step ? 'step' : undefined}>
@@ -20,11 +21,15 @@ export function Obfuscate() {
       <h2 id="src-title">Script obfuscator</h2>
       <p>Build a separate copy of your script without sending it off your device.</p>
     </header>
-    <div className="src-body"><AttachmentField tool={tool} /><BuildSettings tool={tool} /></div>
+    <div className="src-body"><AttachmentField tool={tool} /></div>
+    <aside className="src-job-side" aria-label="Build controls"><div className="src-facts"><h3><FileSliders size={15} />Job details</h3>
+      <dl><div><dt>File types</dt><dd>.lua / .luau</dd></div><div><dt>Encoding</dt><dd>UTF-8</dd></div>
+        <div><dt>Size limit</dt><dd>512 KiB</dd></div><div><dt>Attached size</dt><dd>{file ? formatSize(file.size) : '—'}</dd></div></dl></div>
+    <BuildSettings tool={tool} />
     {issue?.field === 'build' && <p className="src-error src-build-error" role="alert"><CircleAlert size={15} aria-hidden="true" /><span>{issue.message} Fix the file and attach it again.</span></p>}
     <footer className="src-foot">{result ? <OutputFile file={result} focusDownload={builtHere.current} /> : <>
       <span className="src-status" role="status"><i aria-hidden="true" />{reading ? 'Reading file…' : file ? issue?.field === 'build' ? 'Build failed' : 'File attached' : 'Waiting for a file'}</span>
       <button type="button" className="ws-button ws-primary src-action" disabled={!file || reading} onClick={() => { builtHere.current = true; tool.build(); }}>Obfuscate file <ArrowRight size={15} aria-hidden="true" /></button>
-    </>}</footer>
+    </>}</footer></aside>
   </section></div>;
 }
