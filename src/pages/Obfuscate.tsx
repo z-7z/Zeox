@@ -1,35 +1,110 @@
 import { useRef } from 'react';
-import { ArrowRight, Check, CircleAlert, FileSliders } from 'lucide-react';
+import { ArrowRight, Check, CircleAlert, FileCheck2, Layers3 } from 'lucide-react';
 import { AttachmentField } from '../components/source/AttachmentField';
 import { BuildSettings } from '../components/source/BuildSettings';
 import { OutputFile } from '../components/source/OutputFile';
+import { SOURCE_LIMIT } from '../lib/source/compact';
 import { formatSize } from '../lib/vault/container';
 import { useSourceTool } from '../components/workspace/ToolSessions';
+import { CapacityTile } from '../components/workspace/InstrumentTiles';
 import '../components/source/workshop.css';
 
-const steps = ['Attach', 'Build', 'Save'];
 export function Obfuscate() {
-  const tool = useSourceTool(), { file, reading, result, issue } = tool;
+  const tool = useSourceTool(),
+    { file, reading, result, issue } = tool,
+    builtHere = useRef(false);
   const step = result ? 2 : file && !reading ? 1 : 0;
-  const builtHere = useRef(false);
-  return <div className="ws-file-layout"><section className="ws-panel src-job" aria-labelledby="src-title">
-    <header className="src-heading">
-      <div className="src-topline"><span className="src-kicker"><span aria-hidden="true">//</span> LUA + LUAU</span>
-        <ol className="src-steps" aria-label="File workflow">{steps.map((label, i) => <li key={label} aria-current={i === step ? 'step' : undefined}>
-          <span aria-hidden="true">{i < step ? <Check size={11} /> : `0${i + 1}`}</span>{label}
-        </li>)}</ol></div>
-      <h2 id="src-title">Script obfuscator</h2>
-      <p>Build a separate copy of your script without sending it off your device.</p>
-    </header>
-    <div className="src-body"><AttachmentField tool={tool} /></div>
-    <aside className="src-job-side" aria-label="Build controls"><div className="src-facts"><h3><FileSliders size={15} />Job details</h3>
-      <dl><div><dt>File types</dt><dd>.lua / .luau</dd></div><div><dt>Encoding</dt><dd>UTF-8</dd></div>
-        <div><dt>Size limit</dt><dd>512 KiB</dd></div><div><dt>Attached size</dt><dd>{file ? formatSize(file.size) : '—'}</dd></div></dl></div>
-    <BuildSettings tool={tool} />
-    {issue?.field === 'build' && <p className="src-error src-build-error" role="alert"><CircleAlert size={15} aria-hidden="true" /><span>{issue.message} Fix the file and attach it again.</span></p>}
-    <footer className="src-foot">{result ? <OutputFile file={result} focusDownload={builtHere.current} /> : <>
-      <span className="src-status" role="status"><i aria-hidden="true" />{reading ? 'Reading file…' : file ? issue?.field === 'build' ? 'Build failed' : 'File attached' : 'Waiting for a file'}</span>
-      <button type="button" className="ws-button ws-primary src-action" disabled={!file || reading} onClick={() => { builtHere.current = true; tool.build(); }}>Obfuscate file <ArrowRight size={15} aria-hidden="true" /></button>
-    </>}</footer></aside>
-  </section></div>;
+  return (
+    <div className="station-board source-board">
+      <section className="ws-panel station-work src-job" aria-labelledby="src-title">
+        <header className="station-head">
+          <div>
+            <small className="eyebrow">SOURCE STATION / 01</small>
+            <h2 id="src-title">Script intake</h2>
+          </div>
+          <span className="source-badge">
+            <Layers3 size={13} /> LUA + LUAU
+          </span>
+        </header>
+        <AttachmentField tool={tool} />
+        {issue?.field === 'build' && (
+          <p className="src-error" role="alert">
+            <CircleAlert size={15} />
+            {issue.message} Fix the file and attach it again.
+          </p>
+        )}
+        <footer className="src-foot">
+          {result ? (
+            <OutputFile file={result} focusDownload={builtHere.current} />
+          ) : (
+            <>
+              <span className="src-status" role="status">
+                <i />
+                {reading ? 'Reading file…' : file ? 'File attached' : 'Waiting for a file'}
+              </span>
+              <button
+                className="ws-button ws-primary src-action"
+                disabled={!file || reading}
+                onClick={() => {
+                  builtHere.current = true;
+                  tool.build();
+                }}
+              >
+                Obfuscate file <ArrowRight size={15} />
+              </button>
+            </>
+          )}
+        </footer>
+      </section>
+      <section className="ws-panel station-info src-profile" aria-label="Build profile">
+        <small className="eyebrow">PROCESSOR</small>
+        <h2>Build profile</h2>
+        <div className="profile-value">
+          {String(Object.values(tool.options).filter(Boolean).length).padStart(2, '0')}
+          <small> / 03 transforms</small>
+        </div>
+        <BuildSettings tool={tool} />
+        <dl className="fact-list">
+          <div>
+            <dt>Input encoding</dt>
+            <dd>UTF-8</dd>
+          </div>
+          <div>
+            <dt>Runtime</dt>
+            <dd>On device</dd>
+          </div>
+          <div>
+            <dt>Output</dt>
+            <dd>Separate file</dd>
+          </div>
+        </dl>
+      </section>
+      <CapacityTile label="512 KiB" limit={SOURCE_LIMIT} size={file?.size ?? null} />
+      <section className="ws-panel station-flow src-flow" aria-label="Build pipeline">
+        <h2>Build pipeline</h2>
+        <ol aria-label="File workflow">
+          {['Attach', 'Build', 'Save'].map((s, i) => (
+            <li key={s} aria-current={i === step ? 'step' : undefined}>
+              <i>{i < step ? <Check size={13} /> : String(i + 1).padStart(2, '0')}</i>
+              {s}
+            </li>
+          ))}
+        </ol>
+      </section>
+      <section className="ws-panel station-note src-receipt" aria-label="Build receipt">
+        <div>
+          <FileCheck2 size={18} />
+          <h2>Build receipt</h2>
+        </div>
+        <strong>{result ? formatSize(result.blob.size) : 'No output yet'}</strong>
+        <p>
+          {result ? (
+            <bdi dir="ltr">{result.name}</bdi>
+          ) : (
+            'Attach a script and build a copy. Your original stays unchanged.'
+          )}
+        </p>
+      </section>
+    </div>
+  );
 }

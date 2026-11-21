@@ -3,13 +3,13 @@ import { ArrowDownToLine, ArrowRight, ArrowUpRight, FolderLock, CheckCheck, Circ
 import { formatSize, SOURCE_ACCEPT, type Mode } from '../../lib/vault/container';
 import { phaseLabel, type VaultSession } from './session';
 import { PanelHeader } from '../workspace/PanelHeader';
-import { FileArt } from './StudioChrome';
+import { Cartridge } from '../workspace/InstrumentTiles';
 
 function SectionLabel({ no, title }: { no: string; title: string }) {
   return <h3 className="vt-step"><span>{no}</span>{title}</h3>;
 }
 function ModeSwitch({ mode, change, disabled }: { mode: Mode; change: (mode: Mode) => void; disabled: boolean }) {
-  return <div className={`vt-switch ${mode}`} role="group" aria-label="Operation"><i aria-hidden="true" />{(['encrypt', 'decrypt'] as const).map(value => {
+  return <div className={`vt-switch ${mode}`} role="group" aria-label="Operation">{(['encrypt', 'decrypt'] as const).map(value => {
     const Icon = value === 'encrypt' ? LockKeyhole : UnlockKeyhole;
     return <button key={value} type="button" aria-pressed={mode === value} disabled={disabled} onClick={() => change(value)}><Icon size={13} />{value === 'encrypt' ? 'Encrypt' : 'Decrypt'}</button>;
   })}</div>;
@@ -33,14 +33,14 @@ export function Workbench({ s }: { s: VaultSession }) {
     if (!busy) s.selectFile(Array.from(e.dataTransfer.files));
   }
   const result = s.result;
-  return <section className="ws-panel vt-workbench" id="workbench" aria-labelledby="bench-title" tabIndex={-1}>
-    <PanelHeader title="File workbench" id="bench-title" icon={FolderLock} bar>
+  return <section className="ws-panel station-work vt-workbench" id="workbench" aria-labelledby="bench-title" tabIndex={-1}>
+    <PanelHeader title="Archive console" id="bench-title" icon={FolderLock}>
       <ModeSwitch mode={s.mode} change={s.switchMode} disabled={busy} /></PanelHeader>
     {!s.supported && <div className="vt-warning" role="alert"><CircleAlert size={15} />This browser needs HTTPS and Web Crypto to process files locally.</div>}
     {result ? <div className="vt-result" key="result"><div className="vt-result-mark"><ShieldCheck size={30} /></div>
       <p className="vt-eyebrow">OPERATION COMPLETE</p><h3>{encrypt ? 'File encrypted' : 'File restored'}</h3>
       <p>{encrypt ? 'Save the archive and keep your passphrase. Your original is unchanged.' : 'Save the restored file before closing this tab.'}</p>
-      <div className="vt-output"><FileCode2 size={17} /><strong>{result.name}</strong><small>{formatSize(result.blob.size)}</small></div>
+      <div className="vt-output"><FileCode2 size={17} /><strong><bdi dir="ltr">{result.name}</bdi></strong><small>{formatSize(result.blob.size)}</small></div>
       <div className="vt-result-actions">{s.url && <a ref={download} href={s.url} download={result.name} className="ws-button ws-primary"><ArrowDownToLine size={15} />{encrypt ? 'Download .zeox' : 'Download original'}</a>}
         <button type="button" className="ws-button" onClick={() => { s.reset(); requestAnimationFrame(() => browse.current?.focus({ preventScroll: true })); }}><RotateCcw size={13} />Process another file</button></div>
     </div> : <form noValidate onSubmit={e => { e.preventDefault(); void s.run(); }} aria-busy={busy}>
@@ -49,11 +49,11 @@ export function Workbench({ s }: { s: VaultSession }) {
           <div className="vt-field-heading"><SectionLabel no="01" title={encrypt ? 'Source file' : 'Encrypted archive'} />
             {encrypt && <button type="button" className="ws-quiet" onClick={s.sample} disabled={busy}>Use sample<ArrowUpRight size={12} /></button>}</div>
           <input ref={input} type="file" aria-label={encrypt ? 'Choose a source file' : 'Choose a .zeox archive'} hidden disabled={busy} accept={encrypt ? SOURCE_ACCEPT : '.zeox'} onChange={e => { s.selectFile(Array.from(e.currentTarget.files || [])); e.currentTarget.value = ''; }} />
-          <div className={`vt-drop${dragging ? ' is-dragging' : ''}${s.file ? ' has-file' : ''}${s.problem?.field === 'file' ? ' has-error' : ''}`}
+          <div className={`vt-drop intake-surface${dragging ? ' is-dragging' : ''}${s.file ? ' has-file' : ''}${s.problem?.field === 'file' ? ' has-error' : ''}`}
             onDragEnter={e => { e.preventDefault(); if (!busy && e.dataTransfer.types.includes('Files')) { dragDepth.current++; setDragging(true); } }}
             onDragLeave={e => { e.preventDefault(); if (--dragDepth.current <= 0) { dragDepth.current = 0; setDragging(false); } }} onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = busy ? 'none' : 'copy'; }} onDrop={onDrop}>
             <button ref={browse} type="button" className="vt-drop-button" disabled={busy} onClick={() => input.current?.click()} aria-label={s.file ? 'Replace selected file' : 'Browse files'} aria-describedby={s.problem?.field === 'file' ? 'vt-error' : undefined}>
-              <FileArt selected={!!s.file} /><span className="vt-drop-copy">{s.file ? <><strong>{s.file.name}</strong><small>{formatSize(s.file.size)} <b>·</b> {dragging ? 'Release to replace' : 'Click to replace'}</small></>
+              <Cartridge kind="archive"/><span className="vt-drop-copy">{s.file ? <><strong><bdi dir="ltr">{s.file.name}</bdi></strong><small>{formatSize(s.file.size)} <b>·</b> {dragging ? 'Release to replace' : 'Click to replace'}</small></>
                 : <><strong>{dragging ? 'Release to select this file' : <>Drop your file or <em>browse files</em></>}</strong><small>{encrypt ? 'Luau, Lua & Roblox files' : 'Zeox archives (.zeox)'}<b>·</b>25 MB max{encrypt ? '' : ' source'}</small></>}</span>
             </button>
             {s.file && <button type="button" className="vt-remove" aria-label="Remove selected file" disabled={busy} onClick={s.removeFile}><X size={15} /></button>}

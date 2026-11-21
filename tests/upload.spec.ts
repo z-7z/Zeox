@@ -92,6 +92,6 @@ for (const [width, height] of [[320, 568], [390, 844], [568, 320], [844, 390], [
     await expect(page.getByRole('group', { name: 'Source file' })).toContainText(name); await build.click();
     await expect(page.getByRole('link', { name: 'Download file' })).toBeInViewport();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
-    await expect(page.locator('main section.ws-panel')).toHaveCount(1); await expect(page.locator(noCodePane)).toHaveCount(0);
+    await expect(page.getByRole('group',{name:'Source file'})).toHaveCount(1); await expect(page.locator('input[type=file]')).toHaveCount(1); await expect(page.locator(noCodePane)).toHaveCount(0);
   });
 }

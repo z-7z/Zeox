@@ -1,16 +1,57 @@
-/* One opaque canvas. Dividers, not floating cards or lighting, separate panes. */
+/* Signal desk: ink canvas, separate graphite housings and solid signal colors. */
 .db-scene {
-  --db-canvas: #0b0b0c; --db-card: #0d0d0e; --db-rail: #111112; --db-line: #252526;
-  --db-ink: #f2f2f2; --db-muted: #a9a9ad; --db-dim: #99999d; --db-up: #64c5a4; --db-down: #ed949a;
-  --db-pad: clamp(20px, 2.1vw, 44px); --db-radius: 5px; --db-columns: minmax(0, 2.25fr) minmax(270px, 1fr);
-  /* The report plot and Vault intake get the remainder after a bounded inspector. */
-  --db-work-columns: minmax(0, 1fr) clamp(240px, 22%, 368px);
-  --db-inspector-pad: clamp(16px, 1.5vw, 28px);
-  --db-mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
-  color-scheme: dark; color: var(--db-ink); background: var(--db-canvas); font-variant-numeric: tabular-nums;
+  --canvas: #09090a;
+  --card: #121213;
+  --face: #1c1c1e;
+  --edge: #242426;
+  --ink: #f6f5f2;
+  --muted: #b0aeac;
+  --dim: #9c9997;
+  --orange: #ff802d;
+  --lime: #8cf363;
+  --red: #ff5149;
+  --radius: clamp(12px, 1.05vw, 20px);
+  --gap: clamp(7px, 0.68vw, 14px);
+  --pad: clamp(16px, 1.65vw, 34px);
+  --inset: clamp(14px, 1.9vw, 34px);
+  --mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+  color-scheme: dark;
+  color: var(--ink);
+  background: var(--canvas);
+  font-variant-numeric: tabular-nums;
 }
-.ws-panel { position: relative; min-width: 0; background: var(--db-card); }
-.sk-shape { display: block; border-radius: 2px; background: #262628; }
-@media (max-width:600px) { .db-scene { --db-pad: 16px; } }
-@media (prefers-contrast: more) { .db-scene { --db-line: #57575a; --db-muted: #d3d3d3; --db-dim: #c1c1c1; } }
-@media (forced-colors: active) { .db-scene { --db-line: CanvasText; --db-up: CanvasText; --db-down: CanvasText; }.ws-panel { background: Canvas; } }
+.ws-panel {
+  min-width: 0;
+  position: relative;
+  isolation: isolate;
+  background: var(--card);
+  border: 1px solid #19191a;
+  border-radius: var(--radius);
+}
+.sk-shape {
+  display: block;
+  background: #303032;
+  border-radius: 4px;
+}
+@media (max-width: 600px) {
+  .db-scene {
+    --pad: 14px;
+    --inset: 10px;
+    --gap: 7px;
+    --radius: 13px;
+  }
+}
+@media (prefers-contrast: more) {
+  .db-scene {
+    --dim: #c7c5c3;
+    --edge: #555557;
+  }
+  .ws-panel {
+    border-color: #555;
+  }
+}
+@media (forced-colors: active) {
+  .ws-panel {
+    border-color: CanvasText;
+  }
+}

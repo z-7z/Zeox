@@ -1,10 +1,10 @@
-import { Braces, ChartNoAxesColumnIncreasing, LayoutGrid, LockKeyhole } from 'lucide-react';
+import { Braces, ChartNoAxesColumnIncreasing, House, LockKeyhole } from 'lucide-react';
 
 export const sections = [
-  { id: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: LayoutGrid },
-  { id: 'obfuscate', path: '/obfuscate', label: 'Obfuscate', icon: Braces },
-  { id: 'usages', path: '/usages', label: 'Usages', icon: ChartNoAxesColumnIncreasing },
-  { id: 'vault', path: '/vault', label: 'Vault', icon: LockKeyhole },
+  { id: 'dashboard', path: '/dashboard', label: 'Dashboard', hint: 'Sample analytics and local session', icon: House },
+  { id: 'obfuscate', path: '/obfuscate', label: 'Obfuscate', hint: 'Attach and build a Lua script', icon: Braces },
+  { id: 'usages', path: '/usages', label: 'Usages', hint: 'Review or export completed runs', icon: ChartNoAxesColumnIncreasing },
+  { id: 'vault', path: '/vault', label: 'Vault', hint: 'Encrypt or restore a file', icon: LockKeyhole },
 ] as const;
 export type Section = typeof sections[number];
 export function sectionFor(path: string): Section {

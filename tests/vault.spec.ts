@@ -126,7 +126,7 @@ test('session log is metadata only, clearable and transient', async ({ page }) =
   await expect(page.getByRole('region', { name: 'Session activity' })).toContainText('No files processed yet');
 });
 
-test('the expanded file surface and responsive step layout preserve an in-progress job', async ({ page }) => {
+test('the archive intake and responsive step layout preserve an in-progress job', async ({ page }) => {
   await page.setViewportSize({ width: 1366, height: 768 }); await page.goto('/vault');
   const browse = page.getByRole('button', { name: 'Browse files' }), width = (await browse.boundingBox())!.width;
   const [picker] = await Promise.all([page.waitForEvent('filechooser'), browse.click({ position: { x: Math.floor(width) - 6, y: 15 } })]);
@@ -155,7 +155,7 @@ test('mobile studio fits the viewport, guide restores focus, and motion can be d
   await expect(page.getByRole('dialog')).toContainText('must be decrypted');
   await page.keyboard.press('Escape'); await expect(guide).toBeFocused();
   await openSidebar(page); await page.getByRole('button', { name: 'Enable animation' }).click(); await page.keyboard.press('Escape');
-  const art = page.locator('.vt-file-art img');
+  const art = page.locator('.cartridge-archive');
   expect(await art.evaluate(el => getComputedStyle(el).animationName)).toBe('none');
   await page.emulateMedia({ reducedMotion: 'reduce' }); await page.reload();
   expect(await art.evaluate(el => getComputedStyle(el).animationName)).toBe('none');

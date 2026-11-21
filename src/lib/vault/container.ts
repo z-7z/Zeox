@@ -12,7 +12,7 @@ export const MAX_BYTES = 25_000_000;
 const MAGIC = [0x5a, 0x45, 0x4f, 0x58, 1]; // ZEOX, format version 1
 const SALT_SIZE = 16, IV_SIZE = 12, TAG_SIZE = 16, MAX_NAME = 1024;
 const HEADER_SIZE = MAGIC.length + SALT_SIZE + IV_SIZE;
-const MAX_ARCHIVE = HEADER_SIZE + TAG_SIZE + 2 + MAX_NAME + MAX_BYTES;
+export const MAX_ARCHIVE = HEADER_SIZE + TAG_SIZE + 2 + MAX_NAME + MAX_BYTES;
 const encoder = new TextEncoder();
 
 export const cryptoAvailable = () => window.isSecureContext && !!globalThis.crypto?.subtle;
