@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { cryptoAvailable, processFile, validateFile, validatePassphrase, type Mode, type OutputFile, type Phase } from '../../lib/vault/container';
+import { cryptoAvailable, processFile, validateFile, validatePassphrase, type Mode, type Phase, type VaultResult } from '../../lib/vault/container';
 
 export interface SessionEvent { id: number; mode: Mode; name: string; size: number; time: number }
 export type Problem = { field: 'file' | 'pass' | 'confirm' | 'operation'; message: string };
-export const phaseLabel: Record<Phase, string> = { reading: 'Reading file', deriving: 'Deriving key', sealing: 'Encrypting file', restoring: 'Decrypting file' };
+export const phaseLabel: Record<Phase, string> = { reading: 'Reading file', deriving: 'Deriving key', sealing: 'Encrypting file', restoring: 'Decrypting file', cleaning: 'Cleaning text' };
 
 // Volatile state only. No uploads, storage, analytics or URLs containing secrets.
 export function useVaultSession(onSuccess: (operation: Mode, input: number, output: number) => void) {
@@ -13,16 +13,21 @@ export function useVaultSession(onSuccess: (operation: Mode, input: number, outp
   const [confirmation, setConfirmation] = useState('');
   const [phase, setPhase] = useState<Phase | null>(null);
   const [problem, setProblem] = useState<Problem | null>(null);
-  const [result, setResult] = useState<OutputFile | null>(null);
-  const [url, setUrl] = useState('');
+  const [result, setResult] = useState<VaultResult | null>(null);
+  const [urls, setUrls] = useState<{ original: string; cleaned?: string } | null>(null);
   const [events, setEvents] = useState<SessionEvent[]>([]);
   const id = useRef(0), running = useRef(false), alive = useRef(true);
   const supported = cryptoAvailable();
   useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   useEffect(() => {
-    if (!result) { setUrl(''); return; }
-    const objectUrl = URL.createObjectURL(result.blob); setUrl(objectUrl);
-    return () => URL.revokeObjectURL(objectUrl);
+    if (!result) { setUrls(null); return; }
+    const original = URL.createObjectURL(result.blob);
+    const cleaned = result.cleanup?.file && URL.createObjectURL(result.cleanup.file.blob);
+    setUrls({ original, cleaned });
+    return () => {
+      URL.revokeObjectURL(original);
+      if (cleaned) URL.revokeObjectURL(cleaned);
+    };
   }, [result]);
 
   function reset() {
@@ -65,6 +70,6 @@ export function useVaultSession(onSuccess: (operation: Mode, input: number, outp
   const clearLog = useCallback(() => setEvents([]), []);
   return { mode, switchMode, file, selectFile, removeFile: () => { if (!running.current) { setFile(null); setProblem(null); } }, sample,
     passphrase, editPass: (s: string) => { setPassphrase(s); setProblem(null); }, confirmation, editConfirm: (s: string) => { setConfirmation(s); setProblem(null); },
-    phase, problem, result, url, run, reset, events, clearLog, supported, forgetPassphrase };
+    phase, problem, result, urls, run, reset, events, clearLog, supported, forgetPassphrase };
 }
 export type VaultSession = ReturnType<typeof useVaultSession>;

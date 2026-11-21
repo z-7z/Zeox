@@ -1,13 +1,19 @@
-/** Portable, password-encrypted archives. Treat all source files as opaque bytes. */
+import { cleanRestoredFile, partialListingName, type Cleanup } from './cleanup';
+
+/** The archive codec treats all source files as opaque bytes. */
 export type Mode = 'encrypt' | 'decrypt';
-export type Phase = 'reading' | 'deriving' | 'sealing' | 'restoring';
+export type Phase = 'reading' | 'deriving' | 'sealing' | 'restoring' | 'cleaning';
 export interface OutputFile { blob: Blob; name: string }
+export interface VaultResult extends OutputFile { cleanup?: Cleanup }
 export const FORMATS = [
   { name: 'Luau', extensions: ['.luau'], description: 'Luau source scripts' },
   { name: 'Lua 5.1', extensions: ['.lua'], description: 'Lua source scripts' },
   { name: 'Roblox', extensions: ['.rbxl', '.rbxlx', '.rbxm', '.rbxmx'], description: 'Studio places and models, binary or XML' },
 ] as const;
-export const SOURCE_ACCEPT = FORMATS.flatMap(f => [...f.extensions]).join(',');
+const extensions = FORMATS.flatMap(f => [...f.extensions]);
+// File pickers cannot express numbered .partial.lua (2).txt exports. Filter
+// these precisely in safeSourceName; do not accept arbitrary .txt archives.
+export const SOURCE_ACCEPT = [...extensions, '.txt'].join(',');
 export const MAX_BYTES = 25_000_000;
 const MAGIC = [0x5a, 0x45, 0x4f, 0x58, 1]; // ZEOX, format version 1
 const SALT_SIZE = 16, IV_SIZE = 12, TAG_SIZE = 16, MAX_NAME = 1024;
@@ -23,11 +29,11 @@ export function formatSize(bytes: number) {
 }
 function safeSourceName(name: string) {
   return !!name && !/[\\/\u0000-\u001f\u007f\u202a-\u202e\u2066-\u2069]/u.test(name)
-    && encoder.encode(name).length <= MAX_NAME && SOURCE_ACCEPT.split(',').some(ext => name.toLowerCase().endsWith(ext));
+    && encoder.encode(name).length <= MAX_NAME && (extensions.some(ext => name.toLowerCase().endsWith(ext)) || partialListingName.test(name));
 }
 export function validateFile(file: File, mode: Mode): string | null {
   if (mode === 'encrypt') {
-    if (!safeSourceName(file.name)) return 'Choose a .luau, .lua, .rbxl, .rbxlx, .rbxm or .rbxmx file with a valid filename.';
+    if (!safeSourceName(file.name)) return 'Choose a .luau, .lua, .partial.lua.txt, .partial.luau.txt, .rbxl, .rbxlx, .rbxm or .rbxmx file with a valid filename.';
     if (file.size > MAX_BYTES) return 'This file is too large. The source file limit is 25 MB.';
   } else {
     if (!file.name.toLowerCase().endsWith('.zeox')) return 'Choose an encrypted .zeox archive to restore.';
@@ -51,11 +57,20 @@ async function deriveKey(passphrase: string, salt: Uint8Array, usage: Mode) {
   } finally { bytes.fill(0); }
 }
 
+/** Only a successful, authenticated restore reaches the cleaning pass. Keep
+ * the primary bytes exact for downloads, the session log and usage accounting. */
+export async function processFile(file: File, mode: Mode, passphrase: string, phase: (p: Phase) => void): Promise<VaultResult> {
+  const output = await processArchive(file, mode, passphrase, phase);
+  if (mode === 'encrypt') return output;
+  phase('cleaning');
+  return { ...output, cleanup: await cleanRestoredFile(output) };
+}
+
 /** V1: authenticated header (magic/version, salt, IV), then AES-GCM ciphertext + tag.
  * The sealed payload contains a two-byte UTF-8 filename length, filename and original bytes.
  * KDF parameters are fixed by the version; untrusted files cannot request expensive KDF settings.
  */
-export async function processFile(file: File, mode: Mode, passphrase: string, phase: (p: Phase) => void): Promise<OutputFile> {
+async function processArchive(file: File, mode: Mode, passphrase: string, phase: (p: Phase) => void): Promise<OutputFile> {
   if (!cryptoAvailable()) throw new Error('Local encryption needs Web Crypto over HTTPS. Open this page in a supported browser.');
   const invalid = validateFile(file, mode) || validatePassphrase(passphrase, mode);
   if (invalid) throw new Error(invalid);

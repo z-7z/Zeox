@@ -15,9 +15,40 @@ function encodeLiteral(token: string) {
   return token[0] + Array.from(encoder.encode(token.slice(1, -1)), b => byteEscape[b]).join('') + token[0];
 }
 
+// Reverse the build tool's fully decimal-escaped printable UTF-8 literals only.
+// Mixed escapes, arbitrary byte strings and delimiters must stay exactly as written.
+const literalDecoder = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true });
+function readableLiteral(token: string) {
+  if (token[1] !== '\\') return token;
+  const body = token.slice(1, -1);
+  if (!/^(?:\\[0-9]{3})+$/.test(body)) return token;
+  const bytes = new Uint8Array(body.length / 4);
+  for (let i = 0; i < bytes.length; i++) {
+    const n = Number(body.slice(i * 4 + 1, i * 4 + 4));
+    if (n > 255) return token;
+    bytes[i] = n;
+  }
+  try {
+    const text = literalDecoder.decode(bytes);
+    if (/[\\\u0000-\u001f\u007f-\u009f\u2028-\u202e\u2066-\u2069\ufeff]/u.test(text) || text.includes(token[0])) return token;
+    return token[0] + text + token[0];
+  } catch { return token; }
+}
+
 export function compactSource(source: string, options: Options): string {
   if (byteLength(source) > SOURCE_LIMIT) throw new Error('Source must be 512 KiB or smaller.');
   if (!source.trim()) throw new Error('The attached script is empty. Choose a file with Lua or Luau source.');
+  return rewrite(source, options, 'build');
+}
+
+/** Restore profile: use the same lexer, never obfuscate, and keep the indentation
+ * and line endings of surviving lines. The caller bounds and decodes the blob. */
+export function cleanLuaSource(source: string): string {
+  const bom = source.charCodeAt(0) === 0xfeff ? '\uFEFF' : '';
+  return bom + rewrite(source.slice(bom.length), { removeComments: true, compactSpacing: true, encodeText: false }, 'restore');
+}
+
+function rewrite(source: string, options: Options, profile: 'build' | 'restore'): string {
   if (source.includes('\0')) throw new Error('Choose a UTF-8 text script, not a binary file.');
   const longOpen = /\[(=*)\[/y;
   function longEnd(pos: number): number | null {
@@ -61,14 +92,23 @@ export function compactSource(source: string, options: Options): string {
 
   const out: string[] = [];
   let gap = '', i = 0;
-  function emit(token: string) {
-    if (gap) {
-      if (!options.compactSpacing) out.push(gap);
-      else if (out.length) out.push(/[\r\n]/.test(gap) ? '\n' : ' ');
-      gap = '';
+  function flushGap(final = false) {
+    if (!gap) return;
+    if (!options.compactSpacing) out.push(gap);
+    else if (profile === 'restore') {
+      const last = Math.max(gap.lastIndexOf('\n'), gap.lastIndexOf('\r'));
+      if (last >= 0) {
+        const eol = gap[last] === '\n' && gap[last - 1] === '\r' ? '\r\n' : gap[last];
+        if (out.length) out.push(eol);
+        if (!final) out.push(gap.slice(last + 1));
+      } else if (!final) out.push(out.length ? ' ' : gap);
+    } else if (out.length) {
+      if (/[\r\n]/.test(gap)) out.push('\n');
+      else if (!final) out.push(' ');
     }
-    out.push(token);
+    gap = '';
   }
+  function emit(token: string) { flushGap(); out.push(token); }
   while (i < source.length) {
     const start = i, c = source[i];
     if (isSpace(c)) { do { i++; } while (i < source.length && isSpace(source[i])); gap += source.slice(start, i); continue; }
@@ -81,7 +121,7 @@ export function compactSource(source: string, options: Options): string {
     }
     if (c === '"' || c === "'") {
       i = quotedEnd(i); const token = source.slice(start, i);
-      emit(options.encodeText ? encodeLiteral(token) : token); continue;
+      emit(profile === 'restore' ? readableLiteral(token) : options.encodeText ? encodeLiteral(token) : token); continue;
     }
     if (start === 0 && source.startsWith('#!')) i = lineEnd(i);
     else if (c === '`') i = templateEnd(i);
@@ -89,7 +129,6 @@ export function compactSource(source: string, options: Options): string {
     else { do { i++; } while (i < source.length && !isSpace(source[i]) && !'\'"`['.includes(source[i]) && !source.startsWith('--', i)); }
     emit(source.slice(start, i));
   }
-  if (!options.compactSpacing) out.push(gap);
-  else if (out.length && /[\r\n]/.test(gap)) out.push('\n');
+  flushGap(true);
   return out.join('');
 }

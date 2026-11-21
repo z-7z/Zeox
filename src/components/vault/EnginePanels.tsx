@@ -9,11 +9,12 @@ import {
   UnlockKeyhole,
 } from 'lucide-react';
 import { PanelHeader } from '../workspace/PanelHeader';
-import { formatSize } from '../../lib/vault/container';
+import { formatSize, type Phase } from '../../lib/vault/container';
 import { phaseLabel, type SessionEvent, type VaultSession } from './session';
 
 export function EnginePanel({ session, openGuide }: { session: VaultSession; openGuide: () => void }) {
   const { phase, supported, mode } = session;
+  const stages: Phase[] = mode === 'encrypt' ? ['reading', 'deriving', 'sealing'] : ['reading', 'deriving', 'restoring', 'cleaning'];
   return (
     <section className="ws-panel station-info vt-engine" aria-label="Cipher engine">
       <PanelHeader title="Cipher engine" icon={CircuitBoard}>
@@ -34,7 +35,7 @@ export function EnginePanel({ session, openGuide }: { session: VaultSession; ope
         <p>Galois / Counter Mode</p>
       </div>
       <ol className="cipher-stages" aria-label="Processing stages">
-        {(['reading', 'deriving', mode === 'encrypt' ? 'sealing' : 'restoring'] as const).map((stage, i) => (
+        {stages.map((stage, i) => (
           <li key={stage} aria-current={phase === stage ? 'step' : undefined}>
             <i>{'0' + (i + 1)}</i>
             {phaseLabel[stage]}
