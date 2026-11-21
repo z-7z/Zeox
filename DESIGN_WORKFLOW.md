@@ -2,7 +2,7 @@
 
 This document defines the reusable workflow for any AI (or human) changing
 Zeox interfaces. It combines the Skeleton Download System, vendored AI Design
-Skills, and the matte workspace design system.
+Skills, and the signal desk design system.
 
 ## Workflow (run in order, every time)
 
@@ -29,33 +29,14 @@ Skills, and the matte workspace design system.
    (focus rings, semantic HTML, alt text), and consistency.
 8. **Report the changes made.**
 
-## Dashboard-first workspace
+## The signal desk
 
-`/` and `/dashboard` open the tool overview. Use one left-hand navigation
-landmark with exactly **Dashboard, Obfuscate, Usages and Vault**. Keep it
-vertical on every screen. The desktop rail can disappear completely; on
-phones (including short landscape viewports) it becomes a normally closed modal drawer. Keep a labeled trigger,
-current-page indication, Escape/backdrop dismissal and keyboard focus return.
-Never add a second top strip, command search, simulated accounts or sales.
-`/dashboard/overview` and `/showcase` are compatibility redirects.
+Use the latest reference's hierarchy: a near-black frame, slim vertical rail with boxed icons, compact utilities and an asymmetric grid of opaque rounded cards. Fill the actual browser window; don't reproduce the empty presentation margin in the reference image. Keep tight, consistent gaps, orange active markers, white data lines, lime change chips and red/green chart fills. No glass, reflections, shine sweeps or decorative motion.
 
-Follow the attached desktop report reference, not its surrounding image matte:
-**edge-to-edge viewport, icons-only left rail, three KPIs, wide line chart,
-segmented radial summary at right, two compact summaries below**. Use Zeox
-file and session data, not imitation sales figures. Clearly distinguish the
-dated sample report from live tab-local runs. Match the static skeleton and
-script-free export to these panes. Do not restore the old ribbon/pie tiles.
-
-All four routes use the viewport width and at least its height, with natural
-scrolling when needed. No inset mock window, desktop max-width, backdrop
-filters, shiny borders, glows or shimmer. Use solid graphite active states
-and fine rules between panes. Give each nav icon an accessible name and a
-native hover title. Keep the toolbar usable when the rail is hidden.
-
-On narrow screens, stack the panes without horizontal scrolling. Obfuscate
-is file-only; Vault is a file and passphrase workbench; Usages is an
-exportable report. Keep build/encrypt within the first portrait phone screen
-without disabling zoom. Respect the motion switch and reduced-motion setting.
+- **Desktop Dashboard:** one dominant throughput card at upper left; batch tape and narrow, vertical action dock to its right. Below: the green output card, small red trend above the dot index and local session meter, and wide format columns with an orange accent. Keep the date rail aligned to the actual plot, not the viewport.
+- **Phone Dashboard:** a two-column composition, not a scaled desktop. Trace and columns span the width; yield and batches share a row. Turn the action dock horizontally. Keep touch and keyboard inspection, period controls and data tables usable.
+- **Navigation:** exactly Dashboard, Obfuscate, Usages and Vault in an accessible icon-only rail. Its labeled toggle can hide the rail. Phones, including short landscape windows, get a modal drawer with focus return, Escape and backdrop dismissal. Use the utility strip for tool search, shortcuts and local session information, not another tab bar. Keep one route H1.
+- **Data:** only the Dashboard uses the dated sample. Label it as such. The live session tile, file receipts and Usages report reflect actual local successes. Never fill an empty state with invented operations, accounts or balances.
 
 ## Skeleton Download System
 
@@ -81,16 +62,11 @@ Design contract for an external template importer (not shipped in the dashboard 
 
 ## One surface system across the workspace
 
-`workspace/material.css` owns opaque fills, type colors, hairlines and the
-shared desktop column ratio. `Shell` owns the viewport, rail and one toolbar
-H1. `workspace/panels.css`, `PanelHeader` and `PanelDialog` own shared tool
-controls and modals. Individual routes arrange their own contents; never put
-example analytics on tool pages to fill space.
+`workspace/material.css` owns the tokens and card housing. `Shell`, `PanelHeader`, `PanelDialog` and the layouts in `workspace/panels.css` are shared. Obfuscate and Vault are five-card file stations: working surface, engine/profile, capacity, flow and receipt/log. Obfuscate accepts an attachment only; never add an editor. Usages uses the same housings for totals, byte trends, operation mix and the exportable ledger.
 
-Check phone portrait and landscape as well as laptop, 1920px and wider PC
-windows. Verify no desktop gutters around the app or horizontal overflow,
-with the rail open and closed. Test real uploads, downloads, chart controls,
-keyboard focus, readable empty states and direct-entry loading.
+`dashboard/layout.css` owns **all three** Dashboard layouts: live, lazy fallback and standalone export. Other route fallbacks reserve each station or ledger's tracks. Load layout rules with the shell, not only with a lazy route. The exported skeleton must have no scripts, session data, fonts to download or network requests.
+
+Review the populated and empty states, cold entries, and offline downloads. Compare at laptop, wide Windows and phone portrait/landscape sizes with the rail both open and closed. Test the real file picker, download bytes, keyboard shortcuts and modal focus return, and check horizontal overflow with native scrollbars. Keep build/encrypt in reach in the initial phone view without disabling zoom.
 
 ## Icons
 

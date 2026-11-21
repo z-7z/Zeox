@@ -15,7 +15,7 @@ for (const width of [320, 390, 1440]) {
     await expect(page.getByRole('heading', { level: 1, name: 'Overview' })).toBeVisible();
     await expect(page.getByRole('banner').getByRole('navigation')).toHaveCount(0);
     if (mobile) await expect(sidebar(page)).toHaveCount(0);
-    await page.keyboard.press('/'); await page.keyboard.press('Control+k'); await expect(page.getByRole('dialog')).toHaveCount(0);
+    await page.keyboard.press('/'); await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(page.locator('body')).not.toContainText(/campaign|purchase rate|orders|sales|workspace commands/i);
     for (const section of ['Dashboard', 'Obfuscate', 'Usages', 'Vault']) {
       const nav = await openSidebar(page), links = nav.getByRole('link');
@@ -41,13 +41,13 @@ for (const width of [320, 390, 1440]) {
 
 test('interface motion remains optional; the report and loading surfaces never shine', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 }); await page.goto('/');
-  await expect(page.locator('.ov-trend')).toHaveCSS('backdrop-filter', 'none'); await expect(page.locator('.trend-line')).toHaveCSS('animation-name', 'none');
+  await expect(page.locator('.signal-main')).toHaveCSS('backdrop-filter', 'none'); await expect(page.locator('.signal-line')).toHaveCSS('animation-name', 'none');
   await openSidebar(page); const toggle = page.getByRole('button', { name: 'Enable animation' });
   await toggle.click(); await expect(toggle).toHaveAttribute('aria-pressed', 'false'); await expect(page.locator('.db-scene')).toHaveAttribute('data-motion', 'off');
-  await go(page, 'Vault'); await expect(page.locator('.vt-file-art img')).toHaveCSS('animation-name', 'none');
+  await go(page, 'Vault'); await expect(page.locator('.cartridge-archive')).toHaveCSS('animation-name', 'none');
   await page.emulateMedia({ reducedMotion: 'reduce' }); await go(page, 'Dashboard'); await openSidebar(page);
   await expect(page.getByRole('button', { name: 'Motion reduced by system preference' })).toBeDisabled();
-  await page.keyboard.press('Escape'); await expect(page.locator('.ov-gauge')).toHaveCSS('background-image', 'none');
+  await page.keyboard.press('Escape'); await expect(page.locator('.mix-index')).toHaveCSS('background-image', 'none');
 });
 
 test('local source file builds offline, downloads under a distinct name, and survives section changes', async ({ page, context }) => {
@@ -82,6 +82,8 @@ test('usage counts successes only, filters and exports metadata, resets without 
   // Navigation need not wait for the in-flight job.
   await go(page, 'Usages');
   await expect(page.getByRole('region', { name: 'Completed runs' }).locator('strong')).toHaveText('2');
+  await expect(page.getByRole('img',{name:/Input and output sizes for the last 2 runs/})).toBeVisible();
+  await expect(page.locator('.run-chart rect')).toHaveCount(4);
   const filter = page.getByLabel('Filter usage log'); await filter.selectOption('vault');
   await expect(page.getByRole('table').getByRole('row')).toHaveCount(2);
   const waiting = page.waitForEvent('download'); await page.getByRole('button', { name: 'Export log' }).click();
@@ -109,4 +111,17 @@ test('invalid attachments preserve a good file and failed builds do not count', 
   await expect(page.getByRole('alert')).toContainText('no closing bracket'); await expect(page.getByRole('link', { name: 'Download file' })).toHaveCount(0);
   await go(page, 'Usages'); await expect(page.getByText('No usage yet')).toBeVisible();
   await go(page, 'Obfuscate'); await expect(intake).toContainText('unfinished.lua');
+});
+
+
+test('toolbar search opens real tools and the session chip explains local state', async ({page}) => {
+  await page.goto('/dashboard'); const find=page.getByRole('button',{name:'Find a tool'});
+  await find.focus(); await page.keyboard.press('Control+k'); const search=page.getByRole('searchbox',{name:'Search tools'});
+  await expect(search).toBeFocused(); await search.fill('unmatched'); await expect(page.getByRole('dialog',{name:'Find a tool'}).getByRole('status')).toContainText('No matching tool');
+  await search.press('Escape'); await expect(find).toBeFocused(); await find.click(); await search.fill('restore'); await search.press('Enter');
+  await expect(page).toHaveURL(/\/vault$/); await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.getByRole('button',{name:'Local session information'}).click(); await expect(page.getByRole('dialog')).toContainText('Tab memory');
+  await page.keyboard.press('Escape'); await expect(page.getByRole('button',{name:'Local session information'})).toBeFocused();
+  await page.getByRole('button',{name:'Keyboard shortcuts'}).click(); await expect(page.getByRole('dialog')).toContainText('Inspect a focused chart');
+  await page.goBack(); await expect(page).toHaveURL(/\/dashboard$/); await expect(page.getByRole('dialog')).toHaveCount(0);
 });

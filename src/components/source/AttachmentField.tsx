@@ -1,7 +1,7 @@
 import { useRef, useState, type DragEvent } from 'react';
 import { CircleAlert, FileUp, RefreshCw, X } from 'lucide-react';
 import { formatSize } from '../../lib/vault/container';
-import sheet from '../../assets/source/script-sheet.svg';
+import { Cartridge } from '../workspace/InstrumentTiles';
 import type { SourceSession } from './session';
 
 export function AttachmentField({ tool }: { tool: SourceSession }) {
@@ -20,13 +20,13 @@ export function AttachmentField({ tool }: { tool: SourceSession }) {
     void tool.attach(Array.from(e.dataTransfer.files));
   }
   return <>
-    <div className="src-intake" role="group" aria-label="Source file" aria-busy={reading} data-dragging={dragging || undefined} data-attached={!!file || undefined}
+    <div className="src-intake intake-surface" role="group" aria-label="Source file" aria-busy={reading} data-dragging={dragging || undefined} data-attached={!!file || undefined}
       onDragEnter={enter} onDragLeave={leave} onDragOver={e => { e.preventDefault(); if (e.dataTransfer.types.includes('Files')) e.dataTransfer.dropEffect = 'copy'; }} onDrop={drop}>
       <input ref={input} type="file" accept=".lua,.luau" hidden aria-label="Attach Lua or Luau file" onChange={e => {
         const files = Array.from(e.currentTarget.files ?? []); e.currentTarget.value = ''; void tool.attach(files);
       }} />
       <button type="button" ref={browse} className="src-drop" aria-label={action} aria-describedby={`src-file-title src-file-meta${fileIssue ? ' src-file-error' : ''}`} onClick={() => input.current?.click()}>
-        <img className="src-sheet" src={sheet} width="148" height="112" alt="" draggable={false} />
+        <Cartridge kind="script"/>
         <span className="src-file-title" id="src-file-title" title={file?.name}><bdi dir="ltr">{dragging ? 'Drop to attach' : reading ? 'Reading file…' : file ? file.name : 'Drop your script here'}</bdi></span>
         <span className="src-file-meta" id="src-file-meta">{file ? `${/\.luau$/i.test(file.name) ? 'Luau' : 'Lua'} · ${formatSize(file.size)} · UTF-8` : '.lua or .luau · 512 KiB max'}</span>
         <span className="src-browse">{file ? <RefreshCw size={14} /> : <FileUp size={15} />}{action}</span>

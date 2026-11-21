@@ -1,21 +1,21 @@
 # Zeox Workspace
 
-A local workspace for Lua source and file protection. Its matte canvas fills the browser viewport at every size; there is no framed desktop mockup, width cap, glass, shine or blur. A **vertical icon rail** on the left contains four named links. The header button hides/restores it, or opens the same icon rail as a modal drawer on phones. Current-page state, native hover titles, keyboard focus and Escape/backdrop dismissal work without visible navigation labels. An optional desktop full-screen button uses the browser API only when available and explicitly requested.
+Zeox is a local workspace for Lua scripts and encrypted file archives. The dark **signal desk** fills the window: an icon-only rail on the left, a short utility bar, and a close-set grid of rounded instrument cards. The orange icon marks the active route. Hide the rail for more room, or open it as a drawer on a phone. **Find a tool** (`Ctrl`/`⌘` + `K`) searches the four real routes; the session badge explains what stays in this tab. Full screen is optional and only requested on a button press.
 
 | Section | Route | What it does |
 | --- | --- | --- |
-| **Dashboard** | `/`, `/dashboard` | A three-metric strip above an inspectable daily volume chart. A segmented file gauge, saved-file meter, actions, live session summary and operation mix complete the report. **Download skeleton** saves this layout as static, offline HTML. |
-| **Obfuscate** | `/obfuscate` | Attach one UTF-8 `.lua` or `.luau` script (512 KiB max), build it on device, and download a separate file. No paste box, code editor or source preview. |
-| **Usages** | `/usages` | Actual successful source builds, encryptions and decryptions **in this tab**. Counters cover all successful runs; the filterable ledger and CSV contain the last 50 runs, with times and byte counts only. |
-| **Vault** | `/vault` | Encrypt and restore Luau, Lua 5.1 and Roblox Studio files byte-for-byte. |
+| **Dashboard** | `/`, `/dashboard` | Inspect throughput and recent sample batches, compare saved and unexported files, open operation/format details, and jump to a tool. **Skeleton** in the action dock downloads the eight-card layout as standalone HTML. |
+| **Obfuscate** | `/obfuscate` | Attach one UTF-8 `.lua` or `.luau` script (512 KiB max), choose settings, build on device and download a separate file. No paste box, editor or source preview. |
+| **Usages** | `/usages` | Actual successful builds, encryptions and decryptions in this tab. Counters cover all successful runs, the plot pairs input/output bytes for the last 16, and the filterable ledger and CSV cover the last 50. |
+| **Vault** | `/vault` | Encrypt or restore files locally. After a successful decrypt, get a cleaned script or a static EXF reading when supported, alongside the exact original. |
 
-The header marks the charts as **sample data**. The 7- and 30-day windows end May 15, 2026; the period picker updates the dates, comparisons, charts and detail tables together. Point at the volume chart or use the arrow, Home and End keys when focused. **This session** is separate: its count and up to three recent runs come from Usages in this tab. Quick actions open the real tools. There are no simulated accounts, sales or remote analytics. `/dashboard/overview` and `/showcase` redirect to Dashboard.
+## Reading the desk
 
-## Layout and surfaces
+The Dashboard plots a **dated sample**, not uploads from your device. Both the 7- and 30-day windows end May 15, 2026 (UTC). The white trace shows rolling 24-hour input volume from eight-hour samples; its daily closes are the values in the detail table. Compare against the previous window using the green change chips. Point, tap, or focus the chart and use the arrow, Home and End keys to inspect a day. The date rail follows the available plot width. The colored traces, dot index and columns follow the selected period. **This session** alone reads the real Usages ledger. No accounts, financial balances or remote analytics are simulated. `/dashboard/overview` and `/showcase` redirect to Dashboard.
 
-The desktop reference is a continuous report, not a grid of floating cards. The collapsible 68px rail, top toolbar, full-width content and right inspector use opaque fills and hairline dividers. Source, Vault and Usages use the same desktop columns as Dashboard, with file requirements, cipher status or an operation breakdown in the side pane. At narrow widths the report stacks, file actions stay reachable, and the rail is normally closed. Browser zoom, native scrolling, safe-area insets and forced colors remain supported.
+On desktop the throughput, batch tape and action dock share the upper row. The green output card and format columns span the two lower rows. On a phone the trace gets both columns, outputs sit beside the batch list, and actions form a horizontal row. The file stations put intake first in portrait; the two Vault steps sit beside one another in short landscape windows. The page scrolls naturally, including at browser zoom. Keyboard focus, motion preferences and safe-area padding apply throughout.
 
-`workspace/material.css` owns the matte tokens; `workspace/workspace.css` owns the viewport shell. `workspace/panels.css` supplies tool surfaces and controls; `dashboard/layout.css` is shared by the real report, its lazy fallback and its offline export. Skeletons are static. The motion switch and the OS reduced-motion preference control interface transitions; neither enables lighting or other glass effects.
+Shared palette, spacing and opaque surfaces live in `src/components/workspace/material.css`; `workspace.css` owns the shell and `panels.css` the station and ledger grids. `src/components/dashboard/layout.css` supplies the grid for the live Dashboard, its loading state and the script-free offline export. All skeletons are static; chart fills are not glass, glows or moving light effects.
 
 ## Source tools and local state
 
@@ -25,15 +25,32 @@ Obfuscate offers three independent source transformations: express plain quoted 
 
 Changing workspace sections preserves the attached script and completed downloads. Vault clears passphrase inputs when leaving its section. A workspace reload drops tool state, including the Usages counters. Nothing in the workspace reads or writes Web Storage. Dashboard and Usages share the same in-memory counters; neither collects filenames or contents.
 
-## Vault and archive compatibility
+## Vault: restore and automatic cleanup
 
-1. In **Encrypt**, select one `.luau`, `.lua`, `.rbxl`, `.rbxlx`, `.rbxm` or `.rbxmx` file up to 25 MB (or choose **Use sample**).
+1. In **Encrypt**, select one `.luau`, `.lua`, `.rbxl`, `.rbxlx`, `.rbxm` or `.rbxmx` file up to 25 MB (or choose **Use sample**). Vault also accepts partial listing exports named `*.partial.lua.txt` / `*.partial.luau.txt`, including numbered copies such as `level.partial.lua (2).txt`. Other `.txt` files are not accepted.
 2. Set and confirm a passphrase of at least 12 characters; encrypt and download the `.zeox` archive. Keep your passphrase and original safe. There is no recovery mechanism.
-3. In **Decrypt**, open that archive, enter the same passphrase and download the original name and bytes. Archives must be restored before use in Roblox Studio. Source and binary assets are opaque to the cipher.
+3. In **Decrypt**, open a `.zeox` archive, enter the same passphrase and press **Decrypt file**. After authentication and filename validation, Vault **automatically** cleans supported text in this tab. No second upload, command or settings change is needed. **Download original** always returns the stored name and bytes. Roblox assets must be restored before use in Studio.
+
+| Restored file | Result in addition to the original |
+| --- | --- |
+| UTF-8 Lua / Luau, up to 1 MiB | **Download cleaned file** (`*.clean.lua` / `*.clean.luau`). Removes ordinary comments and redundant whitespace, retains line indentation, shebangs, directives and license notices, and makes fully decimal-escaped printable UTF-8 strings readable when safe. No symbol renaming or statement reordering in source. If nothing changes, Vault says so instead of offering two identical files. |
+| EXF v12 compact partial listing, up to 1 MiB | **Download reading** (`*.reading.txt`). Groups visible calls, writes and returns by prototype, puts referenced helpers first when possible, and folds register setup, labels, jumps and decoy diagnostics into expressions or counts. Names come from visible lookups; line numbers refer to the original. `?` means a value, binding or arity is unknown. This is **not executable Lua**: it does not infer missing paths or bypass the entry guard. |
+| Studio place/model (including XML), binary/non-UTF-8 script, oversized script, or unsupported/incomplete listing | Original only, with a reason. A cleanup failure does not turn a successful restore into an error. |
+
+Vault never executes the restored file. A reading may be smaller than a VM listing because it doesn't repeat dispatch scaffolding; that does **not** prove the hidden operations have no effects. Each decrypt records one operation and the original restored byte count, not another operation for the derived copy.
 
 The v1 `.zeox` format is unchanged (`src/lib/vault/container.ts`). PBKDF2-SHA-256 (600,000 iterations) derives a non-extractable AES-256-GCM key. Each archive has a fresh 16-byte salt and 12-byte IV. Its 33-byte authenticated header is `ZEOX`, version `0x01`, salt and IV; the ciphertext ends in a 16-byte authentication tag. The plaintext is a 2-byte big-endian UTF-8 filename length, filename and unmodified file bytes. Incorrect keys and tampering do not yield downloads. The suggested outer archive name includes the original name; it can be renamed without affecting restoration.
 
 Vault needs HTTPS (or localhost) and Web Crypto. Source and Vault operations work offline after their respective pages have loaded. The Vault log keeps metadata including filenames for its last 30 successful operations in memory, separate from the name-free Usages ledger. Object URLs are revoked when discarded.
+
+### Optional: reading an already-decrypted EXF listing without Vault
+
+For a compact v12 listing already on disk, the Node 18+ CLI uses the **same reading pass** and refuses to overwrite anything. It is not a step in the Vault workflow.
+
+```sh
+node tools/read-exf.mjs "sample.partial.lua.txt" "sample.reading.txt"
+node --test tools/read-exf.test.mjs
+```
 
 ## Develop, test and deploy
 
@@ -45,6 +62,6 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. The suite checks edge-to-edge desktop layouts up to 2560px, icon-only accessible navigation, opaque surfaces, sample-period changes and chart inspection across direct routes, and covers rail and drawer navigation, mobile widths, motion/transparency preferences, skeleton and usage CSV downloads, keyboard file selection, drag/drop, validation and replacement, download bytes and size limits, source transformations, local usage accounting, and independent decryption / offline round trips for all six Vault file types.
+`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. The suite checks edge-to-edge desktop layouts up to 2560px, icon-only accessible navigation, opaque surfaces, sample-period changes and chart inspection across direct routes, and covers rail and drawer navigation, mobile widths, motion/transparency preferences, skeleton and usage CSV downloads, keyboard file selection, drag/drop, validation and replacement, download bytes and size limits, source transformations, local usage accounting, and independent decryption, offline round trips, automatic cleanup and byte-identical original downloads.
 
 Deploy `dist/` to a static HTTPS host. `vercel.json` rewrites the application routes to `index.html`, serves static assets unchanged, and sets a same-origin content security policy. The font and imagery are served locally. See `DESIGN_WORKFLOW.md` for the design contract and `public/licenses/` for the font license.

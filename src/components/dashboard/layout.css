@@ -1,22 +1,65 @@
-/* Live overview and script-free skeleton share these same pane boundaries. */
-.overview-grid { flex: 1; min-width: 0; display: grid; grid-template-columns: var(--db-columns); grid-template-areas: 'kpis side' 'trend side' 'notes side'; grid-template-rows: auto minmax(280px,1fr) auto; min-height: calc(100svh - var(--bar-height, 0px)); }
-.ov-kpis { grid-area: kpis; min-height: clamp(116px, 15.6vh, 188px); border-bottom: 1px solid var(--db-line); }
-.ov-trend { grid-area: trend; min-width: 0; display: flex; flex-direction: column; padding: var(--db-pad); }
-.overview-notes { grid-area: notes; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); min-height: clamp(200px, 27vh, 330px); border-top: 1px solid var(--db-line); }
-.overview-notes > *, .overview-side > * { min-width: 0; padding: var(--db-pad); }
-.overview-notes > * + * { border-left: 1px solid var(--db-line); }
-.overview-side { grid-area: side; display: flex; flex-direction: column; min-width: 0; border-left: 1px solid var(--db-line); }
-.overview-side > * + * { border-top: 1px solid var(--db-line); }
-.ov-gauge { flex: 1; display: flex; flex-direction: column; }.ov-exports { min-height: 128px; }
-@media (min-width:921px) and (max-height:820px) { .overview-side > *, .overview-notes > *, .ov-trend { padding-block: 19px; } }
-@media (min-width:921px) and (max-height:730px) { .ov-kpis { min-height: 98px; }.overview-notes { min-height: 162px; }.overview-grid { grid-template-rows: auto minmax(240px,1fr) auto; } }
-@media (max-width:920px) {
-  .overview-grid { grid-template-columns: minmax(0,1fr); grid-template-areas: 'kpis' 'trend' 'side' 'notes'; grid-template-rows: auto auto auto auto; }
-  .ov-trend { min-height: 326px; }.overview-side { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); border-left: 0; border-top: 1px solid var(--db-line); }
-  .ov-gauge { grid-row: span 2; }.overview-side > * + * { border-left: 1px solid var(--db-line); }.overview-side > .ov-exports { border-top: 0; }
+/* One asymmetric grid for the desk, cold entry and portable offline export. */
+.signal-board {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  min-height: calc(100svh - var(--bar-height, 0px) - var(--inset));
+  gap: var(--gap);
+  grid-template-columns: minmax(0, 24fr) minmax(0, 17fr) minmax(0, 18fr) minmax(0, 25fr) minmax(0, 13fr);
+  grid-template-rows: minmax(272px, 2.75fr) minmax(103px, 1fr) minmax(112px, 1fr);
+  grid-template-areas: 'signal signal signal tape dock' 'yield loss loss bars bars' 'yield index live bars bars';
 }
-@media (max-width:600px) {
-  .ov-kpis { min-height: 99px; }.ov-trend { min-height: 268px; }.overview-side, .overview-notes { grid-template-columns: minmax(0,1fr); }
-  .overview-side > * + *, .overview-side > .ov-exports, .overview-notes > * + * { border-left: 0; border-top: 1px solid var(--db-line); }
-  .ov-exports { min-height: 0; }.ov-gauge { grid-row: auto; }.overview-notes { min-height: 0; }
+.signal-main {
+  grid-area: signal;
+}
+.batch-tape {
+  grid-area: tape;
+}
+.desk-launch {
+  grid-area: dock;
+}
+.yield-card {
+  grid-area: yield;
+}
+.loss-card {
+  grid-area: loss;
+}
+.mix-index {
+  grid-area: index;
+}
+.live-tile {
+  grid-area: live;
+}
+.format-bars {
+  grid-area: bars;
+}
+.signal-board > * {
+  min-width: 0;
+}
+/* Track minima live here (not in lazy CSS), so the same board can reserve space
+   before fonts, chart observers or the dashboard module have loaded. */
+@media (max-width: 980px) {
+  .signal-board {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.16fr);
+    grid-template-rows: minmax(296px, auto) minmax(62px, auto) repeat(2, minmax(120px, auto)) minmax(
+        216px,
+        auto
+      );
+    grid-template-areas: 'signal signal tape' 'dock dock dock' 'yield loss loss' 'yield index live' 'bars bars bars';
+  }
+}
+@media (max-width: 640px) {
+  .signal-board {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.14fr);
+    grid-template-rows: minmax(clamp(275px, 36svh, 324px), auto) minmax(264px, auto) minmax(60px, auto) minmax(
+        108px,
+        auto
+      ) minmax(128px, auto) minmax(226px, auto);
+    grid-template-areas: 'signal signal' 'yield tape' 'dock dock' 'loss loss' 'index live' 'bars bars';
+  }
+}
+@media (min-width: 981px) and (max-height: 700px) {
+  .signal-board {
+    grid-template-rows: minmax(255px, 1fr) minmax(98px, 0.35fr) minmax(108px, 0.36fr);
+  }
 }
