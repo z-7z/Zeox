@@ -31,11 +31,11 @@ Skills, and the signal desk design system.
 
 ## The signal desk
 
-Use the latest reference's hierarchy: a near-black frame, slim vertical rail with boxed icons, compact utilities and an asymmetric grid of opaque rounded cards. Fill the actual browser window; don't reproduce the empty presentation margin in the reference image. Keep tight, consistent gaps, orange active markers, white data lines, lime change chips and red/green chart fills. No glass, reflections, shine sweeps or decorative motion.
+Use the latest reference's hierarchy: a near-black frame, compact utilities and an asymmetric grid of opaque rounded cards. The Obfuscator is the product; the sample Dashboard is a secondary destination. Fill the actual browser window; don't reproduce the empty presentation margin in the reference image. Keep tight, consistent gaps, orange active markers, white data lines, lime change chips and red/green chart fills. No glass, reflections, shine sweeps or decorative motion.
 
 - **Desktop Dashboard:** one dominant throughput card at upper left; batch tape and narrow, vertical action dock to its right. Below: the green output card, small red trend above the dot index and local session meter, and wide format columns with an orange accent. Keep the date rail aligned to the actual plot, not the viewport.
 - **Phone Dashboard:** a two-column composition, not a scaled desktop. Trace and columns span the width; yield and batches share a row. Turn the action dock horizontally. Keep touch and keyboard inspection, period controls and data tables usable.
-- **Navigation:** exactly Dashboard, Obfuscate, Usages and Vault in an accessible icon-only rail. Its labeled toggle can hide the rail. Phones, including short landscape windows, get a modal drawer with focus return, Escape and backdrop dismissal. Use the utility strip for tool search, shortcuts and local session information, not another tab bar. Keep one route H1.
+- **Navigation:** never reserve a column or tab strip for tools. Use one masthead launcher. Its native dialog contains four icon-only links, Obfuscator first, in a compact 2×2 grid. Keep accessible names, current state, initial focus, Escape, backdrop dismissal and focus return. The same launcher works on touch and desktop. Search is the text-based alternative. Keep one route H1.
 - **Data:** only the Dashboard uses the dated sample. Label it as such. The live session tile, file receipts and Usages report reflect actual local successes. Never fill an empty state with invented operations, accounts or balances.
 
 ## Skeleton Download System
@@ -62,11 +62,11 @@ Design contract for an external template importer (not shipped in the dashboard 
 
 ## One surface system across the workspace
 
-`workspace/material.css` owns the tokens and card housing. `Shell`, `PanelHeader`, `PanelDialog` and the layouts in `workspace/panels.css` are shared. Obfuscate and Vault are five-card file stations: working surface, engine/profile, capacity, flow and receipt/log. Obfuscate accepts an attachment only; never add an editor. Usages uses the same housings for totals, byte trends, operation mix and the exportable ledger.
+`workspace/material.css` owns the tokens and card housing. `Shell`, `PanelHeader`, `PanelDialog` and the layouts in `workspace/panels.css` are shared. The Obfuscator is the landing page on `/` as well as `/obfuscate`. Lead with the source file, its actual build settings and the resulting copy, not an analytics grid or a Vault form. Its three-panel track layout lives in `source/layout.css` so even the cold state opens into the file tool. Accept an attachment only; never add an editor. Vault retains its five-card archive station. Usages uses the same housings for totals, byte trends, operation mix and the exportable ledger.
 
 `dashboard/layout.css` owns **all three** Dashboard layouts: live, lazy fallback and standalone export. Other route fallbacks reserve each station or ledger's tracks. Load layout rules with the shell, not only with a lazy route. The exported skeleton must have no scripts, session data, fonts to download or network requests.
 
-Review the populated and empty states, cold entries, and offline downloads. Compare at laptop, wide Windows and phone portrait/landscape sizes with the rail both open and closed. Test the real file picker, download bytes, keyboard shortcuts and modal focus return, and check horizontal overflow with native scrollbars. Keep build/encrypt in reach in the initial phone view without disabling zoom.
+Review the populated and empty states, cold entries, and offline downloads. Compare at laptop, wide Windows and phone portrait/landscape sizes with the tool menu both open and closed. Test the real file picker, download bytes, keyboard shortcuts and modal focus return, and check horizontal overflow with native scrollbars. Keep build/encrypt in reach in the initial phone view without disabling zoom.
 
 ## Icons
 

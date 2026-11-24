@@ -1,6 +1,6 @@
 import { test, expect, type Download, type Page } from '@playwright/test';
 import { createCipheriv, createDecipheriv, pbkdf2Sync, randomBytes } from 'node:crypto';
-import { go, openSidebar } from './navigation';
+import { go, openSession } from './navigation';
 
 const secret = 'orbit atlas lantern violet';
 async function read(download: Download) {
@@ -214,7 +214,7 @@ test('the archive intake and responsive step layout preserve an in-progress job'
   await picker.setFiles({ name, mimeType: 'application/octet-stream', buffer: Buffer.from([0,255,13,10]) });
   await fillSecret(page, true);
   const replace = page.getByRole('button', { name: 'Replace selected file' });
-  await page.getByRole('button', { name: 'Hide sidebar' }).click(); expect((await replace.boundingBox())!.width).toBeGreaterThan(width + 40);
+  await page.setViewportSize({ width: 1536, height: 864 }); expect((await replace.boundingBox())!.width).toBeGreaterThan(width + 40);
   await page.setViewportSize({ width: 844, height: 390 });
   const file = (await page.locator('.vt-file-step').boundingBox())!, key = (await page.locator('.vt-key-step').boundingBox())!;
   expect(key.y).toBe(file.y); expect(key.x).toBeGreaterThan(file.x + file.width);
@@ -234,10 +234,10 @@ test('mobile studio fits the viewport, guide restores focus, and motion can be d
   await guide.click();
   await expect(page.getByRole('dialog')).toContainText('must be decrypted');
   await page.keyboard.press('Escape'); await expect(guide).toBeFocused();
-  await openSidebar(page); await page.getByRole('button', { name: 'Enable animation' }).click(); await page.keyboard.press('Escape');
+  await openSession(page); await page.getByRole('button', { name: 'Enable animation' }).click(); await page.keyboard.press('Escape');
   const art = page.locator('.cartridge-archive');
   expect(await art.evaluate(el => getComputedStyle(el).animationName)).toBe('none');
   await page.emulateMedia({ reducedMotion: 'reduce' }); await page.reload();
   expect(await art.evaluate(el => getComputedStyle(el).animationName)).toBe('none');
-  await openSidebar(page); await expect(page.getByRole('button', { name: 'Motion reduced by system preference' })).toBeDisabled();
+  await openSession(page); await expect(page.getByRole('button', { name: 'Motion reduced by system preference' })).toBeDisabled();
 });

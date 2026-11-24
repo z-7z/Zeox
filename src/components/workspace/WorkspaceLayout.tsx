@@ -3,6 +3,8 @@ import { Check } from 'lucide-react';
 import { Outlet, useLocation, useOutletContext } from 'react-router-dom';
 import { DashboardSkeleton } from '../dashboard/Skeleton';
 import type { SamplePeriod } from '../dashboard/period';
+import { SourceIntro } from '../source/SourceIntro';
+import '../source/layout.css';
 import { Shell } from './Shell';
 import { ToolSkeleton } from './ToolSkeleton';
 import { sectionFor } from './sections';
@@ -23,7 +25,7 @@ export function WorkspaceLayout() {
     window.clearTimeout(timer.current); setNotice(message); timer.current = window.setTimeout(() => setNotice(''), 3200);
   }
   useEffect(() => {
-    document.title = `${active.label} — Zeox Workspace`;
+    document.title = active.id === 'obfuscate' ? 'Lua Obfuscator — Zeox' : `${active.label} — Zeox Obfuscator`;
     if (previous.current !== pathname) {
       previous.current = pathname; setNotice('');
       document.getElementById('workspace-main')?.focus({ preventScroll: true });
@@ -32,6 +34,7 @@ export function WorkspaceLayout() {
     return () => window.clearTimeout(timer.current);
   }, [active, pathname]);
   return <Shell active={active} motion={motion} notify={notify}>
+    {active.id === 'obfuscate' && <SourceIntro />}
     <Suspense fallback={active.id === 'dashboard' ? <DashboardSkeleton /> : <ToolSkeleton section={active} />}>
       <Outlet context={{ notify, motion: motion.enabled, period, setPeriod } satisfies PageState} />
     </Suspense>

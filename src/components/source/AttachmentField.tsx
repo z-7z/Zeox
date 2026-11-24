@@ -1,7 +1,6 @@
 import { useRef, useState, type DragEvent } from 'react';
-import { CircleAlert, FileUp, RefreshCw, X } from 'lucide-react';
+import { CircleAlert, FileCode2, FileUp, RefreshCw, X } from 'lucide-react';
 import { formatSize } from '../../lib/vault/container';
-import { Cartridge } from '../workspace/InstrumentTiles';
 import type { SourceSession } from './session';
 
 export function AttachmentField({ tool }: { tool: SourceSession }) {
@@ -26,7 +25,7 @@ export function AttachmentField({ tool }: { tool: SourceSession }) {
         const files = Array.from(e.currentTarget.files ?? []); e.currentTarget.value = ''; void tool.attach(files);
       }} />
       <button type="button" ref={browse} className="src-drop" aria-label={action} aria-describedby={`src-file-title src-file-meta${fileIssue ? ' src-file-error' : ''}`} onClick={() => input.current?.click()}>
-        <Cartridge kind="script"/>
+        <span className="src-file-stamp" aria-hidden="true"><FileCode2 strokeWidth={1.35} /></span>
         <span className="src-file-title" id="src-file-title" title={file?.name}><bdi dir="ltr">{dragging ? 'Drop to attach' : reading ? 'Reading file…' : file ? file.name : 'Drop your script here'}</bdi></span>
         <span className="src-file-meta" id="src-file-meta">{file ? `${/\.luau$/i.test(file.name) ? 'Luau' : 'Lua'} · ${formatSize(file.size)} · UTF-8` : '.lua or .luau · 512 KiB max'}</span>
         <span className="src-browse">{file ? <RefreshCw size={14} /> : <FileUp size={15} />}{action}</span>

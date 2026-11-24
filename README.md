@@ -1,13 +1,15 @@
-# Zeox Workspace
+# Zeox Obfuscator
 
-Zeox is a local workspace for Lua scripts and encrypted file archives. The dark **signal desk** fills the window: an icon-only rail on the left, a short utility bar, and a close-set grid of rounded instrument cards. The orange icon marks the active route. Hide the rail for more room, or open it as a drawer on a phone. **Find a tool** (`Ctrl`/`⌘` + `K`) searches the four real routes; the session badge explains what stays in this tab. Full screen is optional and only requested on a button press.
+Zeox opens directly into a **file-only Lua / Luau obfuscator**. Attach one script, choose source transformations, and download the new file. The browser does the work; there is no editor, account or upload. The Zeox mark always takes you back to this tool.
+
+There is **no permanent tab bar or sidebar**. Open the grid button in the masthead to switch tools: a compact, icon-only 2×2 menu on both desktop and touch. The current tool is marked in orange. Links have accessible names, titles and a shared focus/hover caption. Escape dismisses the menu and restores focus. **Find a tool** (`Ctrl`/`⌘` + `K`) is the searchable alternative. The local session button opens shortcuts, motion and optional full-screen controls.
 
 | Section | Route | What it does |
 | --- | --- | --- |
-| **Dashboard** | `/`, `/dashboard` | Inspect throughput and recent sample batches, compare saved and unexported files, open operation/format details, and jump to a tool. **Skeleton** in the action dock downloads the eight-card layout as standalone HTML. |
-| **Obfuscate** | `/obfuscate` | Attach one UTF-8 `.lua` or `.luau` script (512 KiB max), choose settings, build on device and download a separate file. No paste box, editor or source preview. |
-| **Usages** | `/usages` | Actual successful builds, encryptions and decryptions in this tab. Counters cover all successful runs, the plot pairs input/output bytes for the last 16, and the filterable ledger and CSV cover the last 50. |
+| **Obfuscator** | `/`, `/obfuscate` | Attach one UTF-8 `.lua` or `.luau` file (512 KiB max), choose settings, build on device and download a separate copy. |
 | **Vault** | `/vault` | Encrypt or restore files locally. After a successful decrypt, get a cleaned script or a static EXF reading when supported, alongside the exact original. |
+| **Usages** | `/usages` | Actual successful builds, encryptions and decryptions in this tab. Counters cover all successful runs, the plot pairs input/output bytes for the last 16, and the filterable ledger and CSV cover the last 50. |
+| **Dashboard** | `/dashboard` | An optional sample report with throughput, recent batches and shortcuts. **Skeleton** downloads the eight-card layout as standalone HTML. |
 
 ## Reading the desk
 
@@ -15,11 +17,11 @@ The Dashboard plots a **dated sample**, not uploads from your device. Both the 7
 
 On desktop the throughput, batch tape and action dock share the upper row. The green output card and format columns span the two lower rows. On a phone the trace gets both columns, outputs sit beside the batch list, and actions form a horizontal row. The file stations put intake first in portrait; the two Vault steps sit beside one another in short landscape windows. The page scrolls naturally, including at browser zoom. Keyboard focus, motion preferences and safe-area padding apply throughout.
 
-Shared palette, spacing and opaque surfaces live in `src/components/workspace/material.css`; `workspace.css` owns the shell and `panels.css` the station and ledger grids. `src/components/dashboard/layout.css` supplies the grid for the live Dashboard, its loading state and the script-free offline export. All skeletons are static; chart fills are not glass, glows or moving light effects.
+Shared palette, spacing and opaque surfaces live in `src/components/workspace/material.css`; `workspace.css` owns the shell and `panels.css` the station and ledger grids. `src/components/dashboard/layout.css` supplies the grid for the live Dashboard, its loading state and the script-free offline export. `src/components/source/layout.css` reserves the source masthead and three tool panels on both home URLs, including during a cold load. All skeletons are static; chart fills are not glass, glows or moving light effects.
 
 ## Source tools and local state
 
-**Attach → Build → Save:** choose or drop one local script. The page starts empty, with the optional **Build settings** folded away. A valid attachment shows its name, format and size and enables **Obfuscate file**. The result is a downloadable `.obf.lua` / `.obf.luau` (or `.compact.*` without text encoding), not another code pane. Removing/replacing the attachment or changing a setting clears the previous output. Invalid files produce an inline error without replacing a valid attachment. No source is uploaded, displayed or executed; there is no sample input or account requirement.
+**Attach → Build → Save:** choose or drop one local script. The page starts empty. Three named **Build settings** sit beside the attachment on desktop and below it on phones. A valid attachment shows its name, format and size and enables **Obfuscate file**. The result is a downloadable `.obf.lua` / `.obf.luau` (or `.compact.*` without text encoding), not another code pane. Removing/replacing the attachment or changing a setting clears the previous output. Invalid files produce an inline error without replacing a valid attachment. No source is uploaded, displayed or executed; there is no sample input or account requirement.
 
 Obfuscate offers three independent source transformations: express plain quoted strings as three-digit Lua byte escapes, remove ordinary comments and compact whitespace. The lexical pass leaves identifiers, existing escapes, bracket strings and entire Luau interpolations alone. It keeps directive comments and copyright/SPDX notices. There is no VM, runtime loader or execution step. This is **not encryption or a guarantee of secrecy**; the output remains source code. For encrypted storage, use Vault.
 
@@ -62,6 +64,6 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. The suite checks edge-to-edge desktop layouts up to 2560px, icon-only accessible navigation, opaque surfaces, sample-period changes and chart inspection across direct routes, and covers rail and drawer navigation, mobile widths, motion/transparency preferences, skeleton and usage CSV downloads, keyboard file selection, drag/drop, validation and replacement, download bytes and size limits, source transformations, local usage accounting, and independent decryption, offline round trips, automatic cleanup and byte-identical original downloads.
+`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. The suite checks edge-to-edge desktop layouts up to 2560px, icon-only accessible navigation, opaque surfaces, sample-period changes and chart inspection across direct routes, and covers the compact tool picker, mobile widths, motion/transparency preferences, skeleton and usage CSV downloads, keyboard file selection, drag/drop, validation and replacement, download bytes and size limits, source transformations, local usage accounting, and independent decryption, offline round trips, automatic cleanup and byte-identical original downloads.
 
 Deploy `dist/` to a static HTTPS host. `vercel.json` rewrites the application routes to `index.html`, serves static assets unchanged, and sets a same-origin content security policy. The font and imagery are served locally. See `DESIGN_WORKFLOW.md` for the design contract and `public/licenses/` for the font license.

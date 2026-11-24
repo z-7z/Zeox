@@ -12,11 +12,11 @@ const Vault = lazy(() => import('./pages/VaultStudio').then(m => ({ default: m.V
 export default function App() {
   return <BrowserRouter><Routes>
     <Route element={<UsageProvider><ToolSessions><WorkspaceLayout /></ToolSessions></UsageProvider>}>
-      <Route index element={<Dashboard />} /><Route path="dashboard" element={<Dashboard />} />
+      <Route index element={<Obfuscate />} /><Route path="dashboard" element={<Dashboard />} />
       <Route path="obfuscate" element={<Obfuscate />} /><Route path="usages" element={<Usages />} /><Route path="vault" element={<Vault />} />
     </Route>
     <Route path="dashboard/overview" element={<Navigate replace to="/dashboard" />} />
     <Route path="showcase" element={<Navigate replace to="/dashboard" />} />
-    <Route path="*" element={<main className="ws-not-found"><small>ZEOX / 404</small><h1>Page not found</h1><Link to="/dashboard">Return to Dashboard →</Link></main>} />
+    <Route path="*" element={<main className="ws-not-found"><small>ZEOX / 404</small><h1>Page not found</h1><Link to="/">Return to Obfuscator →</Link></main>} />
   </Routes></BrowserRouter>;
 }

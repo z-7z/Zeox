@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { attach } from './attachments';
-import { go, openSidebar, sidebar } from './navigation';
+import { go, openTools, toolNav } from './navigation';
 
 test('signal desk follows the reference mosaic and opens individual batches and formats', async ({ page }) => {
-  await page.goto('/'); await expect(page.getByRole('heading', { name: 'Throughput' })).toBeVisible();
+  await page.goto('/dashboard'); await expect(page.getByRole('heading', { name: 'Throughput' })).toBeVisible();
   const box = async (s:string) => (await page.locator(s).boundingBox())!;
   const [hero,tape,dock,mint,loss,index,live,bars] = await Promise.all(['.signal-main','.batch-tape','.desk-launch','.yield-card','.loss-card','.mix-index','.live-tile','.format-bars'].map(box));
   expect(hero.y).toBe(tape.y); expect(tape.y).toBe(dock.y); expect(hero.width).toBeGreaterThan(tape.width*2); expect(tape.width).toBeGreaterThan(dock.width*1.7);
@@ -17,7 +17,7 @@ test('signal desk follows the reference mosaic and opens individual batches and 
 });
 
 test('sample period, chart cursor and accessible detail tables stay in sync without recording activity', async ({ page }) => {
-  await page.goto('/'); const slider = page.getByRole('slider'), period = page.getByLabel('Sample period');
+  await page.goto('/dashboard'); const slider = page.getByRole('slider'), period = page.getByLabel('Sample period');
   await expect(page.getByText('Sample charts', { exact: true })).toBeVisible(); await expect(slider).toHaveAttribute('aria-valuemax','30');
   await slider.focus(); await slider.press('Home'); await expect(slider).toHaveAttribute('aria-valuetext', 'Apr 16, 72 MB');
   await slider.press('ArrowRight'); await expect(page.locator('.signal-readout')).toContainText('Apr 17');
@@ -43,7 +43,7 @@ test('chart inspection and date spacing follow the plot when its width changes',
   await page.getByLabel('Sample period').selectOption('7'); const desktopLabels = await axis.locator('span').count(); expect(desktopLabels).toBeGreaterThanOrEqual(4);
   const before = (await plot.boundingBox())!.width;
   await plot.press('Home'); await plot.press('ArrowRight');
-  await page.getByRole('button', { name: 'Hide sidebar' }).click();
+  await page.setViewportSize({ width: 1536, height: 768 });
   await expect(plot).toHaveAttribute('aria-valuenow', '2');
   const wide = (await plot.boundingBox())!; expect(wide.width).toBeGreaterThan(before + 40);
   await plot.click({ position: { x: Math.floor(wide.width) - 1, y: 12 } });
@@ -63,7 +63,7 @@ test('chart inspection and date spacing follow the plot when its width changes',
 });
 
 test('quick actions open the actual tools, with real counts and recent operations in the session pane', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/dashboard');
   const summary = page.getByRole('region', { name: 'Session summary' }); await expect(summary.getByText('No runs yet')).toBeVisible();
   await page.getByRole('link', { name: 'Obfuscate file' }).click(); await attach(page);
   await page.getByRole('button', { name: 'Obfuscate file' }).click();
@@ -110,29 +110,27 @@ test('loading state and offline export share the eight-card mosaic, without scri
   expect(requests).toEqual([]);
 });
 
-test('desktop sidebar can disappear entirely without losing an attachment or changing routes', async ({ page }) => {
-  await page.goto('/obfuscate'); await attach(page, 'tune.lua');
+test('the home mark returns straight to the file tool and retains its attachment', async ({ page }) => {
+  await page.goto('/'); await attach(page, 'tune.lua');
   const intake = page.getByRole('group', { name: 'Source file' }); await expect(intake).toContainText('tune.lua');
-  const before = await page.locator('.ws-frame').boundingBox(); await page.getByRole('button', { name: 'Hide sidebar' }).click();
-  await expect(sidebar(page)).toHaveCount(0); await expect(page.getByRole('button', { name: 'Open sidebar' })).toHaveAttribute('aria-expanded', 'false');
-  expect((await page.locator('.ws-frame').boundingBox())!.width).toBeGreaterThan(before!.width + 50);
-  await page.keyboard.press('/'); await expect(intake).toContainText('tune.lua'); await expect(page.getByRole('dialog')).toHaveCount(0);
-  await page.getByRole('link', { name: 'Zeox home' }).click(); await expect(sidebar(page)).toHaveCount(0);
-  await page.getByRole('link', { name: 'Obfuscate file' }).click(); await expect(intake).toContainText('tune.lua');
-  await openSidebar(page); await expect(sidebar(page).locator('[aria-current=page]')).toHaveAccessibleName('Obfuscate');
+  const before = await page.locator('main').boundingBox();
+  await openTools(page); await expect(toolNav(page).locator('[aria-current=page]')).toHaveAccessibleName('Obfuscator');
+  expect((await page.locator('main').boundingBox())!.width).toBe(before!.width);
+  await go(page,'Dashboard'); await page.getByRole('link', { name: 'Zeox home' }).click();
+  await expect(page).toHaveURL(/\/$/); await expect(intake).toContainText('tune.lua'); await expect(toolNav(page)).toHaveCount(0);
 });
 
-test('mobile drawer contains focus, dismisses from keyboard, button and backdrop, and releases scroll on resize', async ({ page }) => {
+test('the compact tool menu traps focus, supports Escape and backdrop dismissal, and survives resize', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 640 }); await page.goto('/vault');
-  const opener = page.getByRole('button', { name: 'Open sidebar' }), dialog = page.getByRole('dialog', { name: 'Workspace navigation' });
-  await opener.click(); await expect(dialog).toBeVisible(); await expect(sidebar(page).getByRole('link', { name: 'Vault' })).toBeFocused();
+  const opener = page.getByRole('button', { name: 'Open tools' }), dialog = page.getByRole('dialog', { name: 'Tools' });
+  await opener.click(); await expect(dialog).toBeVisible(); await expect(toolNav(page).getByRole('link', { name: 'Vault' })).toBeFocused();
   expect(await dialog.evaluate(el => el.matches(':modal'))).toBe(true);
-  await page.keyboard.press('Shift+Tab'); await expect(sidebar(page).getByRole('link', { name: 'Usages' })).toBeFocused();
+  await page.keyboard.press('Shift+Tab'); await expect(toolNav(page).getByRole('link', { name: 'Obfuscator' })).toBeFocused();
   await page.keyboard.press('Escape'); await expect(opener).toBeFocused(); await expect(dialog).toHaveCount(0);
   await opener.click(); await page.mouse.click(375, 135); await expect(opener).toBeFocused();
-  await opener.click(); await page.getByRole('button', { name: 'Close sidebar' }).click(); await expect(opener).toBeFocused();
+  await opener.click(); await page.getByRole('button', { name: 'Close tool menu' }).click(); await expect(opener).toBeFocused();
   await opener.click(); await page.setViewportSize({ width: 1024, height: 720 });
-  await expect(dialog).toHaveCount(0); await expect(sidebar(page).getByRole('link')).toHaveCount(4);
+  await expect(toolNav(page).getByRole('link')).toHaveCount(4); expect((await dialog.boundingBox())!.height).toBeLessThan(360);
+  await go(page, 'Usages'); await expect(dialog).toHaveCount(0);
   await expect.poll(() => page.evaluate(() => document.body.style.overflow)).not.toBe('hidden');
-  await page.setViewportSize({ width: 390, height: 640 }); await expect(opener).toBeVisible(); await expect(sidebar(page)).toHaveCount(0);
 });

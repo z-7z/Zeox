@@ -9,6 +9,7 @@ interface Props {
   children: ReactNode;
   className?: string;
   initialFocus?: RefObject<HTMLElement>;
+  returnFocus?: RefObject<HTMLElement>;
 }
 
 export function PanelDialog({
@@ -19,11 +20,12 @@ export function PanelDialog({
   children,
   className = '',
   initialFocus,
+  returnFocus,
 }: Props) {
   const ref = useRef<HTMLDialogElement>(null);
   useLayoutEffect(() => {
     const el = ref.current!,
-      opener = document.activeElement,
+      opener = returnFocus?.current ?? document.activeElement,
       overflow = document.body.style.overflow;
     el.showModal();
     initialFocus?.current?.focus({ preventScroll: true });
@@ -33,7 +35,7 @@ export function PanelDialog({
       document.body.style.overflow = overflow;
       if (opener instanceof HTMLElement && opener.isConnected) opener.focus({ preventScroll: true });
     };
-  }, [initialFocus]);
+  }, [initialFocus, returnFocus]);
   return (
     <dialog
       ref={ref}
