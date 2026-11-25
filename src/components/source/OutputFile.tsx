@@ -1,35 +1,60 @@
 import { useEffect, useRef, useState } from 'react';
+import { Download } from 'lucide-react';
+import { DownloadPanel } from '../studio/DownloadPanel';
 import { formatSize } from '../../lib/vault/container';
-import { SplitFace } from '../orbit/Panels';
 import type { SourceArtifact } from './session';
 
-export function OutputFile({ file, focusDownload }: { file: SourceArtifact; focusDownload: boolean }) {
-  const [url, setUrl] = useState(''),
-    link = useRef<HTMLAnchorElement>(null);
+export function SourceDownload({
+  file,
+  focusDownload,
+  failed,
+}: {
+  file: SourceArtifact | null;
+  focusDownload: boolean;
+  failed: boolean;
+}) {
+  const [link, setLink] = useState<{ file: SourceArtifact; url: string } | null>(null),
+    ref = useRef<HTMLAnchorElement>(null);
   useEffect(() => {
-    const next = URL.createObjectURL(file.blob);
-    setUrl(next);
-    return () => URL.revokeObjectURL(next);
+    if (!file) {
+      setLink(null);
+      return;
+    }
+    const url = URL.createObjectURL(file.blob);
+    setLink({ file, url });
+    return () => URL.revokeObjectURL(url);
   }, [file]);
+  const url = link?.file === file ? link?.url : undefined;
   useEffect(() => {
-    if (url && focusDownload) link.current?.focus({ preventScroll: true });
+    if (url && focusDownload) ref.current?.focus();
   }, [url, focusDownload]);
   return (
-    <>
-      <span className="sr-only" role="status">
-        {file.name} ({formatSize(file.blob.size)})
-      </span>
-      {url && (
-        <a
-          ref={link}
-          className="split-action"
-          title={`${file.name} (${formatSize(file.blob.size)})`}
-          href={url}
-          download={file.name}
-        >
-          <SplitFace>Download file</SplitFace>
-        </a>
+    <DownloadPanel
+      kind="script"
+      result={file && url ? { name: file.name, size: file.blob.size } : undefined}
+      failed={failed}
+      job={
+        file && !url ? { title: 'Preparing download', step: 'Preparing download', completed: 0, total: 1 } : undefined
+      }
+      note={
+        failed
+          ? 'Check the build error, then try again.'
+          : file
+            ? 'Your transformed script is ready to save.'
+            : 'Build your script to get a downloadable Lua or Luau file.'
+      }
+    >
+      {file && url && (
+        <>
+          <span className="sr-only" role="status">
+            {file.name} ({formatSize(file.blob.size)})
+          </span>
+          <a className="run-action" ref={ref} href={url} download={file.name}>
+            <Download aria-hidden="true" />
+            Download file
+          </a>
+        </>
       )}
-    </>
+    </DownloadPanel>
   );
 }

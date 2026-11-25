@@ -34,7 +34,7 @@ export function Usages() {
       'Time (UTC),Operation,Input bytes,Output bytes',
       ...rows.map((r) => `${new Date(r.time).toISOString()},${operationLabels[r.operation]},${r.input},${r.output}`),
     ];
-    downloadText('zeox-session-usage.csv', 'text/csv;charset=utf-8', lines.join('\r\n') + '\r\n');
+    downloadText('zeoxfucator-session-usage.csv', 'text/csv;charset=utf-8', lines.join('\r\n') + '\r\n');
   }
   return (
     <>
@@ -89,7 +89,7 @@ export function Usages() {
           empty={
             usage.count
               ? 'No operations match this filter.'
-              : 'Complete a build or Vault operation to see its size here.'
+              : 'Complete a build or encryption operation to see its size here.'
           }
         />
         <section className="card ledger-card" aria-label="Usage ledger">
@@ -99,7 +99,7 @@ export function Usages() {
               <select aria-label="Filter usage log" value={filter} onChange={(e) => setFilter(e.target.value)}>
                 <option value="all">All tools</option>
                 <option value="compact">Obfuscator</option>
-                <option value="vault">Vault</option>
+                <option value="vault">Encryption</option>
               </select>
             </label>
           </CardTitle>

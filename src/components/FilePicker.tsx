@@ -1,7 +1,7 @@
-import { useRef, useState, type RefObject } from 'react';
-import { ArrowUpRight, FileCode2, Upload, X } from 'lucide-react';
+import { useId, useRef, useState, type ReactNode, type RefObject } from 'react';
+import { FileCheck2, FileUp, Upload, X } from 'lucide-react';
 import { formatSize } from '../lib/vault/container';
-import { SOURCE_LIMIT } from '../lib/source/compact';
+import { SectionHead } from './studio/Studio';
 
 export function FileName({ name }: { name: string }) {
   return (
@@ -16,6 +16,7 @@ interface Props {
   accept: string;
   hint: string;
   file: { name: string; size: number } | null;
+  limitLabel: string;
   select: (files: File[]) => void;
   remove: () => void;
   browse: RefObject<HTMLButtonElement>;
@@ -23,7 +24,7 @@ interface Props {
   reading?: boolean;
   disabled?: boolean;
   errorId?: string;
-  limit?: number;
+  extra?: ReactNode;
 }
 export function FilePicker({
   legend,
@@ -38,17 +39,17 @@ export function FilePicker({
   reading,
   disabled,
   errorId,
-  limit = SOURCE_LIMIT,
+  limitLabel,
+  extra,
 }: Props) {
   const input = useRef<HTMLInputElement>(null),
     depth = useRef(0),
-    [drag, setDrag] = useState(false);
-  const size = file ? formatSize(file.size) : '0 KB',
-    [value, unit] = size.split(' ');
+    [drag, setDrag] = useState(false),
+    hintId = useId();
   return (
     <fieldset
-      className="card file-card"
       id="source-file"
+      className="studio-section intake"
       tabIndex={-1}
       disabled={disabled}
       aria-busy={!!reading}
@@ -76,6 +77,12 @@ export function FilePicker({
       }}
     >
       <legend className="sr-only">{legend}</legend>
+      <SectionHead index="01" title={legend}>
+        <span className="intake-meta">
+          {extra}
+          <small>{limitLabel} max</small>
+        </span>
+      </SectionHead>
       <input
         ref={input}
         type="file"
@@ -88,47 +95,39 @@ export function FilePicker({
           select(files);
         }}
       />
-      <div className="file-card-inner">
-        <div className="card-head">
-          <h2 className="underlined">{legend}</h2>
+      <div className="drop-zone">
+        <div className="drop-symbol" aria-hidden="true">
+          {file ? <FileCheck2 /> : <FileUp />}
+        </div>
+        <div className="drop-copy">
+          <b>
+            {drag ? (
+              'Drop to attach'
+            ) : reading ? (
+              <span role="status">Reading file…</span>
+            ) : file ? (
+              <FileName name={file.name} />
+            ) : (
+              'Drop a file here'
+            )}
+          </b>
+          <p id={hintId}>{file ? `${formatSize(file.size)} · Attached locally` : hint}</p>
+        </div>
+        <div className="upload-actions">
           <button
             ref={browse}
-            className="pill paper small"
             type="button"
-            aria-describedby={errorId}
+            className="pill paper"
+            aria-describedby={[hintId, errorId].filter(Boolean).join(' ')}
             onClick={() => input.current?.click()}
           >
             <Upload aria-hidden="true" />
             {file ? 'Replace file' : choose}
           </button>
-        </div>
-        <div className="file-value">
-          <div className="metric-value">
-            {value}
-            <small>{unit}</small>
-          </div>
-          <span className="gain">
-            <ArrowUpRight aria-hidden="true" />
-            {file ? `${Math.min(100, Math.round((file.size / limit) * 100))}% used` : 'On device'}
-          </span>
-        </div>
-        <div className="file-foot">
-          {reading ? (
-            <span role="status">Reading file…</span>
-          ) : drag ? (
-            <b>Drop to attach</b>
-          ) : file ? (
-            <>
-              <FileCode2 aria-hidden="true" />
-              <FileName name={file.name} />
-            </>
-          ) : (
-            <span>{hint}</span>
-          )}
           {(file || reading) && (
             <button
               type="button"
-              className="round mini"
+              className="round"
               aria-label="Remove file"
               title="Remove file"
               onClick={() => {

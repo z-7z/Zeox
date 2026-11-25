@@ -61,7 +61,7 @@ for (const suffix of ['luau', 'lua', 'rbxl', 'rbxlx', 'rbxm', 'rbxmx']) {
     expect(restored.name).toBe(name);
     expect(restored.bytes).toEqual(bytes);
     if (suffix.startsWith('rb')) {
-      await expect(page.getByRole('region', { name: 'Vault result' })).toContainText('without text cleanup');
+      await expect(page.getByRole('region', { name: 'Archive result' })).toContainText('without text cleanup');
       await expect(page.locator('a[download]')).toHaveCount(1);
     } else {
       const cleaned = await getDownload(page, 'Download cleaned file');
@@ -105,7 +105,7 @@ test('decrypt automatically folds a numbered partial listing offline, retains bo
   await expect(page.getByRole('region', { name: 'Completed runs' }).locator('strong')).toHaveText('2');
   const row = page.getByRole('row', { name: /Decryption/ });
   await expect(row.getByRole('cell').nth(1)).toHaveText(`${bytes.length} B`);
-  await go(page, 'Vault'); await expect(links).toHaveCount(2);
+  await go(page, 'Encryption'); await expect(links).toHaveCount(2);
   expect(await links.evaluateAll(els => els.map(el => el.getAttribute('href')).sort())).toEqual(urls);
   const revoked = await page.evaluateHandle(() => {
     const list: string[] = [], revoke = URL.revokeObjectURL.bind(URL);
@@ -130,7 +130,7 @@ test('cleanup failure preserves an authenticated original; an invalid inner name
   const bytes = Buffer.from('-- EXPERIMENTAL PARTIAL LIFT. truncated\n-- EXF LIFTER REVISION: 12\nreturn 1');
   await loadFile(page, 'incoming.zeox', v1Archive('unknown.lua', bytes)); await fillSecret(page, false);
   await page.getByRole('button', { name: 'Decrypt file', exact: true }).click();
-  await expect(page.getByRole('region', { name: 'Vault result' })).toContainText('Incomplete or unsupported EXF');
+  await expect(page.getByRole('region', { name: 'Archive result' })).toContainText('Incomplete or unsupported EXF');
   expect(await getDownload(page, 'Download original')).toEqual({ name: 'unknown.lua', bytes });
   await expect(page.locator('a[download]')).toHaveCount(1);
   await page.getByRole('button', { name: 'Process another file' }).click();
@@ -169,7 +169,7 @@ test('fresh salts and nonces; rejects wrong passphrases and changed archives', a
 test('reports unsupported, oversized, missing and mismatched inputs without overwriting files', async ({ page }) => {
   await page.goto('/vault');
   await page.getByRole('button', { name: 'Encrypt file', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Browse files' })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Upload file' })).toBeFocused();
   await loadFile(page, 'test.txt', Buffer.from('not supported'));
   await expect(page.getByRole('alert')).toContainText('Choose a .luau');
   // Use a browser File in a drag event; do not send a 25 MB fixture over the wire.
@@ -187,7 +187,7 @@ test('reports unsupported, oversized, missing and mismatched inputs without over
   await expect(page.getByRole('alert')).toContainText('same passphrase');
   await expect(page.getByLabel('Confirm passphrase', { exact: true })).toBeFocused();
   await page.getByRole('button', { name: 'Remove file' }).click();
-  await expect(page.getByRole('button', { name: 'Browse files' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Upload file' })).toBeVisible();
 });
 
 test('session log is metadata only, clearable and transient', async ({ page }) => {
@@ -203,7 +203,7 @@ test('session log is metadata only, clearable and transient', async ({ page }) =
 
 test('the native file chooser and mode controls keep an attachment through resize', async ({page}) => {
   await page.goto('/vault');
-  const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.getByRole('button', {name:'Browse files'}).press('Enter')]);
+  const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.getByRole('button', {name:'Upload file'}).press('Enter')]);
   const name = 'مشهد-workbench.rbxl';
   await chooser.setFiles({name,mimeType:'application/octet-stream',buffer:Buffer.from([0,255,13,10])});
   await fillSecret(page,true);

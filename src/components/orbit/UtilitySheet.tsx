@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowUpRight, BookOpen, LockKeyhole, Search, ShieldCheck } from 'lucide-react';
 import { operationLabels, useUsage } from '../workspace/UsageSession';
 import { formatSize } from '../../lib/vault/container';
@@ -18,6 +18,7 @@ export function UtilitySheet({ kind, close }: { kind: Utility; close: () => void
   const [query, setQuery] = useState(''),
     usage = useUsage(),
     navigate = useNavigate();
+  const encryption = useLocation().pathname.toLowerCase().replace(/\/$/, '') === '/encrypt';
   const matches = tools.filter((t) => `${t.name} ${t.info}`.toLowerCase().includes(query.trim().toLowerCase()));
   return (
     <Dialog title={titles[kind]} close={close}>
@@ -64,7 +65,26 @@ export function UtilitySheet({ kind, close }: { kind: Utility; close: () => void
           {!matches.length && <p role="status">No matching tools.</p>}
         </>
       )}
-      {kind === 'guide' && (
+      {kind === 'guide' && encryption && (
+        <>
+          <p>Protect a single file without uploading it to a server.</p>
+          <ol className="guide-steps">
+            <li>Choose Encrypt and attach a supported file up to 25 MB.</li>
+            <li>
+              Set and confirm a passphrase. You can generate one locally, choose the outer archive name and verify the
+              archive before download.
+            </li>
+            <li>
+              Select Encrypt file and save the .zeox archive. To restore the original, choose Decrypt and enter the same
+              passphrase.
+            </li>
+          </ol>
+          <p className="hint">
+            <LockKeyhole aria-hidden="true" /> There is no passphrase recovery.
+          </p>
+        </>
+      )}
+      {kind === 'guide' && !encryption && (
         <>
           <p>Build a separate copy without uploading your script.</p>
           <ol className="guide-steps">
@@ -73,8 +93,12 @@ export function UtilitySheet({ kind, close }: { kind: Utility; close: () => void
             <li>Select Obfuscate file, then download the result. Your original is unchanged.</li>
           </ol>
           <p className="hint">
-            <BookOpen aria-hidden="true" size={15} /> For password-protected archives, use Vault instead.
+            <BookOpen aria-hidden="true" size={15} /> For a password-protected archive, use the separate encryption
+            tool.
           </p>
+          <Link className="pill paper" to="/encrypt" onClick={close}>
+            Open file encryption <ArrowUpRight aria-hidden="true" />
+          </Link>
         </>
       )}
       {kind === 'inbox' && (

@@ -4,6 +4,7 @@
     { "source": "/dashboard/overview", "destination": "/index.html" },
     { "source": "/obfuscate", "destination": "/index.html" },
     { "source": "/usages", "destination": "/index.html" },
+    { "source": "/encrypt", "destination": "/index.html" },
     { "source": "/vault", "destination": "/index.html" },
     { "source": "/showcase", "destination": "/index.html" }
   ],

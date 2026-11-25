@@ -14,7 +14,7 @@ export function SplitFace({ children }: { children: ReactNode }) {
 export function PageTitle({
   title,
   badge = 'Private workspace',
-  kicker = 'Welcome to Zeox',
+  kicker = 'ZeoxFucator workspace',
   children,
 }: {
   title: string;

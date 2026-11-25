@@ -44,7 +44,7 @@ export function Dashboard({ period, setPeriod }: { period: SamplePeriod; setPeri
   }
   function exportReport() {
     downloadText(
-      `zeox-sample-${period}d.csv`,
+      `zeoxfucator-sample-${period}d.csv`,
       'text/csv;charset=utf-8',
       [
         'Sample date (UTC),Input MB,Files,Saved outputs',

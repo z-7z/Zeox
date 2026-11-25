@@ -78,8 +78,10 @@ export function BarPanel({ title, context, rows, detail, exportData, empty }: Pr
               aria-label={`${r.tick}: ${r.name}, ${r.facts.map(([label, value]) => `${label}: ${value}`).join(', ')}`}
               aria-pressed={index === i}
               tabIndex={index === i ? 0 : -1}
-              onPointerEnter={(e) => {
-                if (e.pointerType !== 'touch') select(i);
+              onPointerMove={(e) => {
+                // Scrolling to a keyboard-focused column can move a different one
+                // under a stationary pointer. Only actual movement selects a reading.
+                if (e.pointerType !== 'touch' && (e.movementX || e.movementY)) select(i);
               }}
               onFocus={() => select(i)}
               onClick={() => select(i)}

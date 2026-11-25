@@ -19,8 +19,8 @@ for (const width of [320, 1440]) {
       await expectToolsAt(page, width === 320 ? 'bottom' : 'left');
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
     }
-    await page.goBack(); await expect(page).toHaveTitle('Usages — Zeox Obfuscator');
-    await page.goForward(); await expect(page).toHaveTitle('Dashboard — Zeox Obfuscator');
+    await page.goBack(); await expect(page).toHaveTitle('Usages — ZeoxFucator');
+    await page.goForward(); await expect(page).toHaveTitle('Dashboard — ZeoxFucator');
     for (const path of ['/dashboard/overview', '/showcase']) {
       await page.goto(path); await expect(page).toHaveURL(/\/dashboard$/); await expect(page.getByLabel('Sample period')).toBeVisible();
     }
@@ -48,11 +48,11 @@ test('local source file builds offline, downloads under a distinct name, and sur
 
 test('usage counts successes only, filters and exports metadata, resets without losing a Vault download', async ({ page }) => {
   await page.goto('/obfuscate');
-  await attach(page); await page.getByRole('button', { name: 'Obfuscate file' }).click(); await go(page, 'Vault');
+  await attach(page); await page.getByRole('button', { name: 'Obfuscate file' }).click(); await go(page, 'Encryption');
   await page.getByRole('button', { name: 'Encrypt file', exact: true }).click(); await expect(page.getByRole('alert')).toContainText('Choose a file first');
   await page.getByRole('button', { name: 'Use sample' }).click();
   const pass = page.getByLabel('Passphrase', { exact: true }), secret = 'not stored in the ledger'; await pass.fill(secret);
-  await go(page, 'Usages'); await go(page, 'Vault'); await expect(pass).toHaveValue('');
+  await go(page, 'Usages'); await go(page, 'Encryption'); await expect(pass).toHaveValue('');
   await pass.fill(secret); await page.getByLabel('Confirm passphrase', { exact: true }).fill(secret);
   await page.getByRole('button', { name: 'Encrypt file', exact: true }).click();
   // Navigation need not wait for the in-flight job.
@@ -66,7 +66,7 @@ test('usage counts successes only, filters and exports metadata, resets without 
   await expect(page.getByRole('region', { name: 'Completed runs' }).locator('strong')).toHaveText('2');
   await page.getByRole('button', { name: 'Reset', exact: true }).click(); await page.getByRole('button', { name: 'Clear usage' }).click();
   await expect(page.getByText('No usage yet')).toBeVisible();
-  await go(page, 'Vault'); await expect(page.getByRole('link', { name: 'Download .zeox' })).toBeVisible();
+  await go(page, 'Encryption'); await expect(page.getByRole('link', { name: 'Download .zeox' })).toBeVisible();
   await page.reload(); await expect(page.getByRole('link', { name: 'Download .zeox' })).toHaveCount(0);
 });
 

@@ -49,7 +49,7 @@ test('finder, appearance, activity and privacy controls work without leaving tab
   await input.fill('restore');
   await expect(dialog.getByRole('link')).toHaveCount(1);
   await input.press('Enter');
-  await expect(page).toHaveURL(/\/vault$/);
+  await expect(page).toHaveURL(/\/encrypt$/);
   await expect(dialog).toHaveCount(0);
   await expect(page.getByRole('main')).toBeFocused();
   await page.getByRole('button', { name: 'Dark mode: switch to light' }).click();
@@ -76,6 +76,7 @@ test('striped plot offers keyboard readings, an accessible data table and an act
   page,
 }) => {
   await page.goto('/');
+  await page.getByText('Encoding reference', { exact: true }).click();
   const panel = page.getByRole('region', { name: 'Literal encoding breakdown' });
   const bars = panel.getByRole('group').getByRole('button');
   await expect(bars).toHaveCount(9);
@@ -98,7 +99,7 @@ test('striped plot offers keyboard readings, an accessible data table and an act
   const saved = page.waitForEvent('download');
   await panel.getByRole('button', { name: /export .* csv/i }).click();
   const csv = await saved;
-  expect(csv.suggestedFilename()).toBe('zeox-byte-reference.csv');
+  expect(csv.suggestedFilename()).toBe('zeoxfucator-byte-reference.csv');
   const stream = await csv.createReadStream(),
     chunks: Buffer[] = [];
   for await (const c of stream!) chunks.push(c);
@@ -107,32 +108,24 @@ test('striped plot offers keyboard readings, an accessible data table and an act
   expect(lines[1]).toBe('1,90,0x5A,\\090');
 });
 
-test('build strip, filtered controls and file details follow the real attachment and result', async ({ page }) => {
+test('the source workbench exposes its controls directly, preserves the file and links to encryption', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/#build-settings');
   await expect(page.getByRole('region', { name: 'Build configuration' })).toBeFocused();
-  const step = page.getByRole('list', { name: 'Build pipeline breakdown' }).locator('[aria-current=step]');
-  await expect(step).toContainText('Source file');
+  const comments = page.getByRole('checkbox', { name: 'Remove comments' });
   await attach(page, 'pipeline.lua');
-  await expect(step).toContainText('Processing');
-  const filter = page.getByLabel('Filter transforms');
-  await filter.selectOption('off');
-  await expect(page.getByText('No transforms in this state.')).toBeVisible();
-  await filter.selectOption('all');
-  await page.getByRole('checkbox', { name: 'Remove comments' }).uncheck();
-  await filter.selectOption('off');
-  await expect(page.getByRole('checkbox')).toHaveCount(1);
-  await expect(page.getByRole('checkbox')).toHaveAccessibleName('Remove comments');
-  await page.getByRole('button', { name: 'Attachment', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Attached script' })).toBeVisible();
+  await comments.uncheck();
   await page.getByRole('button', { name: 'Obfuscate file' }).click();
-  await expect(step).toContainText('Download');
-  await page.getByRole('button', { name: 'Output', exact: true }).click();
-  await expect(page.getByText('pipeline.obf.lua', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Go to build settings' }).click();
-  await expect(filter).toHaveValue('all');
-  await expect(page.getByRole('checkbox', { name: 'Remove comments' })).not.toBeChecked();
-  await expect(page.getByRole('checkbox')).toHaveCount(3);
+  await expect(page.getByRole('heading', { name: 'pipeline.obf.lua' })).toBeVisible();
+  await page.getByRole('main').getByRole('link', { name: 'File encryption' }).click();
+  await expect(page).toHaveURL(/\/encrypt$/);
+  await go(page, 'Obfuscator');
+  await expect(comments).not.toBeChecked();
+  await expect(page.getByRole('link', { name: 'Download file' })).toHaveAttribute('download', 'pipeline.obf.lua');
+  await comments.check();
+  await expect(page.locator('a[download]')).toHaveCount(0);
 });
 
 test('sample breakdown views and their exported days use the selected period', async ({ page }) => {
@@ -148,7 +141,7 @@ test('sample breakdown views and their exported days use the selected period', a
   const saved = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export sample report', exact: true }).click();
   const csv = await saved;
-  expect(csv.suggestedFilename()).toBe('zeox-sample-7d.csv');
+  expect(csv.suggestedFilename()).toBe('zeoxfucator-sample-7d.csv');
   const stream = await csv.createReadStream(),
     chunks: Buffer[] = [];
   for await (const c of stream!) chunks.push(c);

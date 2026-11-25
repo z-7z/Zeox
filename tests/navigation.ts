@@ -2,7 +2,7 @@ import { expect, type Page } from '@playwright/test';
 
 export const destinations = [
   { label: 'Obfuscator', path: '/obfuscate', heading: 'Lua Obfuscator' },
-  { label: 'Vault', path: '/vault', heading: 'Vault' },
+  { label: 'Encryption', path: '/encrypt', heading: 'File encryption' },
   { label: 'Usages', path: '/usages', heading: 'Usages' },
   { label: 'Dashboard', path: '/dashboard', heading: 'Dashboard' },
 ] as const;

@@ -3,7 +3,10 @@ import { cryptoAvailable, processFile, validateFile, validatePassphrase, type Mo
 
 export interface SessionEvent { id: number; mode: Mode; name: string; size: number; time: number }
 export type Problem = { field: 'file' | 'pass' | 'confirm' | 'operation'; message: string };
-export const phaseLabel: Record<Phase, string> = { reading: 'Reading file', deriving: 'Deriving key', sealing: 'Encrypting file', restoring: 'Decrypting file', cleaning: 'Cleaning text' };
+export const phaseLabel: Record<Phase, string> = {
+  reading: 'Reading file', deriving: 'Deriving key', sealing: 'Encrypting file',
+  restoring: 'Decrypting file', cleaning: 'Cleaning text', verifying: 'Verifying archive',
+};
 
 // Volatile state only. No uploads, storage, analytics or URLs containing secrets.
 export function useVaultSession(onSuccess: (operation: Mode, input: number, output: number) => void) {
@@ -11,6 +14,8 @@ export function useVaultSession(onSuccess: (operation: Mode, input: number, outp
   const [file, setFile] = useState<File | null>(null);
   const [passphrase, setPassphrase] = useState('');
   const [confirmation, setConfirmation] = useState('');
+  const [archiveName, setArchiveName] = useState<'source' | 'neutral'>('source');
+  const [verify, setVerify] = useState(false);
   const [phase, setPhase] = useState<Phase | null>(null);
   const [problem, setProblem] = useState<Problem | null>(null);
   const [result, setResult] = useState<VaultResult | null>(null);
@@ -33,6 +38,7 @@ export function useVaultSession(onSuccess: (operation: Mode, input: number, outp
   function reset() {
     if (running.current) return;
     setResult(null); setFile(null); setPassphrase(''); setConfirmation(''); setProblem(null);
+    setArchiveName('source'); setVerify(false);
   }
   function switchMode(next: Mode) {
     if (!running.current && next !== mode) { reset(); setMode(next); }
@@ -49,15 +55,17 @@ export function useVaultSession(onSuccess: (operation: Mode, input: number, outp
     if (running.current || result) return;
     let invalid: Problem | null = null;
     const passError = validatePassphrase(passphrase, mode);
-    if (!supported) invalid = { field: 'operation', message: 'Open Zeox over HTTPS in a browser with Web Crypto support.' };
+    if (!supported) invalid = { field: 'operation', message: 'Open ZeoxFucator over HTTPS in a browser with Web Crypto support.' };
     else if (!file) invalid = { field: 'file', message: mode === 'encrypt' ? 'Choose a file first, or try the sample script.' : 'Choose a .zeox archive to decrypt.' };
     else if (passError) invalid = { field: 'pass', message: passError };
     else if (mode === 'encrypt' && confirmation !== passphrase) invalid = { field: 'confirm', message: 'Enter the same passphrase in both fields.' };
     if (invalid || !file) { setProblem(invalid); return; }
     setProblem(null); running.current = true;
     try {
-      const output = await processFile(file, mode, passphrase, p => { if (alive.current) setPhase(p); });
+      const artifact = await processFile(file, mode, passphrase, p => { if (alive.current) setPhase(p); }, verify);
       if (!alive.current) return;
+      // Only the suggested outer name changes. The authenticated original is untouched.
+      const output = mode === 'encrypt' && archiveName === 'neutral' ? { ...artifact, name: 'archive.zeox' } : artifact;
       setResult(output); setPassphrase(''); setConfirmation(''); setFile(null);
       const event: SessionEvent = { id: ++id.current, name: mode === 'encrypt' ? file.name : output.name, size: mode === 'encrypt' ? file.size : output.blob.size, time: Date.now(), mode };
       setEvents(list => [event, ...list].slice(0, 30));
@@ -70,6 +78,8 @@ export function useVaultSession(onSuccess: (operation: Mode, input: number, outp
   const clearLog = useCallback(() => setEvents([]), []);
   return { mode, switchMode, file, selectFile, removeFile: () => { if (!running.current) { setFile(null); setProblem(null); } }, sample,
     passphrase, editPass: (s: string) => { setPassphrase(s); setProblem(null); }, confirmation, editConfirm: (s: string) => { setConfirmation(s); setProblem(null); },
+    archiveName, editArchiveName: (next: 'source' | 'neutral') => { if (!running.current && !result) setArchiveName(next); },
+    verify, editVerify: (value: boolean) => { if (!running.current && !result) setVerify(value); },
     phase, problem, result, urls, run, reset, events, clearLog, supported, forgetPassphrase };
 }
 export type VaultSession = ReturnType<typeof useVaultSession>;
