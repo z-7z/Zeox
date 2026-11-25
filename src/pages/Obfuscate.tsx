@@ -8,11 +8,8 @@ import { CardTitle, PageTitle } from '../components/orbit/Panels';
 import { Toggle } from '../components/ui/Toggle';
 import { useSourceTool } from '../components/workspace/ToolSessions';
 
-const transforms = [
-  ['encodeText', 'Encode text literals', 'Write plain quoted strings as decimal byte escapes.', 'Aa'],
-  ['removeComments', 'Remove comments', 'Keep directives and license notices.', '//'],
-  ['compactSpacing', 'Compact spacing', 'Remove extra whitespace without merging tokens.', '␣'],
-] as const;
+import { transforms } from '../components/source/transforms';
+
 export function Obfuscate() {
   const tool = useSourceTool(),
     { file, reading, result, issue } = tool;
@@ -21,15 +18,11 @@ export function Obfuscate() {
   return (
     <div className="task-page source-tool">
       <PageTitle
-        kicker="File tools"
+        kicker="Script workspace"
         badge="On this device"
         title="Lua Obfuscator"
         description="Build a separate copy of your Lua or Luau script with the transforms you choose."
       >
-        <Link className="pill tool-jump" to="/encrypt">
-          File encryption
-          <ArrowUpRight aria-hidden="true" />
-        </Link>
         <button
           className="pill paper run-action"
           type="button"
@@ -100,6 +93,12 @@ export function Obfuscate() {
       </div>
       <SourceDownload file={result} focusDownload={builtHere.current} failed={issue?.field === 'build'} />
       <EncodingReference />
+      <p className="archive-note">
+        Need a passphrase-protected archive instead?{' '}
+        <Link to="/encrypt">
+          File encryption <ArrowUpRight aria-hidden="true" />
+        </Link>
+      </p>
     </div>
   );
 }

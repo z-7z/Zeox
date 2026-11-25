@@ -87,7 +87,7 @@ export function Encryption() {
     <div className="task-page">
       <PageTitle
         title={encrypt ? 'File encryption' : 'File decryption'}
-        kicker="File tools"
+        kicker="Local archive"
         badge="On this device"
         description={
           ready

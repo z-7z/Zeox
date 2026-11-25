@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { tools } from '../orbit/tools';
+import { workspacePages } from '../orbit/navigation';
 
 /** Announce the destination and move focus across both layouts, including hash links. */
 export function RouteEffects() {
@@ -10,10 +10,10 @@ export function RouteEffects() {
     const path = pathname.toLowerCase().replace(/\/$/, '') || '/';
     const name =
       path === '/'
-        ? 'Main'
+        ? 'Lua Obfuscator'
         : path === '/login'
           ? 'Log in'
-          : (tools.find((t) => t.url === path)?.name ?? 'Page not found');
+          : (workspacePages.find((t) => t.url === path)?.name ?? 'Page not found');
     document.title = `${name === 'Obfuscator' ? 'Lua Obfuscator' : name} — ZeoxFucator`;
     const target = hash && document.getElementById(hash.slice(1));
     if (target) {

@@ -1,27 +1,26 @@
 import { Link } from 'react-router-dom';
-import { ArrowDown, ArrowRight, Braces, Cpu, Plus, ShieldCheck } from 'lucide-react';
+import { ArrowDown, ArrowRight, Braces, Cpu, FileCode2, Plus } from 'lucide-react';
 import { Walkthrough } from '../components/site/Walkthrough';
 import { useSite } from '../components/site/SiteSession';
-import flux from '../assets/guide/flux.webp';
-import fluxSmall from '../assets/guide/flux-small.webp';
+import { BuildIllustration } from '../components/site/BuildIllustration';
 
 const facts = [
   ['Source formats', 'Lua + Luau', Braces],
-  ['Archive cipher', 'AES-256-GCM', ShieldCheck],
+  ['Script limit', '512 KiB', FileCode2],
   ['Processing', 'On your device', Cpu],
 ] as const;
 const questions = [
   [
-    'Do my files leave my device?',
-    'No. The browser reads and processes the file locally. The studio never uploads it or executes the script.',
+    'Is my script uploaded or executed?',
+    'No. ZeoxFucator reads your script as text in this browser tab. It never sends your source to a server or runs it.',
   ],
   [
-    'Is obfuscation the same as encryption?',
-    'No. A source build rewrites readable text. To protect a file with a passphrase, create a .zeox archive and restore it before use.',
+    'Can the result still be read?',
+    'Yes. Encoding rewrites plain quoted strings as decimal byte escapes. Identifiers keep their names, and Luau interpolated strings are left as written. Obfuscation is not encryption; don’t put secrets in your script.',
   ],
   [
     'What happens when I leave?',
-    'Save any downloads you want to keep. Moving between pages keeps your attachments, but refreshing or ending the guest session clears the files and run history.',
+    'Save the copy you want to keep. You can move between workspace pages without losing your script, but refreshing or ending the guest session clears this tab’s build.',
   ],
 ] as const;
 
@@ -34,42 +33,25 @@ export function Main() {
         <div className="site-width launch-inner">
           <div className="launch-copy">
             <p className="site-label">
-              <i aria-hidden="true" /> Browser-native file studio
+              <i aria-hidden="true" /> Local Lua &amp; Luau source processing
             </p>
             <h1 id="launch-title">
-              Lua tools.
-              <br />
-              <em>No uploads.</em>
+              Lua <em>Obfuscator</em>
             </h1>
             <p className="launch-lead">
-              Transform a Lua script or seal a Roblox file with a passphrase. Your browser does the work. Your original
-              stays yours.
+              Make your Lua or Luau script harder to read without uploading it. Encode strings, remove comments and
+              compact spacing, then download the copy.
             </p>
             <div className="launch-actions">
               <Link className="site-cta" to={entry}>
-                {guest ? 'Open dashboard' : 'Get started'} <ArrowRight aria-hidden="true" />
+                {guest ? 'Open dashboard' : 'Obfuscate a script'} <ArrowRight aria-hidden="true" />
               </Link>
               <Link className="site-text-link" to="#quick-start">
-                Explore the guide <ArrowDown aria-hidden="true" />
+                See how it works <ArrowDown aria-hidden="true" />
               </Link>
             </div>
           </div>
-          <figure className="flux-scene">
-            <span className="flux-cross" aria-hidden="true">
-              +
-            </span>
-            <img
-              src={flux}
-              srcSet={`${fluxSmall} 640w, ${flux} 1220w`}
-              sizes="(max-width: 680px) 94vw, (max-width: 1500px) 51vw, 730px"
-              width="1220"
-              height="976"
-              alt="An orbital sculpture formed from twisting silver and violet ribbons."
-            />
-            <figcaption>
-              <span>FIG. 01</span> Signal study
-            </figcaption>
-          </figure>
+          <BuildIllustration />
         </div>
       </section>
       <div className="spec-band">
@@ -110,7 +92,7 @@ export function Main() {
         </div>
       </section>
       <div className="site-width closing">
-        <p>Ready to start?</p>
+        <p>Ready to obfuscate?</p>
         <Link className="site-cta" to={entry}>
           {guest ? 'Open dashboard' : 'Continue to log in'} <ArrowRight aria-hidden="true" />
         </Link>

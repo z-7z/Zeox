@@ -1,232 +1,97 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, CalendarDays, Download, Table2 } from 'lucide-react';
-import { dateRange, dayLabel, type SamplePeriod } from '../components/dashboard/period';
-import { number, sampleReport } from '../components/dashboard/sample';
+import { ArrowRight, ArrowUpRight, FileCode2 } from 'lucide-react';
+import type { SamplePeriod } from '../components/dashboard/period';
+import { SampleReport } from '../components/dashboard/SampleReport';
+import { FileName } from '../components/FilePicker';
+import { CardTitle, PageTitle, SplitFace } from '../components/orbit/Panels';
+import { transforms } from '../components/source/transforms';
+import { useSourceTool } from '../components/workspace/ToolSessions';
 import { useUsage } from '../components/workspace/UsageSession';
-import { BarPanel, type BarDatum } from '../components/orbit/BarPanel';
-import { CardTitle, PageTitle, Ribbon, SideNote } from '../components/orbit/Panels';
-import { downloadText } from '../lib/download';
+import { formatSize } from '../lib/vault/container';
 
-import { Choice } from '../components/ui/Choice';
-import { Disclosure } from '../components/ui/Disclosure';
-
-const periods = [
-  { value: 7, label: 'Last 7 days' },
-  { value: 30, label: 'Last 30 days' },
-] as const;
-const views = ['Overview', 'Formats', 'Operations'] as const;
-const measures = [
-  ['Input (MB)', 'mb'],
-  ['Files', 'files'],
-  ['Saved outputs', 'saved'],
-] as const;
 export function Dashboard({ period, setPeriod }: { period: SamplePeriod; setPeriod: (value: SamplePeriod) => void }) {
-  const { current, previous, rows, formats, operations } = sampleReport(period),
-    { count } = useUsage();
-  const [view, setView] = useState<(typeof views)[number]>('Overview');
-  const series = view === 'Formats' ? formats : operations,
-    delta = (current.mb / previous.mb - 1) * 100;
-  const bars: BarDatum[] = [],
-    stride = period === 30 ? 3 : 1;
-  for (let i = 0; i < rows.length; i += stride) {
-    const group = rows.slice(i, i + stride),
-      first = group[0].time,
-      end = group[group.length - 1].time;
-    const total = group.reduce(
-      (acc, row) => ({ mb: acc.mb + row.mb, files: acc.files + row.files, saved: acc.saved + row.saved }),
-      { mb: 0, files: 0, saved: 0 },
-    );
-    bars.push({
-      key: String(first),
-      tick: String(new Date(first).getUTCDate()),
-      name: dayLabel(first) + (first === end ? '' : ` – ${dayLabel(end)}`),
-      value: total.mb,
-      facts: [
-        ['Input', `${number(total.mb)} MB`],
-        ['Files', number(total.files)],
-        ['Saved', number(total.saved)],
-      ],
-    });
-  }
-  function exportReport() {
-    downloadText(
-      `zeoxfucator-sample-${period}d.csv`,
-      'text/csv;charset=utf-8',
-      [
-        'Sample date (UTC),Input MB,Files,Saved outputs',
-        ...rows.map((r) => [new Date(r.time).toISOString().slice(0, 10), r.mb, r.files, r.saved].join(',')),
-      ].join('\r\n') + '\r\n',
-    );
-  }
+  const { file, options, result, reading, issue } = useSourceTool();
+  const { byTool } = useUsage();
   return (
-    <>
-      <PageTitle title="Dashboard" badge="Sample report" kicker="Workspace overview">
-        <button
-          className="round"
-          type="button"
-          onClick={exportReport}
-          aria-label="Export sample report"
-          title="Export sample report"
-        >
-          <Download aria-hidden="true" />
-        </button>
-        <Choice<SamplePeriod>
-          label="Sample period"
-          value={period}
-          options={periods}
-          change={setPeriod}
-          icon={CalendarDays}
-        />
+    <div className="script-dashboard">
+      <PageTitle
+        title="Dashboard"
+        kicker="Lua Obfuscator"
+        badge="Guest session"
+        description="Choose a script, set the transforms and download a separate copy."
+      >
+        <Link className="split-action" to={result ? '/obfuscate#build-output' : '/obfuscate'}>
+          <SplitFace>{result ? 'Open download' : file ? 'Continue build' : 'Obfuscate a script'}</SplitFace>
+        </Link>
       </PageTitle>
-      <div className="desk-grid report-grid">
-        <section className="card metric-card">
-          <CardTitle title="Total input volume">
-            <span className="paper tag">Sample</span>
-          </CardTitle>
-          <div className="file-value">
-            <div className="metric-value">
-              {number(current.mb)}
-              <small>MB</small>
-            </div>
-            <span className="gain" title="Compared with the previous period">
-              <ArrowUpRight aria-hidden="true" />
-              {delta.toFixed(1)}%
+      <div className="build-overview">
+        <section className="card current-script" aria-label="Current script">
+          <CardTitle title="Current script">
+            <span className="quiet-badge">
+              {reading
+                ? 'Reading'
+                : result
+                  ? 'Copy ready'
+                  : issue
+                    ? 'Check source'
+                    : file
+                      ? 'Attached'
+                      : 'Not attached'}
             </span>
+          </CardTitle>
+          <div className="script-identity">
+            <i aria-hidden="true">
+              <FileCode2 />
+            </i>
+            <div>
+              <h3>{file ? <FileName name={file.name} /> : 'Start with a Lua or Luau file'}</h3>
+              <p>{file ? `${formatSize(file.size)} · Attached locally` : 'One UTF-8 script · 512 KiB max'}</p>
+            </div>
           </div>
-          <p className="file-foot">{dateRange(period)} (UTC)</p>
+          <p className="script-foot">
+            {result ? (
+              <>
+                Output: <FileName name={result.name} />
+              </>
+            ) : (
+              'Your source stays on this device and is never executed.'
+            )}
+          </p>
         </section>
-        <Ribbon
-          title="Operation breakdown"
-          metrics={[
-            [number(current.files), 'files'],
-            [number(current.saved), 'saved'],
-          ]}
-          current={0}
-          marker="Top"
-          steps={[
-            { label: 'Source build', caption: `${number(operations[0].value)} builds` },
-            { label: 'Encrypt', caption: `${number(operations[1].value)} jobs` },
-            { label: 'Restore', caption: `${number(operations[2].value)} jobs` },
-          ]}
-          weights={operations.map((op) => op.value)}
-        />
-        <BarPanel
-          title="Input volume breakdown"
-          context={`Sample data · ${stride === 1 ? 'Daily totals' : 'Three-day totals'} in MB`}
-          rows={bars}
-          detail="Input reading"
-          exportData={exportReport}
-        />
-        <section className="card inspector" aria-label="Report details">
-          <div className="panel-side">
-            <div className="side-choices" role="group" aria-label="Report views">
-              {views.map((v) => (
-                <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)}>
-                  {v}
-                </button>
-              ))}
-            </div>
-            <SideNote title={`This tab: ${number(count)} completed ${count === 1 ? 'run' : 'runs'}.`}>
-              <Link className="pill paper small" to="/usages">
-                View usages
-              </Link>
-            </SideNote>
-          </div>
-          <div className="panel-body">
-            <div className="panel-tools">
-              <span>
-                <CalendarDays aria-hidden="true" />
-                Period comparison
-              </span>
-              <span className="quiet-badge">{period} days</span>
-            </div>
-            <div className="table-scroll">
-              <table className="report-table">
-                <caption className="sr-only">
-                  {view === 'Overview' ? 'Sample totals' : `Sample ${view.toLowerCase()}`}
-                </caption>
-                {view === 'Overview' ? (
-                  <>
-                    <thead>
-                      <tr>
-                        <th scope="col">Measure</th>
-                        <th scope="col">Selected</th>
-                        <th scope="col">Previous</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {measures.map(([label, k], i) => (
-                        <tr key={k}>
-                          <th scope="row">
-                            <i className={`token token-${i}`} aria-hidden="true">
-                              {['M', '#', '✓'][i]}
-                            </i>
-                            {label}
-                          </th>
-                          <td className="tint">{number(current[k])}</td>
-                          <td>{number(previous[k])}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </>
-                ) : (
-                  <>
-                    <thead>
-                      <tr>
-                        <th scope="col">{view === 'Formats' ? 'Format' : 'Operation'}</th>
-                        <th scope="col">Files</th>
-                        <th scope="col">Share</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {series.map((r, i) => (
-                        <tr key={r.label}>
-                          <th scope="row">
-                            <i className={`token token-${i % 3}`} aria-hidden="true">
-                              {r.label.slice(0, 1)}
-                            </i>
-                            {r.label}
-                          </th>
-                          <td className="tint">{number(r.value)}</td>
-                          <td>{Math.round((r.value / current.files) * 100)}%</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </>
-                )}
-              </table>
-            </div>
-            <p className="table-foot">Illustrative data, not your activity.</p>
-          </div>
+        <section className="card build-counter" aria-label="Script builds">
+          <CardTitle title="Script builds">
+            <span className="quiet-badge">This tab</span>
+          </CardTitle>
+          <strong className="metric-value">{byTool.compact.toLocaleString('en-US')}</strong>
+          <p className="script-foot">Completed builds in this session.</p>
+          <Link className="workspace-link" to="/usages">
+            View session activity <ArrowUpRight aria-hidden="true" />
+          </Link>
+        </section>
+        <section className="card build-recipe" aria-label="Build settings">
+          <CardTitle title="Build settings">
+            <Link className="workspace-link" to="/obfuscate#build-settings">
+              Edit settings <ArrowRight aria-hidden="true" />
+            </Link>
+          </CardTitle>
+          <ul>
+            {transforms.map(([key, label, hint, mark]) => (
+              <li key={key}>
+                <i className={`token token-${key}`} aria-hidden="true">
+                  {mark}
+                </i>
+                <div>
+                  <h3>
+                    {label} <span>{options[key] ? 'On' : 'Off'}</span>
+                  </h3>
+                  <p>{hint}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
         </section>
       </div>
-      <Disclosure title="Daily totals" icon={Table2}>
-        <div className="table-scroll">
-          <table>
-            <caption>Daily sample totals</caption>
-            <thead>
-              <tr>
-                {['Date', 'MB', 'Files', 'Saved'].map((label) => (
-                  <th key={label} scope="col">
-                    {label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => (
-                <tr key={r.time}>
-                  <th scope="row">{dayLabel(r.time)}</th>
-                  <td>{r.mb}</td>
-                  <td>{r.files}</td>
-                  <td>{r.saved}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Disclosure>
-    </>
+      <SampleReport period={period} setPeriod={setPeriod} />
+    </div>
   );
 }

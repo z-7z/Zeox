@@ -58,6 +58,7 @@ test('theme changes recolor existing cards, dialogs and body-portaled menus with
 
 test('choice lists support keyboard navigation, Escape, outside dismissal and focus return', async ({ page }) => {
   await page.goto('/dashboard');
+  await page.getByText('Sample report', { exact: true }).click();
   const trigger = page.getByRole('combobox', { name: 'Sample period' }),
     menu = page.getByRole('listbox', { name: 'Sample period' });
   await trigger.focus();

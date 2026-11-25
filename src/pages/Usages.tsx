@@ -9,10 +9,10 @@ import { formatSize } from '../lib/vault/container';
 
 import { Choice } from '../components/ui/Choice';
 
-const tools = [
-  { value: 'all', label: 'All tools' },
-  { value: 'compact', label: 'Obfuscator' },
-  { value: 'vault', label: 'Encryption' },
+const runFilters = [
+  { value: 'all', label: 'All runs' },
+  { value: 'compact', label: 'Script builds' },
+  { value: 'vault', label: 'Archive runs' },
 ] as const;
 const localTime = (time: number) => new Date(time).toLocaleTimeString('en-GB');
 export function Usages() {
@@ -31,7 +31,7 @@ export function Usages() {
       name: `Run ${r.id} · ${localTime(r.time)}`,
       value: r.output,
       facts: [
-        ['Tool', operationLabels[r.operation]],
+        ['Operation', operationLabels[r.operation]],
         ['Input', formatSize(r.input)],
         ['Output', formatSize(r.output)],
       ],
@@ -93,15 +93,11 @@ export function Usages() {
           context="Latest nine matching runs · Output bytes"
           rows={bars}
           detail="Run reading"
-          empty={
-            usage.count
-              ? 'No operations match this filter.'
-              : 'Complete a build or encryption operation to see its size here.'
-          }
+          empty={usage.count ? 'No operations match this filter.' : 'Obfuscate a script to see its output size here.'}
         />
         <section className="card ledger-card" aria-label="Usage ledger">
           <CardTitle title="Activity ledger">
-            <Choice label="Filter usage log" value={filter} options={tools} change={setFilter} icon={ListFilter} />
+            <Choice label="Filter usage log" value={filter} options={runFilters} change={setFilter} icon={ListFilter} />
           </CardTitle>
           {rows.length ? (
             <div className="log-scroll" role="region" aria-label="Recent runs" tabIndex={0}>

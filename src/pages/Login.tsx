@@ -13,15 +13,17 @@ export function Login() {
         <div className="entry-mark">
           <Fingerprint aria-hidden="true" />
         </div>
-        <p className="site-label">Workspace access</p>
+        <p className="site-label">Lua Obfuscator</p>
         <h1 id="entry-title">
           Log in<span>.</span>
         </h1>
-        <p className="entry-intro">Explore ZeoxFucator as a guest. Account sign-in isn’t connected in this preview.</p>
+        <p className="entry-intro">
+          Start a guest session to obfuscate Lua and Luau scripts. Account sign-in isn’t connected in this preview.
+        </p>
         <button type="button" className="site-cta" onClick={enterGuest}>
           Continue as guest <ArrowRight aria-hidden="true" />
         </button>
-        <p className="entry-note">No email or password needed. Your files stay on this device.</p>
+        <p className="entry-note">No email or password needed. Your script stays on this device.</p>
         <Link className="site-text-link" to="/">
           <ArrowLeft aria-hidden="true" /> Back to the site
         </Link>

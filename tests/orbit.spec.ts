@@ -34,14 +34,14 @@ test('dock stays in one row while scrolling and rotating, then becomes the left 
 
 test('finder, appearance, activity and privacy controls work without leaving tab memory', async ({ page }) => {
   await page.goto('/dashboard');
-  const finder = page.getByRole('button', { name: 'Search tools' });
+  const finder = page.getByRole('button', { name: 'Search workspace' });
   await finder.focus();
   await page.keyboard.press('Control+k');
   const dialog = page.getByRole('dialog'),
     input = dialog.getByRole('searchbox');
   await expect(input).toBeFocused();
-  await input.fill('no matching tool');
-  await expect(dialog.getByRole('status')).toHaveText('No matching tools.');
+  await input.fill('no matching page');
+  await expect(dialog.getByRole('status')).toHaveText('No matching pages.');
   await page.keyboard.press('Escape');
   await expect(finder).toBeFocused();
   await finder.click();
@@ -131,6 +131,7 @@ test('the source workbench exposes its controls directly, preserves the file and
 
 test('sample breakdown views and their exported days use the selected period', async ({ page }) => {
   await page.goto('/dashboard');
+  await page.getByText('Sample report', { exact: true }).click();
   await page.getByRole('button', { name: 'Formats', exact: true }).click();
   await expect(page.getByRole('table', { name: 'Sample formats' }).getByRole('row', { name: /Luau/ })).toContainText(
     '698',
@@ -138,8 +139,8 @@ test('sample breakdown views and their exported days use the selected period', a
   await page.getByRole('combobox', { name: 'Sample period' }).click();
   await page.getByRole('option', { name: 'Last 7 days' }).click();
   await expect(page.getByRole('row', { name: /Luau/ })).toContainText('192');
-  await page.getByRole('button', { name: 'Operations', exact: true }).click();
-  await expect(page.getByRole('row', { name: /Encrypt/ })).toContainText('167');
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await expect(page.getByRole('row', { name: /Text only/ })).toContainText('167');
   const saved = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export sample report', exact: true }).click();
   const csv = await saved;

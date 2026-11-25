@@ -1,29 +1,31 @@
 # ZeoxFucator
 
-A local file studio: build a separate Lua/Luau script or protect a file in a passphrase-encrypted archive. The public site and guest entry are separate from the tool workspace. No server upload or editor is involved.
+**ZeoxFucator is a browser-based Lua Obfuscator for Lua and Luau.** Choose one script, encode plain quoted strings, strip ordinary comments or compact whitespace, then download the transformed copy. The browser reads the file locally; it never uploads or executes the script.
+
+## Start a script build
+
+1. Open **Main** (`/`). The before/after example uses the actual source pass on a bundled Luau snippet. The guide shows the real build settings and explains what obfuscation can and cannot do.
+2. Choose **Obfuscate a script → Continue as guest**. The independent `/login` page opens the Dashboard without asking for an email or password.
+3. On **Dashboard**, choose **Obfuscate a script**. Attach one UTF-8 `.lua` or `.luau` file (up to 512 KiB), choose the transforms and select **Obfuscate file → Download file**. Your original is unchanged.
 
 | Route | Function |
 | --- | --- |
-| `/` (`/main` redirects here) | Public landing page: product introduction, illustrated guides and FAQ. **Get started** and **Log in** lead to `/login`. |
-| `/login` | Public preview entry. **Continue as guest** opens Dashboard; no account or credentials are requested. |
-| `/obfuscate` | Build one UTF-8 `.lua` or `.luau` script (512 KiB max). |
-| `/encrypt` (also accessible from the old `/vault` link) | Encrypt or restore a file. An authenticated restore offers the exact original and, when available, a cleaned script or static reading. |
-| `/usages` | View, filter, export or clear the current tab's operation metadata. Totals cover all successes; the ledger and CSV cover the last 50. |
-| `/dashboard` | Read a separate dated sample report for 7 or 30 days ending May 15, 2026 (UTC). `/dashboard/overview` and `/showcase` redirect here. |
+| `/` (`/main` redirects here) | Public product introduction, illustrated obfuscation guide and FAQ. |
+| `/login` | Guest preview entry. No account or credentials. |
+| `/dashboard` | Start or resume a build. The current script, transform settings and completed script count come from this tab. A collapsed **Sample report** illustrates script builds for 7 or 30 days ending May 15, 2026 (UTC), separately from the guest session. `/dashboard/overview` and `/showcase` redirect here. |
+| `/obfuscate` | Attach, configure, build and download the script. |
+| `/usages` | View, filter, export or clear the current tab’s operation metadata. Totals cover all successes; the ledger and CSV cover the last 50. |
+| `/encrypt` (`/vault` redirects here) | Separate, optional passphrase-protected archive and restore page. No permanent Encryption tab. |
 
-## Public site → guest entry → workspace
+## Public site and guest workspace
 
-A fresh visit starts on **Main**, not in the Dashboard shell. The landing page has its own site navigation, artwork, two illustrated workflows and FAQ. Both it and `/login` are outside the tool rail, mobile dock, search, inbox and account controls. The guide illustrations are local assets, not live input forms. **Get started → Continue as guest → Dashboard** is the default path.
+Main and login use public navigation. Neither page renders the workspace rail, phone dock, finder, inbox or file picker. **Main → Log in → Dashboard** is the default path for a fresh visitor. A direct workspace bookmark pauses at login, then resumes only a known internal page (including its search/hash). Old root links to `#source-file`, `#build-settings` and `#build-output` still open the corresponding section at `/obfuscate`.
 
-**This is a guest flow preview, not account authentication.** The login page never asks for an email or password. A single non-secret `sessionStorage` marker (`zeoxfucator:preview = guest`) remembers entry across refreshes in this tab. When storage is unavailable the guest flow works in memory until reload. Direct tool bookmarks first show `/login`, then resume only the requested internal tool (including its search/hash). There is no URL-based external return target. Real accounts and server-side authorization are deferred; the marker is not a security boundary and must never be used to grant access to private server data.
+**This is a guest preview, not account authentication.** A single non-secret `sessionStorage` marker (`zeoxfucator:preview = guest`) remembers entry on refresh. If storage is unavailable, the preview works in memory until reload. There is no external return target. The marker must never be used to grant access to private server data.
 
-Only after entry does the app mount the file controllers and the workspace. The desktop rail contains Obfuscator, Usages, Dashboard and Help; on phones the same four items form a single bottom row, including in landscape. **Main is not a tool tab.** The wordmark returns to the public site; an active guest can resume Dashboard there without losing in-memory files. To leave, use **Local workspace information → End guest session** after saving any downloads. This removes the marker and discards all tool sessions and ledger state.
+Only guests mount the file controllers. The desktop rail contains Obfuscator, Usages, Dashboard and Help; phones have the same four items in a single bottom row, including in landscape. The wordmark returns to the public site; an active guest can resume Dashboard without losing in-memory work. **Local workspace information → End guest session** removes the marker and discards the files, results and ledger.
 
-The site is edge to edge, without an outer window, letterboxing or a fullscreen request. The appearance switch applies across public pages and tools; workspace cards are black in dark mode and white in light mode. The choice is kept across navigation and resets to dark on reload. Fonts and images ship with the site. In the workspace, **Ctrl/⌘ K** finds tools and **Esc** closes a utility dialog.
-
-The archive-name, report-period and usage-filter menus are site-styled listboxes with keyboard, touch and focus support. Switches, segmented controls, the passphrase length slider and disclosures share site styles; the upload button still opens the real operating-system file chooser.
-
-The **Obfuscator** page puts a single file chooser, the three source transforms and the download together. Old root links to `#source-file`, `#build-settings` and `#build-output` still open the corresponding section at `/obfuscate`. Its **File encryption** link opens a separate tool, not a dashboard widget. A collapsible encoding reference illustrates a bundled string, never the attached script. Usages is the real session ledger; Dashboard is a separate dated sample report.
+The site is edge to edge, with no outer window or fullscreen request. The theme applies to both layouts; workspace cards are black in dark mode and white in light mode. The choice resets to dark on reload. Fonts and images ship with the site. **Ctrl/⌘ K** finds workspace pages and **Esc** closes a utility dialog. Dropdowns, switches, the passphrase slider and disclosures are site-styled; the upload button opens the real operating-system file chooser.
 
 ## Source files and local state
 
@@ -31,11 +33,11 @@ Choose or drop a single script. The options encode plain quoted strings as three
 
 **Obfuscate file** produces a downloadable `.obf.lua` or `.obf.luau` (`.compact.*` when text encoding is off). Removing or replacing the attachment, or changing an option, clears the old result. A rejected replacement does not discard the last valid script. Nothing executes the script or displays its contents.
 
-Navigating between tools preserves attachments and results in tab memory. Leaving the encryption page clears its passphrase inputs, including generated values. Reloading the page clears the tool sessions and usage counts. No files, passphrases, results or usage data are written to Web Storage or a server.
+Navigating between pages preserves attachments and results in tab memory. Leaving the encryption page clears its passphrase inputs, including generated values. Reloading the page clears the file sessions and usage counts. No files, passphrases, results or usage data are written to Web Storage or a server.
 
-## File encryption, download and restore
+## Optional file encryption, download and restore
 
-**Encrypt** uses three numbered cards, in the same order on desktop and phone:
+The link below the Obfuscator’s encoding reference opens the separate archive page. Encryption is not a source transform: restore the archive before using its contents. **Encrypt** uses three numbered cards, in the same order on desktop and phone:
 
 1. **Choose a file.** Upload or drop one `.luau`, `.lua`, `.rbxl`, `.rbxlx`, `.rbxm` or `.rbxmx` file up to 25 MB (or choose **Use sample**). The tool also accepts partial listings named `*.partial.lua.txt` / `*.partial.luau.txt`, including numbered copies such as `level.partial.lua (2).txt`. Other `.txt` files are not accepted.
 2. **Set a passphrase.** Enter at least 12 characters and confirm them. Alternatively, **Generate** opens a local generator: set the length (16–64 characters, default 24), then **Generate & use**, save the passphrase and confirm it. Optional **Archive options** let you choose the outer filename or verify the new archive before download. Press **Encrypt file**.
@@ -74,6 +76,6 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. Tests cover the separation of public and workspace layouts, guest entry/exit, bookmarked routes, local-only session data, illustrated guides, the file chooser, drag and drop, validation, offline builds, edge-to-edge layout, responsive navigation, card colors in both appearances, keyboard/touch selection and passphrase length, utility dialogs, stage-bound progress and download skeletons, archive options, chart controls, CSV export, independent archive verification, automatic cleanup and exact original downloads.
+`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. Tests cover the separation of public and workspace layouts, guest entry/exit, bookmarked routes, local-only session data, the before/after example, the end-to-end obfuscation journey, the file chooser, drag and drop, validation, offline builds, edge-to-edge layout, responsive navigation, card colors in both appearances, keyboard/touch selection and passphrase length, utility dialogs, stage-bound progress and download skeletons, archive options, chart controls, CSV export, independent archive verification, automatic cleanup and exact original downloads.
 
-Deploy `dist/` to a static HTTPS host. `vercel.json` routes direct tool URLs to `index.html` and sets a same-origin content security policy.
+Deploy `dist/` to a static HTTPS host. `vercel.json` routes direct page URLs to `index.html` and sets a same-origin content security policy.

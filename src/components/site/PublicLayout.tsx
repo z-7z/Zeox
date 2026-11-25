@@ -53,7 +53,7 @@ export function PublicLayout() {
       <footer className="site-footer">
         <div className="site-width">
           <span>ZeoxFucator</span>
-          <small>Local file tools for Lua &amp; Luau</small>
+          <small>Lua Obfuscator · Runs on your device</small>
         </div>
       </footer>
     </div>

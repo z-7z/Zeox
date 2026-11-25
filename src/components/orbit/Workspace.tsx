@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Bell, CircleHelp, Moon, Search, Sparkles, Sun } from 'lucide-react';
 import { useUsage } from '../workspace/UsageSession';
-import { tabs } from './tools';
+import { tabs } from './navigation';
 import { useSite } from '../site/SiteSession';
 import { UtilitySheet, type Utility } from './UtilitySheet';
 import orb from '../../assets/orb.svg';
@@ -50,14 +50,14 @@ export function Workspace() {
         <button
           type="button"
           className="search-trigger"
-          aria-label="Search tools"
+          aria-label="Search workspace"
           onClick={() => open('search')}
           aria-keyshortcuts="Control+k Meta+k"
-          title="Search tools (Ctrl or ⌘ K)"
+          title="Search workspace (Ctrl or ⌘ K)"
           aria-haspopup="dialog"
         >
           <Search aria-hidden="true" />
-          <span>Search tools</span>
+          <span>Search workspace</span>
         </button>
         <button
           type="button"
@@ -109,7 +109,7 @@ export function Workspace() {
         </div>
       </header>
       <div className="workspace-layout">
-        <nav aria-label="Tools" className="dock">
+        <nav aria-label="Workspace" className="dock">
           <div className="dock-items">
             {tabs.map(({ url, name, icon: Icon }) => (
               <Link key={url} to={url} aria-label={name} title={name} aria-current={url === path ? 'page' : undefined}>

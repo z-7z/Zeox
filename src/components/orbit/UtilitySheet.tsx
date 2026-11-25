@@ -4,12 +4,12 @@ import { ArrowUpRight, BookOpen, LockKeyhole, Search, ShieldCheck } from 'lucide
 import { operationLabels, useUsage } from '../workspace/UsageSession';
 import { formatSize } from '../../lib/vault/container';
 import { Dialog } from './Dialog';
-import { tools } from './tools';
+import { workspacePages } from './navigation';
 import { useSite } from '../site/SiteSession';
 
 export type Utility = 'search' | 'guide' | 'inbox' | 'local';
 const titles: Record<Utility, string> = {
-  search: 'Find a tool',
+  search: 'Go to page',
   guide: 'Workspace guide',
   inbox: 'Session activity',
   local: 'Private workspace',
@@ -21,7 +21,9 @@ export function UtilitySheet({ kind, close }: { kind: Utility; close: () => void
     navigate = useNavigate();
   const { endGuest } = useSite();
   const path = useLocation().pathname.toLowerCase().replace(/\/$/, '') || '/';
-  const matches = tools.filter((t) => `${t.name} ${t.info}`.toLowerCase().includes(query.trim().toLowerCase()));
+  const matches = workspacePages.filter((t) =>
+    `${t.name} ${t.info}`.toLowerCase().includes(query.trim().toLowerCase()),
+  );
   return (
     <Dialog title={titles[kind]} close={close}>
       {kind === 'search' && (
@@ -31,8 +33,8 @@ export function UtilitySheet({ kind, close }: { kind: Utility; close: () => void
             <input
               data-first
               type="search"
-              aria-label="Filter tools"
-              placeholder="Tool or action…"
+              aria-label="Filter pages"
+              placeholder="Page or action…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => {
@@ -64,7 +66,7 @@ export function UtilitySheet({ kind, close }: { kind: Utility; close: () => void
               </li>
             ))}
           </ul>
-          {!matches.length && <p role="status">No matching tools.</p>}
+          {!matches.length && <p role="status">No matching pages.</p>}
         </>
       )}
       {kind === 'guide' && path === '/encrypt' && (
@@ -91,19 +93,21 @@ export function UtilitySheet({ kind, close }: { kind: Utility; close: () => void
       )}
       {kind === 'guide' && path !== '/encrypt' && (
         <>
-          <p>Build a separate copy without uploading your script.</p>
+          <p>Obfuscate a Lua or Luau script without uploading it.</p>
           <ol className="guide-steps">
             <li>Choose or drop one UTF-8 .lua or .luau file (512 KiB max).</li>
             <li>Choose which text, comment and spacing transforms to apply.</li>
             <li>Select Obfuscate file, then download the result. Your original is unchanged.</li>
           </ol>
           <p className="hint">
-            <BookOpen aria-hidden="true" size={15} /> For a password-protected archive, use the separate encryption
-            tool.
+            <BookOpen aria-hidden="true" size={15} /> Obfuscation changes how the source reads. It does not encrypt the
+            script.
           </p>
-          <Link className="pill paper" to="/encrypt" onClick={close}>
-            Open file encryption <ArrowUpRight aria-hidden="true" />
-          </Link>
+          {path !== '/obfuscate' && (
+            <Link className="pill paper" to="/obfuscate" onClick={close}>
+              Open Obfuscator <ArrowUpRight aria-hidden="true" />
+            </Link>
+          )}
         </>
       )}
       {kind === 'inbox' && (
@@ -121,7 +125,7 @@ export function UtilitySheet({ kind, close }: { kind: Utility; close: () => void
               ))}
             </ul>
           ) : (
-            <p className="muted">Completed builds and restores will appear here.</p>
+            <p className="muted">Completed runs will appear here.</p>
           )}
           <Link className="pill paper" to="/usages" onClick={close}>
             View full ledger <ArrowUpRight aria-hidden="true" />

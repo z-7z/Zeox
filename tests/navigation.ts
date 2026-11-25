@@ -5,13 +5,13 @@ export const destinations = [
   { label: 'Usages', path: '/usages', heading: 'Usages' },
   { label: 'Dashboard', path: '/dashboard', heading: 'Dashboard' },
 ] as const;
-export const toolNav = (page: Page) => page.getByRole('navigation', { name: 'Tools' });
+export const toolNav = (page: Page) => page.getByRole('navigation', { name: 'Workspace' });
 export async function go(page: Page, section: (typeof destinations)[number]['label'] | 'Encryption') {
   if (section === 'Encryption') {
     // This standalone page is searchable, not a permanent navigation item.
-    await page.getByRole('button', { name: 'Search tools' }).click();
+    await page.getByRole('button', { name: 'Search workspace' }).click();
     await page
-      .getByRole('dialog', { name: 'Find a tool' })
+      .getByRole('dialog', { name: 'Go to page' })
       .getByRole('link', { name: /^Encryption\b/ })
       .click();
   } else {

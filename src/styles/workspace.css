@@ -88,7 +88,6 @@ main:focus:not(:focus-visible), [tabindex="-1"]:focus:not(:focus-visible) { outl
 .dock i { width: clamp(40px, 3.7vw, 56px); height: clamp(40px, 3.7vw, 56px); border-color: var(--line); }
 .dock svg { width: 38%; height: 38%; stroke-width: 2.1; }
 .dock a[aria-current="page"] i { color: var(--on-paper); background: var(--paper); border-color: var(--paper); }
-.dock .lucide-layout-grid { fill: currentColor; stroke-width: 1.4; }
 .dock span { position: absolute; left: calc(100% + 8px); background: var(--paper); color: var(--on-paper); padding: 5px 10px; border-radius: 8px; white-space: nowrap; font-size: .85em; opacity: 0; pointer-events: none; box-shadow: 0 6px 15px #0003; }
 .dock :is(a,button):focus-visible span { opacity: 1; }
 @media (hover:hover) {

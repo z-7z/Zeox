@@ -22,7 +22,7 @@ for (const width of [320, 1440]) {
     await page.goBack(); await expect(page).toHaveTitle('Usages — ZeoxFucator');
     await page.goForward(); await expect(page).toHaveTitle('Dashboard — ZeoxFucator');
     for (const path of ['/dashboard/overview', '/showcase']) {
-      await page.goto(path); await expect(page).toHaveURL(/\/dashboard$/); await expect(page.getByLabel('Sample period')).toBeVisible();
+      await page.goto(path); await expect(page).toHaveURL(/\/dashboard$/); await expect(page.getByRole('link',{name:'Obfuscate a script'})).toBeVisible();
     }
   });
 }
@@ -58,7 +58,10 @@ test('usage counts successes only, filters and exports metadata, resets without 
   // Navigation need not wait for the in-flight job.
   await go(page, 'Usages');
   await expect(page.getByRole('region', { name: 'Completed runs' }).locator('strong')).toHaveText('2');
-  const filter = page.getByLabel('Filter usage log'); await filter.click(); await page.getByRole('option',{name:'Encryption',exact:true}).click();
+  await go(page, 'Dashboard');
+  await expect(page.getByRole('region', { name: 'Script builds' }).locator('strong')).toHaveText('1');
+  await go(page, 'Usages');
+  const filter = page.getByLabel('Filter usage log'); await filter.click(); await page.getByRole('option',{name:'Archive runs',exact:true}).click();
   await expect(page.getByRole('table').getByRole('row')).toHaveCount(2);
   const waiting = page.waitForEvent('download'); await page.getByRole('button', { name: 'Export log' }).click();
   const csv = await text(await waiting); expect(csv).toMatch(/Z,Encryption,\d+,\d+\r\n$/); expect(csv).not.toMatch(/game-config|Source build|not stored/);
