@@ -1,52 +1,31 @@
-import { useLayoutEffect, useRef, type ReactNode } from 'react';
-import { useLocation } from 'react-router-dom';
-import { sourceLinkFor, sourcePanels } from '../components/workspace/sourceLinks';
-import { ArrowRight, Check, CircleAlert } from 'lucide-react';
-import { AttachmentField } from '../components/source/AttachmentField';
-import { BuildSettings } from '../components/source/BuildSettings';
+import { useRef } from 'react';
+import { FilePicker } from '../components/FilePicker';
 import { OutputFile } from '../components/source/OutputFile';
-import { formatSize } from '../lib/vault/container';
 import { useSourceTool } from '../components/workspace/ToolSessions';
-import '../components/source/workshop.css';
 
-function SectionHead({ number, title, id, children }: { number: string; title: string; id: string; children?: ReactNode }) {
-  return <header className="src-head"><span aria-hidden="true">{number}</span><h2 id={id}>{title}</h2>{children}</header>;
-}
+const transforms = [
+  ['encodeText', 'Encode text literals'], ['removeComments', 'Remove comments'], ['compactSpacing', 'Compact spacing'],
+] as const;
 
 export function Obfuscate() {
-  const { hash, key } = useLocation();
-  useLayoutEffect(() => {
-    const link = sourceLinkFor(hash), section = link && document.getElementById(link.id);
-    if (section) { section.focus({ preventScroll: true }); section.scrollIntoView({ block: 'start' }); }
-  }, [hash, key]);
   const tool = useSourceTool(), { file, reading, result, issue } = tool;
-  const builtHere = useRef(false), step = result ? 2 : file && !reading ? 1 : 0;
-  return <div className="source-board">
-    <section id={sourcePanels.file.id} tabIndex={-1} className="ws-panel src-job" aria-labelledby="src-input-title">
-      <SectionHead number="01" title={sourcePanels.file.label} id="src-input-title"><small>UTF-8</small></SectionHead>
-      <AttachmentField tool={tool} />
-      {issue?.field === 'build' && <p className="src-error" role="alert"><CircleAlert size={15} />{issue.message} Fix the file and attach it again.</p>}
-      <footer className="src-foot">
-        {result ? <OutputFile file={result} focusDownload={builtHere.current} /> : <>
-          <span className="src-status" role="status"><i data-ready={!!file && !reading || undefined} />
-            {reading ? 'Reading file…' : file ? 'Ready to build' : 'Waiting for a file'}</span>
-          <button type="button" className="ws-button ws-primary src-action" disabled={!file || reading}
-            onClick={() => { builtHere.current = true; tool.build(); }}>Obfuscate file <ArrowRight size={15} /></button>
-        </>}
-      </footer>
-    </section>
-    <section id={sourcePanels.settings.id} tabIndex={-1} className="ws-panel src-profile" aria-labelledby="src-config-title">
-      <SectionHead number="02" title={sourcePanels.settings.label} id="src-config-title"><small>{Object.values(tool.options).filter(Boolean).length} enabled</small></SectionHead>
-      <BuildSettings tool={tool} />
-    </section>
-    <section id={sourcePanels.output.id} tabIndex={-1} className="ws-panel src-receipt" aria-labelledby="src-output-title">
-      <SectionHead number="03" title={sourcePanels.output.label} id="src-output-title"><small>{result ? formatSize(result.blob.size) : 'LOCAL ONLY'}</small></SectionHead>
-      <div className="src-output-copy"><strong>{result ? <bdi dir="ltr" title={result.name}>{result.name}</bdi> : 'No output yet'}</strong>
-        <p>{result ? 'Your copy is ready to download.' : 'Your original stays unchanged.'}</p></div>
-      <ol className="src-flow" aria-label="File workflow">
-        {['Attach', 'Build', 'Save'].map((label, i) => <li key={label} aria-current={i === step ? 'step' : undefined} data-done={i < step || undefined}>
-          <i aria-hidden="true">{i < step ? <Check size={12} /> : `0${i + 1}`}</i>{label}</li>)}
-      </ol>
-    </section>
-  </div>;
+  const browse = useRef<HTMLButtonElement>(null), builtHere = useRef(false);
+  return <>
+    <h1>Lua Obfuscator</h1>
+    <form onSubmit={e => { e.preventDefault(); builtHere.current = true; tool.build(); }}>
+      <FilePicker legend="Source file" label="Attach Lua or Luau file" accept=".lua,.luau"
+        hint="Choose or drop one UTF-8 .lua or .luau file (512 KiB max)." file={file} select={tool.attach}
+        remove={tool.remove} browse={browse} reading={reading} errorId={issue?.field === 'file' ? 'file-error' : undefined} />
+      {issue?.field === 'file' && <p id="file-error" role="alert">{issue.message}{file && ' Your previous file is still attached.'}</p>}
+      <fieldset id="build-settings" tabIndex={-1}><legend>Build settings</legend>
+        {transforms.map(([key, label]) => <label key={key}>
+          <input type="checkbox" checked={tool.options[key]} onChange={e => tool.configure(key, e.target.checked)} />{label}{' '}
+        </label>)}
+      </fieldset>
+      {issue?.field === 'build' && <p role="alert">{issue.message} Fix the file and attach it again.</p>}
+      <div id="build-output" tabIndex={-1}>{result ? <OutputFile file={result} focusDownload={builtHere.current} /> :
+        <button type="submit" disabled={!file || reading}>Obfuscate file</button>}</div>
+    </form>
+    <p>Processing stays on this device. Your original file is unchanged.</p>
+  </>;
 }

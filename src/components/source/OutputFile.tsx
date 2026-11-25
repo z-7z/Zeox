@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowDownToLine, FileCheck2 } from 'lucide-react';
 import { formatSize } from '../../lib/vault/container';
+import { FileName } from '../FilePicker';
 import type { SourceArtifact } from './session';
 
 export function OutputFile({ file, focusDownload }: { file: SourceArtifact; focusDownload: boolean }) {
@@ -9,11 +9,9 @@ export function OutputFile({ file, focusDownload }: { file: SourceArtifact; focu
     const next = URL.createObjectURL(file.blob); setUrl(next);
     return () => URL.revokeObjectURL(next);
   }, [file]);
-  useEffect(() => { if (url && focusDownload) link.current?.focus({ preventScroll: true }); }, [url, focusDownload]);
+  useEffect(() => { if (url && focusDownload) link.current?.focus(); }, [url, focusDownload]);
   return <>
-    <div className="src-result" role="status"><FileCheck2 size={20} aria-hidden="true" /><div>
-      <small>Output ready · {formatSize(file.blob.size)}</small><bdi dir="ltr" title={file.name}>{file.name}</bdi>
-    </div></div>
-    {url && <a ref={link} href={url} download={file.name} className="ws-button ws-primary src-action"><ArrowDownToLine size={15} aria-hidden="true" />Download file</a>}
+    <p role="status"><FileName name={file.name} /> ({formatSize(file.blob.size)})</p>
+    {url && <a ref={link} href={url} download={file.name}>Download file</a>}
   </>;
 }

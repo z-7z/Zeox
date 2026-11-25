@@ -1,33 +1,21 @@
 # Zeox Obfuscator
 
-Zeox opens directly into a **file-only Lua / Luau obfuscator**. Attach one script, choose source transformations, and download the new file. The browser does the work; there is no editor, account or upload. The Zeox mark always takes you back to this tool.
+Choose a Lua or Luau file, set the transformations, and download a separate copy. Files are processed locally; no account, upload or editor is involved. The pages use plain HTML controls and the browser's default styling.
 
-The **left sidebar** switches between Obfuscator, Vault, Usages and Dashboard. Double chevrons fold the desktop menu into an icon rail; point to an icon or focus it with the keyboard to see its name. The violet, pink and red dots jump to **Source file**, **Build settings** and **Build output**. A phone starts with just the rail: expand it to see the names over the page, then pick a link, tap outside or press Escape. Navigation and folding keep the current file in this tab.
+| Route | Function |
+| --- | --- |
+| `/`, `/obfuscate` | Build one UTF-8 `.lua` or `.luau` script (512 KiB max). |
+| `/vault` | Encrypt or restore a file. An authenticated restore offers the exact original and, when available, a cleaned script or static reading. |
+| `/usages` | View, filter, export or clear the current tab's operation metadata. Totals cover all successes; the ledger and CSV cover the last 50. |
+| `/dashboard` | Read a separate dated sample report for 7 or 30 days ending May 15, 2026 (UTC). `/dashboard/overview` and `/showcase` redirect here. |
 
-**Find a tool** (`Ctrl`/`⌘` + `K`) searches the four destinations. **Help** explains the file flow and shortcuts; **Settings** shows session information, motion and optional full-screen controls.
+## Source files and local state
 
-| Section | Route | What it does |
-| --- | --- | --- |
-| **Obfuscator** | `/`, `/obfuscate` | Attach one UTF-8 `.lua` or `.luau` file (512 KiB max), choose settings, build on device and download a separate copy. |
-| **Vault** | `/vault` | Encrypt or restore files locally. After a successful decrypt, get a cleaned script or a static EXF reading when supported, alongside the exact original. |
-| **Usages** | `/usages` | Actual successful builds, encryptions and decryptions in this tab. Counters cover all successful runs, the plot pairs input/output bytes for the last 16, and the filterable ledger and CSV cover the last 50. |
-| **Dashboard** | `/dashboard` | An optional sample report with throughput, recent batches and shortcuts. **Skeleton** downloads the eight-card layout as standalone HTML. |
+Choose or drop a single script. The options encode plain quoted strings as three-digit Lua byte escapes, remove ordinary comments and compact whitespace. Identifiers, existing escapes, bracket strings, Luau interpolations, directive comments and copyright/SPDX notices are preserved. This is source transformation, not encryption or a guarantee of secrecy.
 
-## Reading the desk
+**Obfuscate file** produces a downloadable `.obf.lua` or `.obf.luau` (`.compact.*` when text encoding is off). Removing or replacing the attachment, or changing an option, clears the old result. A rejected replacement does not discard the last valid script. Nothing executes the script or displays its contents.
 
-The Dashboard plots a **dated sample**, not uploads from your device. Both the 7- and 30-day windows end May 15, 2026 (UTC). The white trace shows rolling 24-hour input volume from eight-hour samples; its daily closes are the values in the detail table. Compare against the previous window using the green change chips. Point, tap, or focus the chart and use the arrow, Home and End keys to inspect a day. The date rail follows the available plot width. The colored traces, dot index and columns follow the selected period. **This session** alone reads the real Usages ledger. No accounts, financial balances or remote analytics are simulated. `/dashboard/overview` and `/showcase` redirect to Dashboard.
-
-On desktop the throughput, batch tape and action dock share the upper row. The green output card and format columns span the two lower rows. On a phone the trace spans the content column and actions form a horizontal row. When two cards no longer fit beside the rail, the tiles stack. The file stations put intake first in portrait; the two Vault steps sit beside one another in short landscape windows. The page scrolls naturally, including at browser zoom. Keyboard focus, motion preferences and safe-area padding apply throughout.
-
-Shared palette, spacing and opaque surfaces live in `src/components/workspace/material.css`; `workspace.css` owns the shell, `sidebar.css` the navigation, and `panels.css` the station and ledger grids. `src/components/dashboard/layout.css` supplies the grid for the live Dashboard, its loading state and the script-free offline export. `src/components/source/layout.css` reserves the source masthead and three tool panels on both home URLs, including during a cold load. All skeletons are static; chart fills are not glass, glows or moving light effects.
-
-## Source tools and local state
-
-**Attach → Build → Save:** choose or drop one local script. The page starts empty. Three named **Build settings** sit beside the attachment on desktop and below it on phones. A valid attachment shows its name, format and size and enables **Obfuscate file**. The result is a downloadable `.obf.lua` / `.obf.luau` (or `.compact.*` without text encoding), not another code pane. Removing/replacing the attachment or changing a setting clears the previous output. Invalid files produce an inline error without replacing a valid attachment. No source is uploaded, displayed or executed; there is no sample input or account requirement.
-
-Obfuscate offers three independent source transformations: express plain quoted strings as three-digit Lua byte escapes, remove ordinary comments and compact whitespace. The lexical pass leaves identifiers, existing escapes, bracket strings and entire Luau interpolations alone. It keeps directive comments and copyright/SPDX notices. There is no VM, runtime loader or execution step. This is **not encryption or a guarantee of secrecy**; the output remains source code. For encrypted storage, use Vault.
-
-Changing workspace sections preserves the attached script and completed downloads. Vault clears passphrase inputs when leaving its section. A workspace reload drops tool state, including the Usages counters. Nothing in the workspace reads or writes Web Storage. Dashboard and Usages share the same in-memory counters; neither collects filenames or contents.
+Navigating between tools preserves attachments and results in tab memory. Leaving Vault clears its passphrase inputs. Reloading the page clears the tool sessions and usage counts. There is no Web Storage or server-side ledger.
 
 ## Vault: restore and automatic cleanup
 
@@ -66,6 +54,6 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. The suite checks edge-to-edge desktop layouts up to 2560px, icon-only accessible navigation, opaque surfaces, sample-period changes and chart inspection across direct routes, and covers the compact tool picker, mobile widths, motion/transparency preferences, skeleton and usage CSV downloads, keyboard file selection, drag/drop, validation and replacement, download bytes and size limits, source transformations, local usage accounting, and independent decryption, offline round trips, automatic cleanup and byte-identical original downloads.
+`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. Tests cover the file chooser, drag and drop, validation, offline builds, browser navigation, CSV export, independent archive verification, automatic cleanup and exact original downloads.
 
-Deploy `dist/` to a static HTTPS host. `vercel.json` rewrites the application routes to `index.html`, serves static assets unchanged, and sets a same-origin content security policy. The font and imagery are served locally. See `DESIGN_WORKFLOW.md` for the design contract and `public/licenses/` for the font license.
+Deploy `dist/` to a static HTTPS host. `vercel.json` routes direct tool URLs to `index.html` and sets a same-origin content security policy.
