@@ -31,7 +31,7 @@ export function Main() {
             <i aria-hidden="true" /> Source processing <span aria-hidden="true">/</span> Lua + Luau
           </p>
           <h1 id="landing-title">
-            Lua Obfuscator
+            Lua <em>Obfuscator</em>
             <span aria-hidden="true" />
           </h1>
           <p className="landing-lead">

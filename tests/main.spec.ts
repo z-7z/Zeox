@@ -63,6 +63,21 @@ for (const width of [320, 1440]) {
   });
 }
 
+test('Main uses the original public colors in both themes', async ({ page }) => {
+  await page.goto('/');
+  for (const [theme, background, accent, button, card] of [
+    ['dark', 'rgb(12, 12, 15)', 'rgb(210, 186, 255)', 'rgb(222, 204, 255)', 'rgb(0, 0, 0)'],
+    ['light', 'rgb(251, 250, 251)', 'rgb(102, 66, 132)', 'rgb(51, 34, 63)', 'rgb(255, 255, 255)'],
+  ]) {
+    if (theme === 'light') await page.getByRole('button', { name: 'Dark mode: switch to light' }).click();
+    await expect(page.locator('.public-site')).toHaveCSS('background-color', background);
+    await expect(page.locator('#landing-title em')).toHaveCSS('color', accent);
+    await expect(page.getByRole('link', { name: 'Obfuscate a script' })).toHaveCSS('background-color', button);
+    await expect(page.locator('.example-bench')).toHaveCSS('background-color', card);
+    await expect(page.locator('#example-output .lua-string')).toHaveCSS('color', accent);
+  }
+});
+
 test.describe('public live example', () => {
   test.use({ hasTouch: true, viewport: { width: 390, height: 844 } });
 

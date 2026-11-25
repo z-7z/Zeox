@@ -1,16 +1,7 @@
-/* Main only. A printed source manual: ink, paper, registration dots and one signal color. */
+/* Main keeps its source-manual layout, but inherits the shared public palette. */
 .public-site[data-landing] {
-  --site-bg: #101211; --site-band: #191b19; --site-rule: #3d413c; --site-accent: #ffa371;
-  --site-button: #ff9b63; --site-on-button: #25170e; --panel: #000; --ink: #f3f4ed;
-  --muted: #b9beb5; --soft: #a6ada1; --edge: #51574f; --raised: #272c26; --focus: #ffbb91;
-  --plate-dot: #454b42; --code-comment: #99a292; --code-string: #ffc499; --code-keyword: #abd9e4;
+  --plate-dot: var(--edge); --code-comment: var(--soft); --code-string: var(--site-accent); --code-keyword: var(--tint);
   --mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
-}
-:root[data-theme="light"] .public-site[data-landing] {
-  --site-bg: #f9faf5; --site-band: #edefe8; --site-rule: #c6ccc1; --site-accent: #973c10;
-  --site-button: #ff975d; --site-on-button: #25170e; --panel: #fff; --ink: #171b16;
-  --muted: #4f574c; --soft: #5a6457; --edge: #a0aa9b; --raised: #e0e5db; --focus: #903b0d;
-  --plate-dot: #bec7b8; --code-comment: #5b6857; --code-string: #92410f; --code-keyword: #225d70;
 }
 [data-landing] .site-width { width: min(100%,1500px); --site-gutter: clamp(20px,5.8vw,90px); }
 [data-landing] .site-header-inner { min-height: clamp(62px,4.8vw,72px); }
@@ -23,6 +14,7 @@
 .source-imprint i { width: 18px; height: 10px; background: repeating-linear-gradient(115deg,var(--site-accent) 0 3px,transparent 3px 5px); }
 .source-imprint span { color: var(--soft); }
 .landing-intro h1 { margin: .17em 0 .14em; font-size: clamp(48px,6.6vw,103px); line-height: 1.04; letter-spacing: -.064em; word-spacing: .025em; font-weight: 740; }
+.landing-intro h1 em { color: var(--site-accent); font-style: normal; }
 .landing-intro h1 span { display: inline-block; width: .13em; height: .13em; background: var(--site-button); margin-left: .045em; }
 .landing-lead { color: var(--muted); max-width: 59ch; font-size: clamp(16px,1.23vw,20px); line-height: 1.6; }
 .landing-actions { display: flex; align-items: center; flex-wrap: wrap; gap: .35em 1.45em; margin-top: 1.25em; }
