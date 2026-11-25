@@ -25,7 +25,7 @@ export function PanelDialog({
   const ref = useRef<HTMLDialogElement>(null);
   useLayoutEffect(() => {
     const el = ref.current!,
-      opener = returnFocus?.current ?? document.activeElement,
+      opener = document.activeElement,
       overflow = document.body.style.overflow;
     el.showModal();
     initialFocus?.current?.focus({ preventScroll: true });
@@ -33,7 +33,9 @@ export function PanelDialog({
     return () => {
       el.close();
       document.body.style.overflow = overflow;
-      if (opener instanceof HTMLElement && opener.isConnected) opener.focus({ preventScroll: true });
+      // A drawer action can remount as an icon in the short, scrollable rail.
+      const trigger = returnFocus?.current ?? opener;
+      if (trigger instanceof HTMLElement && trigger.isConnected) trigger.focus({ preventScroll: !returnFocus });
     };
   }, [initialFocus, returnFocus]);
   return (

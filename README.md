@@ -2,7 +2,9 @@
 
 Zeox opens directly into a **file-only Lua / Luau obfuscator**. Attach one script, choose source transformations, and download the new file. The browser does the work; there is no editor, account or upload. The Zeox mark always takes you back to this tool.
 
-There is **no permanent tab bar or sidebar**. Open the grid button in the masthead to switch tools: a compact, icon-only 2×2 menu on both desktop and touch. The current tool is marked in orange. Links have accessible names, titles and a shared focus/hover caption. Escape dismisses the menu and restores focus. **Find a tool** (`Ctrl`/`⌘` + `K`) is the searchable alternative. The local session button opens shortcuts, motion and optional full-screen controls.
+The **left sidebar** switches between Obfuscator, Vault, Usages and Dashboard. Double chevrons fold the desktop menu into an icon rail; point to an icon or focus it with the keyboard to see its name. The violet, pink and red dots jump to **Source file**, **Build settings** and **Build output**. A phone starts with just the rail: expand it to see the names over the page, then pick a link, tap outside or press Escape. Navigation and folding keep the current file in this tab.
+
+**Find a tool** (`Ctrl`/`⌘` + `K`) searches the four destinations. **Help** explains the file flow and shortcuts; **Settings** shows session information, motion and optional full-screen controls.
 
 | Section | Route | What it does |
 | --- | --- | --- |
@@ -15,9 +17,9 @@ There is **no permanent tab bar or sidebar**. Open the grid button in the masthe
 
 The Dashboard plots a **dated sample**, not uploads from your device. Both the 7- and 30-day windows end May 15, 2026 (UTC). The white trace shows rolling 24-hour input volume from eight-hour samples; its daily closes are the values in the detail table. Compare against the previous window using the green change chips. Point, tap, or focus the chart and use the arrow, Home and End keys to inspect a day. The date rail follows the available plot width. The colored traces, dot index and columns follow the selected period. **This session** alone reads the real Usages ledger. No accounts, financial balances or remote analytics are simulated. `/dashboard/overview` and `/showcase` redirect to Dashboard.
 
-On desktop the throughput, batch tape and action dock share the upper row. The green output card and format columns span the two lower rows. On a phone the trace gets both columns, outputs sit beside the batch list, and actions form a horizontal row. The file stations put intake first in portrait; the two Vault steps sit beside one another in short landscape windows. The page scrolls naturally, including at browser zoom. Keyboard focus, motion preferences and safe-area padding apply throughout.
+On desktop the throughput, batch tape and action dock share the upper row. The green output card and format columns span the two lower rows. On a phone the trace spans the content column and actions form a horizontal row. When two cards no longer fit beside the rail, the tiles stack. The file stations put intake first in portrait; the two Vault steps sit beside one another in short landscape windows. The page scrolls naturally, including at browser zoom. Keyboard focus, motion preferences and safe-area padding apply throughout.
 
-Shared palette, spacing and opaque surfaces live in `src/components/workspace/material.css`; `workspace.css` owns the shell and `panels.css` the station and ledger grids. `src/components/dashboard/layout.css` supplies the grid for the live Dashboard, its loading state and the script-free offline export. `src/components/source/layout.css` reserves the source masthead and three tool panels on both home URLs, including during a cold load. All skeletons are static; chart fills are not glass, glows or moving light effects.
+Shared palette, spacing and opaque surfaces live in `src/components/workspace/material.css`; `workspace.css` owns the shell, `sidebar.css` the navigation, and `panels.css` the station and ledger grids. `src/components/dashboard/layout.css` supplies the grid for the live Dashboard, its loading state and the script-free offline export. `src/components/source/layout.css` reserves the source masthead and three tool panels on both home URLs, including during a cold load. All skeletons are static; chart fills are not glass, glows or moving light effects.
 
 ## Source tools and local state
 

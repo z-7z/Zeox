@@ -1,4 +1,6 @@
-import { useRef, type ReactNode } from 'react';
+import { useLayoutEffect, useRef, type ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
+import { sourceLinkFor, sourcePanels } from '../components/workspace/sourceLinks';
 import { ArrowRight, Check, CircleAlert } from 'lucide-react';
 import { AttachmentField } from '../components/source/AttachmentField';
 import { BuildSettings } from '../components/source/BuildSettings';
@@ -12,11 +14,16 @@ function SectionHead({ number, title, id, children }: { number: string; title: s
 }
 
 export function Obfuscate() {
+  const { hash, key } = useLocation();
+  useLayoutEffect(() => {
+    const link = sourceLinkFor(hash), section = link && document.getElementById(link.id);
+    if (section) { section.focus({ preventScroll: true }); section.scrollIntoView({ block: 'start' }); }
+  }, [hash, key]);
   const tool = useSourceTool(), { file, reading, result, issue } = tool;
   const builtHere = useRef(false), step = result ? 2 : file && !reading ? 1 : 0;
   return <div className="source-board">
-    <section className="ws-panel src-job" aria-labelledby="src-input-title">
-      <SectionHead number="01" title="Source file" id="src-input-title"><small>UTF-8</small></SectionHead>
+    <section id={sourcePanels.file.id} tabIndex={-1} className="ws-panel src-job" aria-labelledby="src-input-title">
+      <SectionHead number="01" title={sourcePanels.file.label} id="src-input-title"><small>UTF-8</small></SectionHead>
       <AttachmentField tool={tool} />
       {issue?.field === 'build' && <p className="src-error" role="alert"><CircleAlert size={15} />{issue.message} Fix the file and attach it again.</p>}
       <footer className="src-foot">
@@ -28,12 +35,12 @@ export function Obfuscate() {
         </>}
       </footer>
     </section>
-    <section className="ws-panel src-profile" aria-labelledby="src-config-title">
-      <SectionHead number="02" title="Build settings" id="src-config-title"><small>{Object.values(tool.options).filter(Boolean).length} enabled</small></SectionHead>
+    <section id={sourcePanels.settings.id} tabIndex={-1} className="ws-panel src-profile" aria-labelledby="src-config-title">
+      <SectionHead number="02" title={sourcePanels.settings.label} id="src-config-title"><small>{Object.values(tool.options).filter(Boolean).length} enabled</small></SectionHead>
       <BuildSettings tool={tool} />
     </section>
-    <section className="ws-panel src-receipt" aria-labelledby="src-output-title">
-      <SectionHead number="03" title="Build output" id="src-output-title"><small>{result ? formatSize(result.blob.size) : 'LOCAL ONLY'}</small></SectionHead>
+    <section id={sourcePanels.output.id} tabIndex={-1} className="ws-panel src-receipt" aria-labelledby="src-output-title">
+      <SectionHead number="03" title={sourcePanels.output.label} id="src-output-title"><small>{result ? formatSize(result.blob.size) : 'LOCAL ONLY'}</small></SectionHead>
       <div className="src-output-copy"><strong>{result ? <bdi dir="ltr" title={result.name}>{result.name}</bdi> : 'No output yet'}</strong>
         <p>{result ? 'Your copy is ready to download.' : 'Your original stays unchanged.'}</p></div>
       <ol className="src-flow" aria-label="File workflow">

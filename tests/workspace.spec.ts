@@ -1,7 +1,7 @@
 import { expect, test, type Download } from '@playwright/test';
 
 import { attach, downloadOutput } from './attachments';
-import { destinations, go, openTools, openSession, toolNav } from './navigation';
+import { destinations, go, openSettings, toolNav } from './navigation';
 
 async function text(download: Download) {
   const stream = await download.createReadStream(); if (!stream) throw new Error('Missing file');
@@ -9,25 +9,26 @@ async function text(download: Download) {
 }
 
 for (const width of [320, 390, 1440]) {
-  test(`Obfuscator home and four icon-only destinations with history at ${width}px`, async ({ page }) => {
+  test(`Obfuscator home and persistent vertical navigation with history at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 }); await page.goto('/');
     await expect(page.getByRole('heading', { level: 1, name: 'Lua Obfuscator', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Choose file' })).toBeVisible();
-    await expect(page.getByRole('banner').getByRole('navigation')).toHaveCount(0);
-    await expect(toolNav(page)).toHaveCount(0); await expect(page.getByRole('slider')).toHaveCount(0);
+    await expect(page.getByRole('slider')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: width < 1025 ? 'Expand sidebar' : 'Collapse sidebar' })).toBeVisible();
+    const nav = toolNav(page), links = nav.getByRole('link');
+    await expect(nav).toHaveCount(1); await expect(links).toHaveCount(7);
+    const boxes = await links.evaluateAll(els => els.map(el => {
+      const {y, width: w, height: h} = el.getBoundingClientRect(); return {y,w,h};
+    }));
+    expect(boxes.every((box,i) => box.w >= 44 && box.h >= 44 && (!i || box.y >= boxes[i-1].y + boxes[i-1].h - 1))).toBe(true);
     await page.keyboard.press('/'); await expect(page.getByRole('dialog')).toHaveCount(0);
     for (const { label, path, heading } of destinations) {
-      const nav = await openTools(page), links = nav.getByRole('link');
-      await expect(links).toHaveText(['','','','']);
-      expect(await links.evaluateAll(els => els.map(el => el.getAttribute('aria-label')))).toEqual(destinations.map(d => d.label));
-      const boxes = await links.evaluateAll(els => els.map(el => { const { x,y,width:w,height:h } = el.getBoundingClientRect(); return {x,y,w,h}; }));
-      expect(boxes[0].y).toBe(boxes[1].y); expect(boxes[2].x).toBe(boxes[0].x); expect(boxes[2].y).toBeGreaterThan(boxes[0].y);
-      expect(boxes.every(box => box.w >= 44 && box.h >= 44)).toBe(true);
-      await nav.getByRole('link', { name: label, exact: true }).click(); await expect(page).toHaveURL(new RegExp(path+'$'));
+      await go(page,label); await expect(page).toHaveURL(new RegExp(path+'$'));
       await expect(page.getByRole('heading', { level: 1, name: heading, exact: true })).toBeVisible();
-      await expect(toolNav(page)).toHaveCount(0); expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+      await expect(nav.locator('[aria-current=page]')).toHaveAccessibleName(label);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
     }
-    await openTools(page); await page.goBack(); await expect(page).toHaveTitle('Usages — Zeox Obfuscator'); await expect(page.getByRole('dialog')).toHaveCount(0);
+    await page.goBack(); await expect(page).toHaveTitle('Usages — Zeox Obfuscator'); await expect(page.getByRole('dialog')).toHaveCount(0);
     await page.goForward(); await expect(page).toHaveTitle('Dashboard — Zeox Obfuscator');
     await page.reload(); await expect(page.getByLabel('Sample period')).toBeVisible();
     for (const path of ['/dashboard/overview', '/showcase']) {
@@ -39,10 +40,10 @@ for (const width of [320, 390, 1440]) {
 test('interface motion remains optional; the report and loading surfaces never shine', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 }); await page.goto('/dashboard');
   await expect(page.locator('.signal-main')).toHaveCSS('backdrop-filter', 'none'); await expect(page.locator('.signal-line')).toHaveCSS('animation-name', 'none');
-  await openSession(page); const toggle = page.getByRole('button', { name: 'Enable animation' });
+  await openSettings(page); const toggle = page.getByRole('button', { name: 'Enable animation' });
   await toggle.click(); await expect(toggle).toHaveAttribute('aria-pressed', 'false'); await expect(page.locator('.db-scene')).toHaveAttribute('data-motion', 'off');
   await page.keyboard.press('Escape'); await go(page, 'Vault'); await expect(page.locator('.cartridge-archive')).toHaveCSS('animation-name', 'none');
-  await page.emulateMedia({ reducedMotion: 'reduce' }); await go(page, 'Dashboard'); await openSession(page);
+  await page.emulateMedia({ reducedMotion: 'reduce' }); await go(page, 'Dashboard'); await openSettings(page);
   await expect(page.getByRole('button', { name: 'Motion reduced by system preference' })).toBeDisabled();
   await page.keyboard.press('Escape'); await expect(page.locator('.mix-index')).toHaveCSS('background-image', 'none');
 });
@@ -55,6 +56,7 @@ test('local source file builds offline, downloads under a distinct name, and sur
   await page.getByRole('button', { name: 'Obfuscate file' }).click();
   const file = await downloadOutput(page); expect(file.name).toBe('ملف.obf.lua'); expect(file.bytes.toString()).toBe(expected);
   expect(await page.evaluate(() => [localStorage.length, sessionStorage.length])).toEqual([0, 0]);
+  await expect(toolNav(page).getByRole('link',{name:'Usages',exact:true})).toHaveAccessibleDescription('1 completed run');
   await context.setOffline(false); await go(page, 'Usages');
   await expect(page.getByRole('region', { name: 'Completed runs' })).toContainText('1');
   await expect(page.getByRole('table').getByRole('row').nth(1)).toContainText('Source build');
@@ -110,14 +112,14 @@ test('invalid attachments preserve a good file and failed builds do not count', 
 });
 
 
-test('toolbar search opens real tools and the session chip explains local state', async ({page}) => {
+test('sidebar search opens real tools, settings explains local state, and help lists shortcuts', async ({page}) => {
   await page.goto('/dashboard'); const find=page.getByRole('button',{name:'Find a tool'});
   await find.focus(); await page.keyboard.press('Control+k'); const search=page.getByRole('searchbox',{name:'Search tools'});
   await expect(search).toBeFocused(); await search.fill('unmatched'); await expect(page.getByRole('dialog',{name:'Find a tool'}).getByRole('status')).toContainText('No matching tool');
   await search.press('Escape'); await expect(find).toBeFocused(); await find.click(); await search.fill('restore'); await search.press('Enter');
   await expect(page).toHaveURL(/\/vault$/); await expect(page.getByRole('dialog')).toHaveCount(0);
-  await page.getByRole('button',{name:'Local session information'}).click(); await expect(page.getByRole('dialog')).toContainText('Tab memory');
-  await page.keyboard.press('Escape'); await expect(page.getByRole('button',{name:'Local session information'})).toBeFocused();
-  await openSession(page); await expect(page.getByRole('dialog')).toContainText('Inspect a focused chart');
+  await openSettings(page); await expect(page.getByRole('dialog')).toContainText('Tab memory');
+  await page.keyboard.press('Escape'); await expect(page.getByRole('button',{name:'Settings',exact:true})).toBeFocused();
+  await page.getByRole('button',{name:'Help',exact:true}).click(); await expect(page.getByRole('dialog')).toContainText('Inspect a focused chart');
   await page.goBack(); await expect(page).toHaveURL(/\/dashboard$/); await expect(page.getByRole('dialog')).toHaveCount(0);
 });

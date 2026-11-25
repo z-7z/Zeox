@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { attach } from './attachments';
-import { go, openTools, toolNav } from './navigation';
+import { go, toolNav } from './navigation';
 
 test('signal desk follows the reference mosaic and opens individual batches and formats', async ({ page }) => {
   await page.goto('/dashboard'); await expect(page.getByRole('heading', { name: 'Throughput' })).toBeVisible();
@@ -13,7 +13,7 @@ test('signal desk follows the reference mosaic and opens individual batches and 
   await expect(page.locator('.bar-columns button')).toHaveCount(5); await expect(page.locator('.yield-copy')).toContainText('92.7% export rate');
   await expect(page.locator('.tape-total')).toContainText('1,842');
   await page.getByRole('button',{name:'Inspect May 14 batch'}).click(); await expect(page.locator('.chosen-row')).toContainText('May 14');
-  await page.keyboard.press('Escape'); await page.getByRole('button',{name:/Inspect Places:/}).click(); await expect(page.locator('.chosen-row')).toContainText('Places');
+  await page.keyboard.press('Escape'); await page.getByRole('button',{name:/Inspect Places\b/}).click(); await expect(page.locator('.chosen-row')).toContainText('Places');
 });
 
 test('sample period, chart cursor and accessible detail tables stay in sync without recording activity', async ({ page }) => {
@@ -113,24 +113,7 @@ test('loading state and offline export share the eight-card mosaic, without scri
 test('the home mark returns straight to the file tool and retains its attachment', async ({ page }) => {
   await page.goto('/'); await attach(page, 'tune.lua');
   const intake = page.getByRole('group', { name: 'Source file' }); await expect(intake).toContainText('tune.lua');
-  const before = await page.locator('main').boundingBox();
-  await openTools(page); await expect(toolNav(page).locator('[aria-current=page]')).toHaveAccessibleName('Obfuscator');
-  expect((await page.locator('main').boundingBox())!.width).toBe(before!.width);
+  await expect(toolNav(page).locator('[aria-current=page]')).toHaveAccessibleName('Obfuscator');
   await go(page,'Dashboard'); await page.getByRole('link', { name: 'Zeox home' }).click();
-  await expect(page).toHaveURL(/\/$/); await expect(intake).toContainText('tune.lua'); await expect(toolNav(page)).toHaveCount(0);
-});
-
-test('the compact tool menu traps focus, supports Escape and backdrop dismissal, and survives resize', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 640 }); await page.goto('/vault');
-  const opener = page.getByRole('button', { name: 'Open tools' }), dialog = page.getByRole('dialog', { name: 'Tools' });
-  await opener.click(); await expect(dialog).toBeVisible(); await expect(toolNav(page).getByRole('link', { name: 'Vault' })).toBeFocused();
-  expect(await dialog.evaluate(el => el.matches(':modal'))).toBe(true);
-  await page.keyboard.press('Shift+Tab'); await expect(toolNav(page).getByRole('link', { name: 'Obfuscator' })).toBeFocused();
-  await page.keyboard.press('Escape'); await expect(opener).toBeFocused(); await expect(dialog).toHaveCount(0);
-  await opener.click(); await page.mouse.click(375, 135); await expect(opener).toBeFocused();
-  await opener.click(); await page.getByRole('button', { name: 'Close tool menu' }).click(); await expect(opener).toBeFocused();
-  await opener.click(); await page.setViewportSize({ width: 1024, height: 720 });
-  await expect(toolNav(page).getByRole('link')).toHaveCount(4); expect((await dialog.boundingBox())!.height).toBeLessThan(360);
-  await go(page, 'Usages'); await expect(dialog).toHaveCount(0);
-  await expect.poll(() => page.evaluate(() => document.body.style.overflow)).not.toBe('hidden');
+  await expect(page).toHaveURL(/\/$/); await expect(intake).toContainText('tune.lua');
 });

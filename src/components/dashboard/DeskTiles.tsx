@@ -86,7 +86,8 @@ export function BatchTape({ report, inspect }: { report: Report; inspect: Inspec
               row = report.rows.length - 1 - i;
             return (
               <li key={r.time}>
-                <button onClick={() => inspect('volume', row)} aria-label={`Inspect ${dayLabel(r.time)} batch`}>
+                <button onClick={() => inspect('volume', row)}>
+                  <span className="db-sr">Inspect</span>
                   <i className={`asset-mark asset-${i}`}>
                     <Icon size={18} />
                   </i>
@@ -110,7 +111,7 @@ export function Launcher({ download }: { download: () => void }) {
   return (
     <section className="ws-panel desk-launch" aria-label="Quick actions">
       <div className="launch-buttons">
-        <Link to="/obfuscate" aria-label="Obfuscate file">
+        <Link to="/obfuscate" aria-label="Build — obfuscate file">
           <Braces />
           Build
         </Link>
@@ -276,15 +277,15 @@ export function FormatBars({ report, inspect }: { report: Report; inspect: Inspe
           return (
             <button
               key={f.label}
-              aria-label={`Inspect ${f.label}: ${number(f.value)} files`}
               onClick={() => inspect('formats', i)}
             >
+              <span className="db-sr">Inspect </span>
               <span className="bar-field">
                 <i style={{ height: `${(f.value / peak) * 78}%` }}>
                   <small>{f.label}</small>
                 </i>
               </span>
-              <b>{number(f.value)}</b>
+              {' '}<b>{number(f.value)}<span className="db-sr"> files</span></b>
             </button>
           );
         })}

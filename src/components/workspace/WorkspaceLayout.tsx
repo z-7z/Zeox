@@ -8,6 +8,7 @@ import '../source/layout.css';
 import { Shell } from './Shell';
 import { ToolSkeleton } from './ToolSkeleton';
 import { sectionFor } from './sections';
+import { sourceLinkFor } from './sourceLinks';
 import { useMotion } from './motion';
 import './material.css';
 import './panels.css';
@@ -17,22 +18,25 @@ interface PageState { notify: (message: string) => void; motion: boolean; period
 export const useWorkspacePage = () => useOutletContext<PageState>();
 
 export function WorkspaceLayout() {
-  const { pathname } = useLocation(), active = sectionFor(pathname), motion = useMotion();
+  const { pathname, hash, key } = useLocation(), active = sectionFor(pathname), motion = useMotion();
   const [period, setPeriod] = useState<SamplePeriod>(30);
   const [notice, setNotice] = useState('');
-  const timer = useRef<number>(), previous = useRef(pathname);
+  const timer = useRef<number>(), previous = useRef(key);
   function notify(message: string) {
     window.clearTimeout(timer.current); setNotice(message); timer.current = window.setTimeout(() => setNotice(''), 3200);
   }
   useEffect(() => {
     document.title = active.id === 'obfuscate' ? 'Lua Obfuscator — Zeox' : `${active.label} — Zeox Obfuscator`;
-    if (previous.current !== pathname) {
-      previous.current = pathname; setNotice('');
-      document.getElementById('workspace-main')?.focus({ preventScroll: true });
-      window.scrollTo({ top: 0, behavior: 'instant' });
+    if (previous.current !== key) {
+      previous.current = key; setNotice('');
+      // Let the lazy file tool resolve its own deep links after it mounts.
+      if (active.id !== 'obfuscate' || !sourceLinkFor(hash)) {
+        document.getElementById('workspace-main')?.focus({ preventScroll: true });
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
     }
     return () => window.clearTimeout(timer.current);
-  }, [active, pathname]);
+  }, [active, hash, key]);
   return <Shell active={active} motion={motion} notify={notify}>
     {active.id === 'obfuscate' && <SourceIntro />}
     <Suspense fallback={active.id === 'dashboard' ? <DashboardSkeleton /> : <ToolSkeleton section={active} />}>

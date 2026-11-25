@@ -34,8 +34,8 @@ Skills, and the signal desk design system.
 Use the latest reference's hierarchy: a near-black frame, compact utilities and an asymmetric grid of opaque rounded cards. The Obfuscator is the product; the sample Dashboard is a secondary destination. Fill the actual browser window; don't reproduce the empty presentation margin in the reference image. Keep tight, consistent gaps, orange active markers, white data lines, lime change chips and red/green chart fills. No glass, reflections, shine sweeps or decorative motion.
 
 - **Desktop Dashboard:** one dominant throughput card at upper left; batch tape and narrow, vertical action dock to its right. Below: the green output card, small red trend above the dot index and local session meter, and wide format columns with an orange accent. Keep the date rail aligned to the actual plot, not the viewport.
-- **Phone Dashboard:** a two-column composition, not a scaled desktop. Trace and columns span the width; yield and batches share a row. Turn the action dock horizontally. Keep touch and keyboard inspection, period controls and data tables usable.
-- **Navigation:** never reserve a column or tab strip for tools. Use one masthead launcher. Its native dialog contains four icon-only links, Obfuscator first, in a compact 2×2 grid. Keep accessible names, current state, initial focus, Escape, backdrop dismissal and focus return. The same launcher works on touch and desktop. Search is the text-based alternative. Keep one route H1.
+- **Phone Dashboard:** a two-column composition, not a scaled desktop. Trace and columns span the width; yield and batches share a row when there is room; stack them in very narrow content columns. Turn the action dock horizontally. Keep touch and keyboard inspection, period controls and data tables usable.
+- **Navigation:** one graphite left sidebar, not a horizontal tab strip or a grid picker. Expanded: window dots, Zeox mark, double chevrons, Menu, and a separated Other group. Folded: keep the destination icons, selected row and colored shortcuts to the three real file panels. Name every control and label icons on hover and keyboard focus. On phones start folded and expand as a dismissible modal over the content instead of squeezing the file tool. Support Escape, backdrop dismissal and focus return. Tool grids respond to the width beside the rail. Keep one route H1.
 - **Data:** only the Dashboard uses the dated sample. Label it as such. The live session tile, file receipts and Usages report reflect actual local successes. Never fill an empty state with invented operations, accounts or balances.
 
 ## Skeleton Download System
@@ -66,7 +66,7 @@ Design contract for an external template importer (not shipped in the dashboard 
 
 `dashboard/layout.css` owns **all three** Dashboard layouts: live, lazy fallback and standalone export. Other route fallbacks reserve each station or ledger's tracks. Load layout rules with the shell, not only with a lazy route. The exported skeleton must have no scripts, session data, fonts to download or network requests.
 
-Review the populated and empty states, cold entries, and offline downloads. Compare at laptop, wide Windows and phone portrait/landscape sizes with the tool menu both open and closed. Test the real file picker, download bytes, keyboard shortcuts and modal focus return, and check horizontal overflow with native scrollbars. Keep build/encrypt in reach in the initial phone view without disabling zoom.
+Review the populated and empty states, cold entries, and offline downloads. Compare at laptop, wide Windows and phone portrait/landscape sizes with the sidebar expanded and folded. Test the real file picker, download bytes, keyboard shortcuts and modal focus return, and check horizontal overflow with native scrollbars. Keep build/encrypt in reach in the initial phone view without disabling zoom.
 
 ## Icons
 

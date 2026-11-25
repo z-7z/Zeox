@@ -1,72 +1,25 @@
-/* One masthead, no fixed rail or strip of tabs. The main tool gets the whole window. */
-.db-scene {
-  --bar-height: 66px;
-  min-height: 100vh;
-  min-height: 100dvh;
-}
-.ws-window, .ws-main {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-.ws-window { min-height: inherit; width: 100%; }
-.ws-main { flex: 1; padding: 0 var(--inset) var(--inset); outline: 0; }
-.ws-bar, .ws-wordmark, .ws-commands, .tool-search, .session-id, .session-controls {
-  display: flex;
-  align-items: center;
-}
-.ws-bar {
-  min-height: var(--bar-height);
-  padding-inline: var(--inset);
-  gap: 14px;
-  background: var(--canvas);
-}
-.ws-icon-button, .tool-search, .session-id {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  color: var(--muted);
-}
-.ws-icon-button { width: 34px; height: 34px; flex: none; background: var(--face); }
-.ws-launch-button { width: 40px; height: 40px; color: var(--ink); background: #1b1b1c; border: 1px solid #343435; }
-.ws-launch-button[aria-expanded='true'] { color: var(--orange); border-color: #916042; }
-.ws-wordmark { gap: 7px; font-size: 22px; line-height: 1; font-weight: 580; letter-spacing: -.07em; }
-.ws-wordmark svg { width: 24px; height: 24px; color: var(--orange); }
-.ws-divider { color: #64615f; font: 18px var(--mono); }
-.ws-route { font-size: 13px; font-weight: 470; color: var(--muted); }
-.ws-commands { margin-left: auto; gap: 12px; }
-.tool-search { height: 36px; gap: 8px; padding-inline: 10px; font-size: 12px; }
-.tool-search kbd { font: 10px var(--mono); border: 1px solid var(--edge); padding: 3px 5px; border-radius: 4px; }
-.session-id { gap: 8px; min-height: 36px; padding: 0 11px; background: #19191a; font: 11px var(--mono); color: var(--ink); }
-.session-id svg { display: none; }
-.session-id i { width: 7px; height: 7px; border-radius: 50%; background: var(--lime); }
-.ws-sample-tag { font: 10px var(--mono); color: var(--muted); }
-.db-scene :is(.ws-icon-button, .tool-search, .session-id):hover:not(:disabled) { background: #2b2b2c; color: var(--ink); }
+/* The rail owns one column. Everything to its right responds to that remaining
+   width, not to an imaginary full-width viewport behind the navigation. */
+.db-scene { --bar-height: 66px; min-height: 100vh; min-height: 100dvh; }
+.ws-window { display: flex; min-width: 0; min-height: inherit; }
+.ws-content, .ws-main { display: flex; flex: 1; flex-direction: column; min-width: 0; }
+.ws-content { container: workspace / inline-size; }
+.ws-main { padding: 0 var(--inset) var(--inset); outline: 0; }
+.ws-bar, .ws-compact-brand, .ws-commands, .ws-device, .session-controls { display: flex; align-items: center; }
+.ws-bar { min-height: var(--bar-height); padding-inline: var(--inset); gap: 9px; background: var(--canvas); }
+.ws-breadcrumb, .ws-route { font-size: 13px; color: var(--muted); }
+.ws-bar > b { font: 12px var(--mono); color: var(--dim); }
+.ws-route { font-weight: 490; color: var(--ink); }
+.ws-compact-brand { display: none; gap: 5px; font-size: 16px; font-weight: 560; letter-spacing: -.06em; }
+.side-slot[data-slim='true'] + .ws-content .ws-compact-brand { display: inline-flex; }
+.side-slot[data-slim='true'] + .ws-content .ws-breadcrumb { display: none; }
+.ws-commands { margin-left: auto; gap: 14px; }
+.ws-device, .ws-sample-tag { color: var(--muted); font: 10px var(--mono); }
+.ws-device { gap: 6px; white-space: nowrap; }
+.ws-device i { width: 6px; height: 6px; border-radius: 50%; background: var(--lime); }
+.ws-icon-button { display: inline-grid; place-items: center; width: 34px; height: 34px; flex: none; border-radius: 8px; color: var(--muted); background: var(--face); }
+.ws-icon-button:hover:not(:disabled) { background: #2b2b2c; color: var(--ink); }
 .ws-dialog::backdrop { background: #000b; }
-/* Anchored to the masthead on touch and desktop. Native dialog supplies inertness,
-   Escape and focus containment; no off-screen copies of the links. */
-.ws-dialog.ws-launcher {
-  inset: calc(var(--bar-height) - 4px) auto auto max(var(--inset), env(safe-area-inset-left));
-  margin: 0;
-  width: min(208px, calc(100% - 24px));
-  max-height: calc(100dvh - var(--bar-height) - 10px);
-  border-radius: 13px;
-  background: #171717;
-}
-.ws-launcher .ws-dialog-content { padding: 14px; }
-.ws-launcher .ws-dialog-header h2 { font-size: 17px; }
-.ws-launcher .ws-dialog-header button { width: 32px; height: 32px; }
-.launcher-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-block: 12px; }
-.launcher-grid a {
-  display: grid; place-items: center; min-height: 51px; border: 1px solid #333333; border-radius: 7px;
-  background: #202021; color: #c4c2bf;
-}
-.launcher-grid a:hover { border-color: #97928c; color: white; }
-.launcher-grid a[aria-current] { background: var(--orange); border-color: var(--orange); color: #251408; }
-.launcher-caption { display: grid; gap: 3px; border-top: 1px solid #343434; padding-top: 10px; min-height: 49px; }
-.launcher-caption strong { font-size: 13px; font-weight: 540; }
-.launcher-caption small { color: var(--muted); font-size: 11px; }
 .session-subtitle { font-size: 14px; font-weight: 520; margin-top: 20px; }
 .session-subtitle + .fact-list { margin-top: 4px; }
 .session-controls { gap: 6px; margin-top: 14px; flex-wrap: wrap; }
@@ -83,28 +36,22 @@
 .ws-not-found h1 { font-size: 32px; }
 .ws-not-found a { text-decoration: underline; }
 @media (max-width: 760px), (max-width: 1024px) and (max-height: 520px) {
-  .db-scene { --bar-height: calc(52px + env(safe-area-inset-top)); }
-  .ws-bar { position: sticky; top: 0; z-index: 4; gap: 9px; padding: env(safe-area-inset-top) max(var(--inset), env(safe-area-inset-right)) 0 max(var(--inset), env(safe-area-inset-left)); }
-  .ws-main { padding-inline: max(var(--inset), env(safe-area-inset-left)) max(var(--inset), env(safe-area-inset-right)); padding-bottom: max(var(--inset), env(safe-area-inset-bottom)); }
-  html:has(.db-scene) { scroll-padding-top: calc(58px + env(safe-area-inset-top)); }
-  .ws-wordmark { font-size: 19px; gap: 4px; }
-  .ws-wordmark svg { width: 20px; }
+  .db-scene { --bar-height: calc(50px + env(safe-area-inset-top)); }
+  .ws-bar { position: sticky; top: 0; z-index: 4; gap: 6px; padding-top: env(safe-area-inset-top); }
+  .ws-bar, .ws-main { padding-right: max(var(--inset), env(safe-area-inset-right)); }
+  .ws-main { padding-bottom: max(var(--inset), env(safe-area-inset-bottom)); }
+  html:has(.db-scene) { scroll-padding-top: calc(56px + env(safe-area-inset-top)); }
+  .ws-compact-brand svg { width: 19px; }
   .ws-route { font-size: 12px; }
-  .ws-commands { gap: 2px; }
-  .tool-search, .session-id { min-width: 36px; min-height: 40px; padding: 0 6px; }
-  .session-id { position: relative; background: none; }
-  .session-id svg { display: block; }
-  .session-id i { position: absolute; right: 6px; top: 8px; width: 4px; height: 4px; }
-  .session-id span, .tool-search kbd, .tool-search span, .ws-sample-tag { display: none; }
-  .ws-launch-button { width: 40px; height: 40px; }
+  .ws-sample-tag { display: none; }
 }
 @media (min-width: 981px) and (max-height: 730px) {
-  .db-scene { --bar-height: 54px; --pad: clamp(13px, 1.35vw, 20px); --inset: clamp(14px, 1.55vw, 24px); }
+  .db-scene { --bar-height: 54px; --pad: clamp(13px, 1.35cqi, 20px); --inset: clamp(14px, 1.55cqi, 24px); }
 }
 .db-scene[data-motion='off'] *, .db-scene[data-motion='off'] *::before { animation: none !important; transition: none !important; }
 @media (prefers-reduced-motion: reduce) {
   .db-scene *, .db-scene *::before { animation: none !important; transition: none !important; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .db-scene[data-motion='on'] :is(.launcher-grid a,.ws-button,.launch-buttons > *,.ws-launch-button) { transition: background-color 100ms ease-out; }
+  .db-scene[data-motion='on'] :is(.side-item,.ws-button,.launch-buttons > *) { transition: background-color 100ms ease-out; }
 }

@@ -220,7 +220,7 @@
 .usage-ledger footer {
   margin-top: auto;
 }
-@media (max-width: 640px) {
+@container workspace (max-width: 640px) {
   .usage-mix ul {
     gap: 9px;
   }

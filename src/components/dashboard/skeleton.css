@@ -80,7 +80,7 @@
   height: 20%;
   border-top: 2px solid #bd6c36;
 }
-@media (max-width: 980px) {
+@container workspace (max-width: 980px) {
   .sk-dock {
     grid-template-columns: repeat(4, 1fr);
     min-height: 40px;

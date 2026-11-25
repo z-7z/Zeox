@@ -24,7 +24,7 @@
 .src-job { grid-area: input; }
 .src-profile { grid-area: config; }
 .src-receipt { grid-area: receipt; }
-@media (max-width: 760px) {
+@container workspace (max-width: 760px) {
   .source-intro { padding-block: 18px; }
   .source-intro h1 { font-size: clamp(37px, 8.8vw, 52px); margin: 5px 0 7px; }
   .intro-copy { max-width: 42ch; font-size: 13px; }
@@ -32,14 +32,21 @@
   .source-board { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'input' 'config' 'receipt';
     grid-template-rows: minmax(clamp(286px, 41svh, 392px), auto) minmax(217px, auto) minmax(162px, auto); align-content: start; }
 }
+@container workspace (max-width: 305px) {
+  .source-intro { padding-block: 14px; }
+  .source-intro h1 { font-size: clamp(28px, 11.6cqi, 35px); }
+  .source-board { grid-template-rows: minmax(308px, auto) minmax(250px, auto) minmax(162px, auto); }
+}
 @media (max-width: 1024px) and (max-height: 520px) and (min-width: 540px) {
   .source-intro { padding-block: 5px 9px; }
   .source-kicker, .intro-copy, .encoding-plate { display: none; }
   .source-intro h1 { margin: 0; font-size: 30px; }
   .source-board { grid-template-columns: repeat(2,minmax(0,1fr)); grid-template-areas: 'input input' 'config receipt';
-    grid-template-rows: minmax(183px, auto) minmax(226px, auto); align-content: start; }
+    grid-template-rows: minmax(183px, auto) minmax(252px, auto); align-content: start; }
 }
-@media (min-width: 761px) and (min-height: 521px) and (max-height: 700px) {
-  .source-intro { padding-block: 17px; }
-  .source-intro h1 { font-size: clamp(40px, 4.4vw, 62px); }
+@media (min-height: 521px) and (max-height: 700px) {
+  @container workspace (min-width: 761px) {
+    .source-intro { padding-block: 17px; }
+    .source-intro h1 { font-size: clamp(40px, 4.4vw, 62px); }
+  }
 }

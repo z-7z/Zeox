@@ -59,8 +59,8 @@ export function Workbench({ s }: { s: VaultSession }) {
           <div className={`vt-drop intake-surface${dragging ? ' is-dragging' : ''}${s.file ? ' has-file' : ''}${s.problem?.field === 'file' ? ' has-error' : ''}`}
             onDragEnter={e => { e.preventDefault(); if (!busy && e.dataTransfer.types.includes('Files')) { dragDepth.current++; setDragging(true); } }}
             onDragLeave={e => { e.preventDefault(); if (--dragDepth.current <= 0) { dragDepth.current = 0; setDragging(false); } }} onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = busy ? 'none' : 'copy'; }} onDrop={onDrop}>
-            <button ref={browse} type="button" className="vt-drop-button" disabled={busy} onClick={() => input.current?.click()} aria-label={s.file ? 'Replace selected file' : 'Browse files'} aria-describedby={s.problem?.field === 'file' ? 'vt-error' : undefined}>
-              <Cartridge kind="archive"/><span className="vt-drop-copy">{s.file ? <><strong><bdi dir="ltr">{s.file.name}</bdi></strong><small>{formatSize(s.file.size)} <b>·</b> {dragging ? 'Release to replace' : 'Click to replace'}</small></>
+            <button ref={browse} type="button" className="vt-drop-button" disabled={busy} onClick={() => input.current?.click()} aria-describedby={s.problem?.field === 'file' ? 'vt-error' : undefined}>
+              <Cartridge kind="archive"/><span className="vt-drop-copy">{s.file ? <><strong><bdi dir="ltr">{s.file.name}</bdi></strong><small>{formatSize(s.file.size)} <b>·</b> {dragging ? 'Release to replace' : 'Replace selected file'}</small></>
                 : <><strong>{dragging ? 'Release to select this file' : <>Drop your file or <em>browse files</em></>}</strong><small>{encrypt ? 'Luau, Lua & Roblox files' : 'Zeox archives (.zeox)'}<b>·</b>25 MB max{encrypt ? '' : ' source'}</small></>}</span>
             </button>
             {s.file && <button type="button" className="vt-remove" aria-label="Remove selected file" disabled={busy} onClick={s.removeFile}><X size={15} /></button>}

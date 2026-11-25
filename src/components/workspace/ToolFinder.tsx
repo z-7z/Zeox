@@ -1,10 +1,10 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, type RefObject } from 'react';
 import { ArrowUpRight, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { PanelDialog } from './PanelDialog';
 import { sections } from './sections';
 
-export function ToolFinder({ close }: { close: () => void }) {
+export function ToolFinder({ close, returnFocus }: { close: () => void; returnFocus?: RefObject<HTMLElement> }) {
   const field = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState(''),
     navigate = useNavigate();
@@ -20,6 +20,7 @@ export function ToolFinder({ close }: { close: () => void }) {
       title="Find a tool"
       titleId="finder-title"
       initialFocus={field}
+      returnFocus={returnFocus}
       close={close}
       closeLabel="Close search"
     >

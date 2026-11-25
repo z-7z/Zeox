@@ -24,10 +24,10 @@ export function AttachmentField({ tool }: { tool: SourceSession }) {
       <input ref={input} type="file" accept=".lua,.luau" hidden aria-label="Attach Lua or Luau file" onChange={e => {
         const files = Array.from(e.currentTarget.files ?? []); e.currentTarget.value = ''; void tool.attach(files);
       }} />
-      <button type="button" ref={browse} className="src-drop" aria-label={action} aria-describedby={`src-file-title src-file-meta${fileIssue ? ' src-file-error' : ''}`} onClick={() => input.current?.click()}>
+      <button type="button" ref={browse} className="src-drop" aria-describedby={fileIssue ? 'src-file-error' : undefined} onClick={() => input.current?.click()}>
         <span className="src-file-stamp" aria-hidden="true"><FileCode2 strokeWidth={1.35} /></span>
-        <span className="src-file-title" id="src-file-title" title={file?.name}><bdi dir="ltr">{dragging ? 'Drop to attach' : reading ? 'Reading file…' : file ? file.name : 'Drop your script here'}</bdi></span>
-        <span className="src-file-meta" id="src-file-meta">{file ? `${/\.luau$/i.test(file.name) ? 'Luau' : 'Lua'} · ${formatSize(file.size)} · UTF-8` : '.lua or .luau · 512 KiB max'}</span>
+        <span className="src-file-title" title={file?.name}>{dragging ? 'Drop to attach' : reading ? 'Reading file…' : file ? <bdi dir="ltr">{file.name}</bdi> : 'Drop your script here'}</span>
+        <span className="src-file-meta">{file ? `${/\.luau$/i.test(file.name) ? 'Luau' : 'Lua'} · ${formatSize(file.size)} · UTF-8` : '.lua or .luau · 512 KiB max'}</span>
         <span className="src-browse">{file ? <RefreshCw size={14} /> : <FileUp size={15} />}{action}</span>
       </button>
       {(file || reading) && <button type="button" className="ws-quiet src-remove" aria-label="Remove file" title="Remove file" onClick={() => { tool.remove(); browse.current?.focus(); }}><X size={15} /></button>}

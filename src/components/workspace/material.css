@@ -10,10 +10,10 @@
   --orange: #ff802d;
   --lime: #8cf363;
   --red: #ff5149;
-  --radius: clamp(12px, 1.05vw, 20px);
-  --gap: clamp(7px, 0.68vw, 14px);
-  --pad: clamp(16px, 1.65vw, 34px);
-  --inset: clamp(14px, 1.9vw, 34px);
+  --radius: clamp(12px, 1.05cqi, 20px);
+  --gap: clamp(7px, 0.68cqi, 14px);
+  --pad: clamp(16px, 1.65cqi, 34px);
+  --inset: clamp(14px, 1.9cqi, 34px);
   --mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
   color-scheme: dark;
   color: var(--ink);
@@ -33,8 +33,8 @@
   background: #303032;
   border-radius: 4px;
 }
-@media (max-width: 600px) {
-  .db-scene {
+@container workspace (max-width: 600px) {
+  main, .ws-bar {
     --pad: 14px;
     --inset: 10px;
     --gap: 7px;

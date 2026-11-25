@@ -1,4 +1,5 @@
 .src-job, .src-profile, .src-receipt { display: flex; flex-direction: column; min-width: 0; padding: var(--pad); }
+.source-board section:focus-visible { outline: 2px solid #ffb16c; outline-offset: -2px; }
 .src-job { gap: clamp(9px, 1.6vh, 20px); }
 .src-head, .src-foot, .src-status, .src-result { display: flex; align-items: center; gap: 9px; min-width: 0; }
 .src-head > span { border: 1px solid #45403b; border-radius: 5px; padding: 4px; color: #f4b184; font: 10px/1 var(--mono); }
@@ -52,7 +53,7 @@
 .src-flow i { font: 10px var(--mono); }
 .src-flow li[aria-current] { border-color: var(--orange); color: #ffb17c; }
 .src-flow li[data-done] { color: var(--lime); border-color: #618350; }
-@media (max-width: 600px) {
+@container workspace (max-width: 600px) {
   .src-job { gap: 9px; }
   .src-file-stamp { margin-bottom: 5px; }
   .src-drop { padding: 12px 28px; }
@@ -60,6 +61,12 @@
   .src-foot { gap: 4px; }
   .src-foot .ws-primary { padding-inline: 10px; }
   .src-status { font-size: 10px; }
+}
+@container workspace (max-width: 305px) {
+  .src-drop { padding: 9px; }
+  .src-foot { flex-direction: column; align-items: stretch; gap: 6px; }
+  .src-options label { gap: 6px; }
+  .src-options label > svg { display: none; }
 }
 @media (max-width: 1024px) and (max-height: 520px) and (min-width: 540px) {
   .src-job { padding: 9px 12px; gap: 5px; }

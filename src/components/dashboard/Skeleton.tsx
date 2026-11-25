@@ -15,6 +15,6 @@ export function DashboardSkeleton() {
 export function downloadSkeleton() {
   downloadText('zeox-overview-skeleton.html', 'text/html;charset=utf-8', `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Zeox · Overview skeleton</title>
-<style>*{box-sizing:border-box}body{margin:0;min-height:100vh}main{padding:var(--inset);display:flex;min-height:100vh}${material}\n${layout}\n${placeholders}main > .signal-board{min-height:calc(100svh - 2 * var(--inset))}</style></head>
+<style>*{box-sizing:border-box}body{margin:0;min-height:100vh;container:workspace / inline-size}main{padding:var(--inset);display:flex;min-height:100vh}${material}\n${layout}\n${placeholders}main > .signal-board{min-height:calc(100svh - 2 * var(--inset))}</style></head>
 <body class="db-scene"><main aria-label="Dashboard layout skeleton"><div class="signal-board db-skeleton">${tiles}</div></main></body></html>`);
 }

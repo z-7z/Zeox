@@ -1,8 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
-import { AudioLines, Grid2X2, Maximize, Minimize, Search, Settings2 } from 'lucide-react';
+import { AudioLines, Maximize, Minimize } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { ZeoxMark } from '../ZeoxMark';
-import { ToolLauncher } from './ToolLauncher';
+import { Sidebar, type SideAction } from './Sidebar';
 import { ToolFinder } from './ToolFinder';
 import { PanelDialog } from './PanelDialog';
 import { useUsage } from './UsageSession';
@@ -28,14 +28,14 @@ export function Shell({ active, motion, notify, children }: {
   active: Section; motion: MotionState; notify: (message: string) => void; children: ReactNode;
 }) {
   const { key } = useLocation(), { count } = useUsage();
-  const [panel, setPanel] = useState<'tools' | 'find' | 'session' | null>(null);
-  const trigger = useRef<HTMLButtonElement>(null);
-  const close = () => setPanel(null);
+  const [panel, setPanel] = useState<SideAction | null>(null);
+  const find = useRef<HTMLButtonElement>(null), help = useRef<HTMLButtonElement>(null), settings = useRef<HTMLButtonElement>(null);
+  const fromShortcut = useRef(false), close = () => setPanel(null);
   useLayoutEffect(() => setPanel(null), [key]);
   useEffect(() => {
     function shortcut(e: KeyboardEvent) {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k' && !document.querySelector('dialog[open]')) {
-        e.preventDefault(); setPanel('find');
+        e.preventDefault(); fromShortcut.current = true; setPanel('find');
       }
     }
     window.addEventListener('keydown', shortcut); return () => window.removeEventListener('keydown', shortcut);
@@ -44,36 +44,33 @@ export function Shell({ active, motion, notify, children }: {
   return <div className="db-scene" data-motion={motion.enabled ? 'on' : 'off'}>
     <a className="ws-skip" href="#workspace-main">Skip to content</a>
     <div className="ws-window">
-      <header className="ws-bar">
-        <button ref={trigger} className="ws-launch-button ws-icon-button" type="button" aria-label="Open tools"
-          title="Open tools" aria-haspopup="dialog" aria-expanded={panel === 'tools'} onClick={() => setPanel('tools')}>
-          <Grid2X2 size={19} aria-hidden="true" />
-        </button>
-        <Link className="ws-wordmark" to="/" aria-label="Zeox home"><ZeoxMark />Zeox</Link>
-        <span className="ws-divider" aria-hidden="true">/</span>
-        {active.id === 'obfuscate' ? <span className="ws-route">Script tools</span> :
-          <h1 className="ws-route">{active.id === 'dashboard' ? 'Overview' : active.label}</h1>}
-        <div className="ws-commands">
-          {active.id === 'dashboard' && <span className="ws-sample-tag">Sample charts</span>}
-          <button className="tool-search" type="button" aria-label="Find a tool" title="Find a tool (Ctrl / ⌘ + K)"
-            aria-haspopup="dialog" onClick={() => setPanel('find')}><Search size={15} /><span>Find a tool</span><kbd>Ctrl / ⌘ K</kbd></button>
-          <button className="session-id" type="button" aria-label="Local session information" title="Local session & preferences"
-            aria-haspopup="dialog" onClick={() => setPanel('session')}><Settings2 size={17} aria-hidden="true" /><i aria-hidden="true" /><span>Local session</span></button>
-        </div>
-      </header>
-      <main id="workspace-main" className="ws-main" tabIndex={-1}>{children}</main>
+      <Sidebar active={active} count={count} actions={{ find, help, settings }} onAction={id => { fromShortcut.current = false; setPanel(id); }} />
+      <div className="ws-content">
+        <header className="ws-bar">
+          <Link className="ws-compact-brand" to="/" aria-label="Zeox home"><ZeoxMark />Zeox</Link>
+          <span className="ws-breadcrumb">Workspace</span><b aria-hidden="true">/</b>
+          {active.id === 'obfuscate' ? <span className="ws-route">Script tools</span> :
+            <h1 className="ws-route">{active.id === 'dashboard' ? 'Overview' : active.label}</h1>}
+          <div className="ws-commands">
+            {active.id === 'dashboard' && <span className="ws-sample-tag">Sample charts</span>}
+            <span className="ws-device"><i aria-hidden="true" />On device</span>
+          </div>
+        </header>
+        <main id="workspace-main" className="ws-main" tabIndex={-1}>{children}</main>
+      </div>
     </div>
-    {panel === 'tools' && <ToolLauncher active={active} close={close} trigger={trigger} />}
-    {panel === 'find' && <ToolFinder close={close} />}
-    {panel === 'session' && <PanelDialog title="Local session" titleId="session-title" close={close} closeLabel="Close session information">
-      <p className="dialog-intro">Files stay on this device. No account or upload is needed.</p>
-      <dl className="fact-list"><div><dt>Completed runs</dt><dd>{count}</dd></div><div><dt>Storage</dt><dd>Tab memory</dd></div></dl>
+    {panel === 'find' && <ToolFinder close={close} returnFocus={fromShortcut.current ? undefined : find} />}
+    {panel === 'help' && <PanelDialog title="Help" titleId="help-title" close={close} closeLabel="Close help" returnFocus={help}>
+      <p className="dialog-intro">Attach a .lua or .luau file in Obfuscator, choose your build settings, then download the new file. Your original stays unchanged.</p>
       <h3 className="session-subtitle">Keyboard shortcuts</h3>
       <dl className="fact-list"><div><dt>Find a tool</dt><dd>Ctrl / ⌘ + K</dd></div><div><dt>Inspect a focused chart</dt><dd>← → · Home · End</dd></div><div><dt>Dismiss a dialog</dt><dd>Esc</dd></div></dl>
+    </PanelDialog>}
+    {panel === 'settings' && <PanelDialog title="Settings" titleId="settings-title" close={close} closeLabel="Close settings" returnFocus={settings}>
+      <p className="dialog-intro">Files stay on this device. No account or upload is needed.</p>
+      <dl className="fact-list"><div><dt>Completed runs</dt><dd>{count}</dd></div><div><dt>Storage</dt><dd>Tab memory</dd></div></dl>
       <div className="session-controls"><button type="button" className="ws-button" onClick={motion.toggle}
-        disabled={motion.systemReduced} aria-pressed={motion.enabled}
-        aria-label={motion.systemReduced ? 'Motion reduced by system preference' : 'Enable animation'}>
-        <AudioLines size={15} />{motion.systemReduced ? 'Reduced motion' : motion.enabled ? 'Motion on' : 'Motion off'}</button>
+        disabled={motion.systemReduced} aria-pressed={motion.enabled}>
+        <AudioLines size={15} />{motion.systemReduced ? 'Motion reduced by system preference' : <>Enable animation <small>{motion.enabled ? 'On' : 'Off'}</small></>}</button>
         <FullScreenButton onUnavailable={() => { close(); notify('Full screen is unavailable in this browser window.'); }} /></div>
     </PanelDialog>}
   </div>;
