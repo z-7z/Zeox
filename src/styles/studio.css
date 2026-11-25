@@ -1,4 +1,4 @@
-/* The tools use Dashboard's actual headers, paper cards, gutters and buttons.
+/* The tools use Dashboard's actual headers, themed cards, gutters and buttons.
    DOM order is the reading order: 01 file, 02 settings + action, 03 download. */
 .page-description { margin-top: .32em; color: var(--muted); max-width: 68ch; }
 .task-page .page-title { padding-block: clamp(16px,1.55vw,28px); }
@@ -6,9 +6,9 @@
 .work-pair { display: grid; grid-template-columns: minmax(0,.94fr) minmax(0,1.14fr); gap: var(--gap); }
 .intake, .settings-card { display: flex; flex-direction: column; }
 .intake .card-head, .settings-card .card-head { margin-bottom: 1em; }
-.drop-zone { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: .8em; padding: clamp(15px,2.4vw,36px); min-width: 0; min-height: 164px; border: 1px dashed #a99ab6; border-radius: calc(var(--radius) * .7); background: radial-gradient(ellipse at 50% 30%,#eee7f5,transparent 70%),#f9f7fb; }
-.intake[data-drag] .drop-zone { outline: 2px solid var(--focus); outline-offset: -2px; background: #efe7f5; }
-.drop-symbol { width: 3.5em; height: 3.5em; display: grid; place-items: center; flex: none; border-radius: 50%; background: #fff; color: #65487a; border: 1px solid #ded4e7; box-shadow: 0 5px 10px -7px #5d456f66; }
+.drop-zone { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: .8em; padding: clamp(15px,2.4vw,36px); min-width: 0; min-height: 164px; border: 1px dashed var(--field-edge); border-radius: calc(var(--radius) * .7); background: radial-gradient(ellipse at 50% 30%,var(--accent-wash),transparent 70%),var(--well); }
+.intake[data-drag] .drop-zone { outline: 2px solid var(--focus); outline-offset: -2px; background: var(--accent-wash); }
+.drop-symbol { width: 3.5em; height: 3.5em; display: grid; place-items: center; flex: none; border-radius: 50%; background: var(--panel); color: var(--accent-ink); border: 1px solid var(--line); box-shadow: 0 5px 10px -7px #5d456f66; }
 .drop-symbol svg { width: 46%; height: 46%; }
 .drop-copy { max-width: 100%; min-width: 0; }
 .drop-copy b { display: block; font-size: clamp(17px,1.44vw,23px); font-weight: 580; letter-spacing: -.03em; }
@@ -24,14 +24,14 @@
 .field-label { display: flex; gap: .6em; align-items: center; justify-content: space-between; min-height: 2.35em; font-size: .94em; }
 .field-label label, .option-row label, .option-row b { font-weight: 640; }
 .secret-input { position: relative; }
-.zf-field { width: 100%; min-height: 43px; border: 1px solid #aba4b0; border-radius: 11px; color: var(--ink); background: #fdfcfe; padding: .65em .86em; }
+.zf-field { width: 100%; min-height: 43px; border: 1px solid var(--field-edge); border-radius: 11px; color: var(--ink); background: var(--well); padding: .65em .86em; }
 .zf-field::placeholder { color: var(--soft); }
-.zf-field[aria-invalid="true"] { border-color: #a84157; }
+.zf-field[aria-invalid="true"] { border-color: var(--error-edge); }
 .secret-input .zf-field { padding-right: 2.9em; }
 .visibility { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 2.5em; height: 2.5em; border-radius: 8px; color: var(--muted); }
 .visibility:hover:not(:disabled), .visibility[aria-pressed="true"] { background: var(--raised); color: var(--ink); }
 .field-hint, .generator-note { display: flex; align-items: center; gap: .5em; margin-top: .65em; font-size: .88em; }
-.generator-note { color: #654180; }
+.generator-note { color: var(--accent-ink); }
 .cipher-options .disclosure { margin-top: 1em; }
 .option-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .6em; padding: .8em 0; border-top: 1px solid var(--line); }
 .option-row > :first-child { flex: 1 1 140px; }
@@ -47,12 +47,12 @@
 .transform-option b { font-weight: 620; }
 /* One compact file receipt, not a second mock screen. */
 .download-panel { margin-top: var(--gap); }
-.output-state { display: inline-flex; align-items: center; gap: .55em; font-size: .8em; font-weight: 600; color: #625b68; background: #f4f1f6; border: 1px solid var(--line); padding: .3em .75em; border-radius: 99px; }
+.output-state { display: inline-flex; align-items: center; gap: .55em; font-size: .8em; font-weight: 600; color: var(--muted); background: var(--raised); border: 1px solid var(--line); padding: .3em .75em; border-radius: 99px; }
 .output-state i { width: .5em; height: .5em; border-radius: 50%; background: currentColor; }
-[data-state="Working"] .output-state { color: #674282; background: #f1e9f7; }
-[data-state="Ready"] .output-state { color: #255e3c; background: #e6f3e9; }
-[data-state="Not created"] .output-state { color: #89283e; background: #fff1f4; }
-.output-body { display: flex; align-items: center; gap: clamp(13px,1.5vw,24px); margin-top: 1em; padding: 1.1em 1.25em; background: #f8f7fa; border: 1px solid var(--line); border-radius: calc(var(--radius) * .66); }
+[data-state="Working"] .output-state { color: var(--accent-ink); background: var(--accent-wash); }
+[data-state="Ready"] .output-state { color: var(--success-ink); background: var(--success-wash); }
+[data-state="Not created"] .output-state { color: var(--error-ink); background: var(--error-wash); }
+.output-body { display: flex; align-items: center; gap: clamp(13px,1.5vw,24px); margin-top: 1em; padding: 1.1em 1.25em; background: var(--well); border: 1px solid var(--line); border-radius: calc(var(--radius) * .66); }
 .file-stamp { flex: none; position: relative; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; width: 3.35em; height: 4.1em; padding: .52em; border-radius: 5px; clip-path: polygon(0 0,70% 0,100% 24%,100% 100%,0 100%); background: linear-gradient(138deg,#f1e6f6,#cfb8dc 58%,#b9b6d8); color: #422f52; }
 .file-stamp::after { content:''; position: absolute; top: 0; right: 0; width: 30%; height: 24%; background: #ab93bc; border-radius: 0 0 0 3px; }
 .file-stamp b { font: 700 .65em ui-monospace,monospace; letter-spacing: .045em; }
@@ -60,21 +60,21 @@
 .output-copy { flex: 1; min-width: 0; }
 .output-copy h3 { font-size: clamp(17px,1.35vw,22px); line-height: 1.25; font-weight: 570; letter-spacing: -.026em; }
 .output-copy > small { display: block; font-size: .82em; color: var(--muted); margin-bottom: .22em; }
-.output-copy > small.ready-line { display: flex; color: #24653e; }
+.output-copy > small.ready-line { display: flex; color: var(--success-ink); }
 .output-copy p { max-width: 74ch; margin-top: .3em; color: var(--muted); font-size: .94em; }
 .result-actions { justify-content: end; max-width: 52%; }
 .pending-body { flex: 1; min-width: 0; }
 .progress-caption { display: flex; align-items: center; justify-content: space-between; gap: .5em; }
-.progress-caption small { color: #614575; font: 600 .8em ui-monospace,monospace; }
-.progress-track { display: flex; height: 9px; margin-top: .65em; border-radius: 99px; overflow: hidden; background: #e4dfe8; }
+.progress-caption small { color: var(--accent-ink); font: 600 .8em ui-monospace,monospace; }
+.progress-track { display: flex; height: 9px; margin-top: .65em; border-radius: 99px; overflow: hidden; background: var(--track); }
 .progress-track > i { background: linear-gradient(90deg,#725988,#956da4); }
 .progress-track .current-stage { background: repeating-linear-gradient(120deg,#b59ac6 0 5px,#947ba5 5px 10px); }
 .download-skeleton { display: grid; grid-template-columns: minmax(0,1fr) minmax(54px,7.25em); align-content: center; gap: 6px 12px; margin-top: 1.1em; }
-.download-skeleton i { height: 8px; width: min(72%,340px); border-radius: 6px; background: #ded8e4; }
+.download-skeleton i { height: 8px; width: min(72%,340px); border-radius: 6px; background: var(--track); }
 .download-skeleton i:nth-child(2) { grid-row: 2; width: min(46%,240px); }
 .download-skeleton i:last-child { grid-column: 2; grid-row: 1/3; height: 100%; width: 100%; border-radius: 99px; }
 @media (prefers-reduced-motion:no-preference) {
-  .download-skeleton i { background: linear-gradient(110deg,#e4dfe8 30%,#f4f0f7 48%,#e4dfe8 66%); background-size: 220% 100%; animation: download-pulse 1.65s linear infinite; }
+  .download-skeleton i { background: linear-gradient(110deg,var(--track) 30%,var(--well) 48%,var(--track) 66%); background-size: 220% 100%; animation: download-pulse 1.65s linear infinite; }
   @keyframes download-pulse { to { background-position: -220% 0; } }
 }
 @media (max-width: 920px) { .pass-grid { grid-template-columns: 1fr; } .task-page .page-actions { flex-shrink: 1; justify-content: end; } }

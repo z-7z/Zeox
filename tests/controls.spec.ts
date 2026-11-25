@@ -2,16 +2,17 @@ import { expect, test } from '@playwright/test';
 import { go } from './navigation';
 
 for (const width of [320, 1440]) {
-  test(`all tools share white Dashboard cards in both appearances at ${width}px`, async ({ page }) => {
+  test(`cards follow the selected theme across all tools at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 });
     await page.goto('/dashboard');
     for (const appearance of ['dark', 'light']) {
+      const surface = appearance === 'dark' ? 'rgb(0, 0, 0)' : 'rgb(255, 255, 255)';
       if (appearance === 'light') await page.getByRole('button', { name: 'Dark mode: switch to light' }).click();
       for (const tool of ['Dashboard', 'Usages', 'Obfuscator', 'Encryption'] as const) {
         await go(page, tool);
         const cards = page.locator('main .card:visible');
         expect(await cards.count()).toBeGreaterThanOrEqual(3);
-        for (const card of await cards.all()) await expect(card).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+        for (const card of await cards.all()) await expect(card).toHaveCSS('background-color', surface);
         await expect(page.locator('main .page-title h1')).toBeVisible();
         // Some form primitives maintain a visually hidden select for form events.
         // Only the styled controls may be exposed to users.
@@ -23,6 +24,37 @@ for (const width of [320, 1440]) {
     }
   });
 }
+
+test('theme changes recolor existing cards, dialogs and body-portaled menus without resetting the file', async ({
+  page,
+}) => {
+  await page.goto('/encrypt');
+  await page.getByRole('button', { name: 'Use sample' }).click();
+  await page.getByText('Archive options', { exact: true }).click();
+  const intake = page.getByRole('group', { name: 'Source file' });
+  const choice = page.getByRole('combobox', { name: 'Archive filename' });
+  for (const [theme, color] of [
+    ['light', 'rgb(255, 255, 255)'],
+    ['dark', 'rgb(0, 0, 0)'],
+  ] as const) {
+    await page
+      .getByRole('button', { name: `${theme === 'light' ? 'Dark' : 'Light'} mode: switch to ${theme}` })
+      .click();
+    await expect(intake).toHaveCSS('background-color', color);
+    await expect(intake).toContainText('game-config.luau');
+    await choice.click();
+    const menu = page.getByRole('listbox', { name: 'Archive filename' });
+    await expect(menu).toHaveCSS('background-color', color);
+    await expect(menu).toHaveCSS('color-scheme', theme);
+    await page.keyboard.press('Escape');
+    await expect(choice).toBeFocused();
+    await page.getByRole('button', { name: 'Generate passphrase' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Generate a passphrase' });
+    await expect(dialog).toHaveCSS('background-color', color);
+    await page.keyboard.press('Escape');
+    await expect(dialog).toHaveCount(0);
+  }
+});
 
 test('choice lists support keyboard navigation, Escape, outside dismissal and focus return', async ({ page }) => {
   await page.goto('/dashboard');

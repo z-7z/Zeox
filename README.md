@@ -11,7 +11,7 @@ A local file studio: build a separate Lua/Luau script or protect a file in a pas
 
 ## Workspace
 
-ZeoxFucator extends edge to edge on every route, without an outer window, letterboxing or a browser fullscreen request. Desktop navigation is a vertical rail on the left. On phones the same links and Help form a single labeled row fixed to the bottom, including in landscape. Search tools with **Ctrl/⌘ K**; **Esc** closes a utility dialog. The appearance switch changes the surrounding workspace and resets to dark on reload. All four tools use the Dashboard’s white cards, dark card text, underlined headings and pill buttons in either appearance. Fonts, icons and chart surfaces ship with the app; no external font or chart service is needed.
+ZeoxFucator extends edge to edge on every route, without an outer window, letterboxing or a browser fullscreen request. The left rail contains Obfuscator, Usages, Dashboard and Help. On phones the same four items form a single labeled row fixed to the bottom, including in landscape. Encryption is a standalone page, not a navigation tab. Search tools with **Ctrl/⌘ K**; **Esc** closes a utility dialog. The appearance switch changes the whole workspace: cards are black with light text in dark mode, and white with dark text in light mode. Dialogs, dropdown menus and controls follow the same theme. The choice is retained across routes and resets to dark on reload. Fonts, icons and chart surfaces ship with the app; no external font or chart service is needed.
 
 The archive-name, report-period and usage-filter menus are site-styled listboxes with keyboard, touch and focus support. Switches, segmented controls, the passphrase length slider and disclosures share site styles; the upload button still opens the real operating-system file chooser.
 
@@ -66,6 +66,6 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. Tests cover the file chooser, drag and drop, validation, offline builds, edge-to-edge layout, responsive navigation, white cards in both appearances, keyboard/touch selection and passphrase length, utility dialogs, stage-bound progress and download skeletons, archive options, chart controls, CSV export, independent archive verification, automatic cleanup and exact original downloads.
+`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. Tests cover the file chooser, drag and drop, validation, offline builds, edge-to-edge layout, responsive navigation, card colors in both appearances, keyboard/touch selection and passphrase length, utility dialogs, stage-bound progress and download skeletons, archive options, chart controls, CSV export, independent archive verification, automatic cleanup and exact original downloads.
 
 Deploy `dist/` to a static HTTPS host. `vercel.json` routes direct tool URLs to `index.html` and sets a same-origin content security policy.

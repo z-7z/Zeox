@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Bell, CircleHelp, Moon, Search, Sparkles, Sun } from 'lucide-react';
 import { useUsage } from '../workspace/UsageSession';
-import { tools } from './tools';
+import { tabs, tools } from './tools';
 import { UtilitySheet, type Utility } from './UtilitySheet';
 import orb from '../../assets/orb.svg';
 
@@ -17,6 +17,15 @@ export function Workspace() {
   const path = pathname.toLowerCase().replace(/\/$/, '') || '/obfuscate';
   const label = tools.find((t) => t.url === path)?.name ?? 'Page not found';
   const guide = path === '/encrypt' ? 'Encryption guide' : 'Build guide';
+  // Menus portal to document.body, outside .orbit-app. Give all surfaces the same theme.
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    root.dataset.theme = light ? 'light' : 'dark';
+    return () => {
+      delete root.dataset.theme;
+    };
+  }, [light]);
+
   function open(kind: Utility) {
     setOverlay({ kind, key });
   }
@@ -46,7 +55,7 @@ export function Workspace() {
     return () => window.removeEventListener('keydown', shortcut);
   }, [label, key, hash]);
   return (
-    <div className="orbit-app" data-theme={light ? 'light' : 'dark'}>
+    <div className="orbit-app">
       <a className="skip" href="#workspace">
         Skip to content
       </a>
@@ -121,7 +130,7 @@ export function Workspace() {
       <div className="workspace-layout">
         <nav aria-label="Tools" className="dock">
           <div className="dock-items">
-            {tools.map(({ url, name, icon: Icon }) => (
+            {tabs.map(({ url, name, icon: Icon }) => (
               <Link key={url} to={url} aria-label={name} title={name} aria-current={url === path ? 'page' : undefined}>
                 <i>
                   <Icon aria-hidden="true" />
