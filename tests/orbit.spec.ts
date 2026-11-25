@@ -6,7 +6,7 @@ test('dock stays in one row while scrolling and rotating, then becomes the left 
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
+  await page.goto('/obfuscate');
   await attach(page, 'orientation.luau');
   for (const [width, height] of [
     [390, 844],
@@ -75,7 +75,7 @@ test('finder, appearance, activity and privacy controls work without leaving tab
 test('striped plot offers keyboard readings, an accessible data table and an actual reference CSV', async ({
   page,
 }) => {
-  await page.goto('/');
+  await page.goto('/obfuscate');
   await page.getByText('Encoding reference', { exact: true }).click();
   const panel = page.getByRole('region', { name: 'Literal encoding breakdown' });
   const bars = panel.getByRole('group').getByRole('button');
@@ -112,7 +112,8 @@ test('the source workbench exposes its controls directly, preserves the file and
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/#build-settings');
+  await page.goto('/?from=bookmark#build-settings');
+  await expect(page).toHaveURL(/\/obfuscate\?from=bookmark#build-settings$/);
   await expect(page.getByRole('region', { name: 'Build configuration' })).toBeFocused();
   const comments = page.getByRole('switch', { name: 'Remove comments' });
   await attach(page, 'pipeline.lua');

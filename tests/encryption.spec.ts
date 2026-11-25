@@ -10,7 +10,7 @@ for (const [width, height, edge] of [
   test(`site uses the entire ${width}×${height} viewport without a fullscreen control`, async ({ page }) => {
     await page.setViewportSize({ width, height });
     await page.goto('/');
-    for (const tool of ['Obfuscator', 'Encryption', 'Usages', 'Dashboard'] as const) {
+    for (const tool of ['Main', 'Obfuscator', 'Encryption', 'Usages', 'Dashboard'] as const) {
       await go(page, tool);
       await expectToolsAt(page, edge);
       const brand = page.getByRole('link', { name: 'ZeoxFucator home' });

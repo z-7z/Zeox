@@ -11,7 +11,7 @@ async function text(download: Download) {
 for (const width of [320, 1440]) {
   test(`responsive tool routes and browser history at ${width}px`, async ({ page }) => {
     await page.setViewportSize({width,height:844}); await page.goto('/');
-    await expect(page.getByRole('heading', {level:1,name:'Lua Obfuscator'})).toBeVisible();
+    await expect(page.getByRole('heading', {level:1,name:'Main',exact:true})).toBeVisible();
     for (const {label, path, heading} of destinations) {
       await go(page, label); await expect(page).toHaveURL(new RegExp(path+'$'));
       await expect(page.getByRole('heading', {level:1,name:heading,exact:true})).toBeVisible();

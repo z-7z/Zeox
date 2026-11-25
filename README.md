@@ -4,18 +4,21 @@ A local file studio: build a separate Lua/Luau script or protect a file in a pas
 
 | Route | Function |
 | --- | --- |
-| `/`, `/obfuscate` | Build one UTF-8 `.lua` or `.luau` script (512 KiB max). |
+| `/` (`/main` redirects here) | Main: illustrated walkthroughs, file limits, session notes and links to each tool. |
+| `/obfuscate` | Build one UTF-8 `.lua` or `.luau` script (512 KiB max). |
 | `/encrypt` (also accessible from the old `/vault` link) | Encrypt or restore a file. An authenticated restore offers the exact original and, when available, a cleaned script or static reading. |
 | `/usages` | View, filter, export or clear the current tab's operation metadata. Totals cover all successes; the ledger and CSV cover the last 50. |
 | `/dashboard` | Read a separate dated sample report for 7 or 30 days ending May 15, 2026 (UTC). `/dashboard/overview` and `/showcase` redirect here. |
 
 ## Workspace
 
-ZeoxFucator extends edge to edge on every route, without an outer window, letterboxing or a browser fullscreen request. The left rail contains Obfuscator, Usages, Dashboard and Help. On phones the same four items form a single labeled row fixed to the bottom, including in landscape. Encryption is a standalone page, not a navigation tab. Search tools with **Ctrl/⌘ K**; **Esc** closes a utility dialog. The appearance switch changes the whole workspace: cards are black with light text in dark mode, and white with dark text in light mode. Dialogs, dropdown menus and controls follow the same theme. The choice is retained across routes and resets to dark on reload. Fonts, icons and chart surfaces ship with the app; no external font or chart service is needed.
+ZeoxFucator extends edge to edge on every route, without an outer window, letterboxing or a browser fullscreen request. The left rail contains Main, Obfuscator, Usages, Dashboard and Help. On phones the same five items form a single labeled row fixed to the bottom, including in landscape. Encryption is a standalone page, not a navigation tab. Search tools with **Ctrl/⌘ K**; **Esc** closes a utility dialog. The appearance switch changes the whole workspace: cards are black with light text in dark mode, and white with dark text in light mode. Dialogs, dropdown menus and controls follow the same theme. The choice is retained across routes and resets to dark on reload. Fonts, icons and chart surfaces ship with the app; no external font or chart service is needed.
 
 The archive-name, report-period and usage-filter menus are site-styled listboxes with keyboard, touch and focus support. Switches, segmented controls, the passphrase length slider and disclosures share site styles; the upload button still opens the real operating-system file chooser.
 
-The start page puts a single file chooser, the three source transforms and the download together. Its **File encryption** link opens a separate tool, not a dashboard widget. A collapsible encoding reference illustrates a bundled string, never the attached script. Usages is the real session ledger; Dashboard is a separate dated sample report.
+The site opens on **Main**. The brand link returns here from any tool. **How to use** jumps to two illustrated walkthroughs: a source build and a passphrase-protected archive. The cover illustration and dark/light example screenshots ship locally; the pictured settings and receipt are examples, not live controls or user uploads. The guide links straight into each tool without reloading the tab.
+
+The **Obfuscator** page puts a single file chooser, the three source transforms and the download together. Old root links to `#source-file`, `#build-settings` and `#build-output` still open the corresponding section at `/obfuscate`. Its **File encryption** link opens a separate tool, not a dashboard widget. A collapsible encoding reference illustrates a bundled string, never the attached script. Usages is the real session ledger; Dashboard is a separate dated sample report.
 
 ## Source files and local state
 
@@ -66,6 +69,6 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. Tests cover the file chooser, drag and drop, validation, offline builds, edge-to-edge layout, responsive navigation, card colors in both appearances, keyboard/touch selection and passphrase length, utility dialogs, stage-bound progress and download skeletons, archive options, chart controls, CSV export, independent archive verification, automatic cleanup and exact original downloads.
+`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. Tests cover entry through Main, its illustrated guides, links and route aliases, the file chooser, drag and drop, validation, offline builds, edge-to-edge layout, responsive navigation, card colors in both appearances, keyboard/touch selection and passphrase length, utility dialogs, stage-bound progress and download skeletons, archive options, chart controls, CSV export, independent archive verification, automatic cleanup and exact original downloads.
 
 Deploy `dist/` to a static HTTPS host. `vercel.json` routes direct tool URLs to `index.html` and sets a same-origin content security policy.

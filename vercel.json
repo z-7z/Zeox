@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/main", "destination": "/index.html" },
     { "source": "/dashboard", "destination": "/index.html" },
     { "source": "/dashboard/overview", "destination": "/index.html" },
     { "source": "/obfuscate", "destination": "/index.html" },

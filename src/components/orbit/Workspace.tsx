@@ -6,25 +6,28 @@ import { tabs, tools } from './tools';
 import { UtilitySheet, type Utility } from './UtilitySheet';
 import orb from '../../assets/orb.svg';
 
+export type WorkspaceTheme = 'light' | 'dark';
+
 export function Workspace() {
   const { pathname, hash, key } = useLocation(),
     { count } = useUsage();
   const previous = useRef(key),
     main = useRef<HTMLElement>(null);
-  const [light, setLight] = useState(false);
+  const [theme, setTheme] = useState<WorkspaceTheme>('dark');
+  const light = theme === 'light';
   const [overlay, setOverlay] = useState<{ kind: Utility; key: string } | null>(null);
   const utility = overlay?.key === key ? overlay.kind : null;
-  const path = pathname.toLowerCase().replace(/\/$/, '') || '/obfuscate';
+  const path = pathname.toLowerCase().replace(/\/$/, '') || '/';
   const label = tools.find((t) => t.url === path)?.name ?? 'Page not found';
-  const guide = path === '/encrypt' ? 'Encryption guide' : 'Build guide';
+  const guide = path === '/' ? 'Getting started' : path === '/encrypt' ? 'Encryption guide' : 'Build guide';
   // Menus portal to document.body, outside .orbit-app. Give all surfaces the same theme.
   useLayoutEffect(() => {
     const root = document.documentElement;
-    root.dataset.theme = light ? 'light' : 'dark';
+    root.dataset.theme = theme;
     return () => {
       delete root.dataset.theme;
     };
-  }, [light]);
+  }, [theme]);
 
   function open(kind: Utility) {
     setOverlay({ kind, key });
@@ -94,7 +97,7 @@ export function Workspace() {
           <button
             type="button"
             className="theme-trigger"
-            onClick={() => setLight((v) => !v)}
+            onClick={() => setTheme(light ? 'dark' : 'light')}
             aria-label={light ? 'Light mode: switch to dark' : 'Dark mode: switch to light'}
           >
             <span>{light ? 'Light mode' : 'Dark mode'}</span>
@@ -147,7 +150,7 @@ export function Workspace() {
           </div>
         </nav>
         <main id="workspace" ref={main} tabIndex={-1}>
-          <Outlet />
+          <Outlet context={theme} />
         </main>
       </div>
       {utility && <UtilitySheet key={utility} kind={utility} close={() => setOverlay(null)} />}

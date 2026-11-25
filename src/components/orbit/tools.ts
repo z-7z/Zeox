@@ -1,6 +1,7 @@
-import { Activity, ChartPie, LayoutGrid, LockKeyhole } from 'lucide-react';
+import { Activity, ChartPie, House, LayoutGrid, LockKeyhole } from 'lucide-react';
 
 export const tabs = [
+  { url: '/', name: 'Main', icon: House, info: 'Start here: illustrated guides to the local file tools' },
   { url: '/obfuscate', name: 'Obfuscator', icon: LayoutGrid, info: 'Attach and build a Lua or Luau script' },
   { url: '/usages', name: 'Usages', icon: Activity, info: 'Inspect or export the local ledger' },
   { url: '/dashboard', name: 'Dashboard', icon: ChartPie, info: 'Explore the dated sample report' },

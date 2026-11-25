@@ -5,7 +5,7 @@ import { go } from './navigation';
 const noCodePane = 'textarea, [contenteditable="true"], [role="textbox"], pre, .cm-editor';
 
 test('empty intake → native keyboard chooser → local build → downloadable file, never an editor', async ({ page, context }) => {
-  await page.goto('/', { waitUntil: 'networkidle' }); await context.setOffline(true);
+  await page.goto('/obfuscate', { waitUntil: 'networkidle' }); await context.setOffline(true);
   const build = page.getByRole('button', { name: 'Obfuscate file' }), choose = page.getByRole('button', { name: 'Choose file' });
   await expect(build).toBeDisabled();
   await expect(page.locator(noCodePane)).toHaveCount(0); await expect(page.getByRole('button', { name: /example|sample/i })).toHaveCount(0);

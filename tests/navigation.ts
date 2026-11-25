@@ -1,6 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 
 export const destinations = [
+  { label: 'Main', path: '/', heading: 'Main' },
   { label: 'Obfuscator', path: '/obfuscate', heading: 'Lua Obfuscator' },
   { label: 'Usages', path: '/usages', heading: 'Usages' },
   { label: 'Dashboard', path: '/dashboard', heading: 'Dashboard' },
@@ -39,7 +40,7 @@ export async function expectToolsAt(page: Page, placement: 'left' | 'bottom') {
       main: document.querySelector('main')!.getBoundingClientRect().left,
     };
   });
-  expect(geometry.buttons).toHaveLength(destinations.length + 1); // Three tabs, plus Help.
+  expect(geometry.buttons).toHaveLength(destinations.length + 1); // Page links, plus Help.
   expect(geometry.buttons.every((b) => b.reachable)).toBe(true);
   if (placement === 'bottom') {
     expect(Math.abs(geometry.bottom - geometry.height)).toBeLessThan(1);

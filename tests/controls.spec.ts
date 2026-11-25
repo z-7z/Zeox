@@ -8,12 +8,12 @@ for (const width of [320, 1440]) {
     for (const appearance of ['dark', 'light']) {
       const surface = appearance === 'dark' ? 'rgb(0, 0, 0)' : 'rgb(255, 255, 255)';
       if (appearance === 'light') await page.getByRole('button', { name: 'Dark mode: switch to light' }).click();
-      for (const tool of ['Dashboard', 'Usages', 'Obfuscator', 'Encryption'] as const) {
+      for (const tool of ['Main', 'Dashboard', 'Usages', 'Obfuscator', 'Encryption'] as const) {
         await go(page, tool);
         const cards = page.locator('main .card:visible');
         expect(await cards.count()).toBeGreaterThanOrEqual(3);
         for (const card of await cards.all()) await expect(card).toHaveCSS('background-color', surface);
-        await expect(page.locator('main .page-title h1')).toBeVisible();
+        await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toBeVisible();
         // Some form primitives maintain a visually hidden select for form events.
         // Only the styled controls may be exposed to users.
         const nativeControls = await page

@@ -3,6 +3,7 @@ import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from 'react
 import { ToolSessions } from './components/workspace/ToolSessions';
 import { UsageProvider } from './components/workspace/UsageSession';
 import type { SamplePeriod } from './components/dashboard/period';
+import { Main } from './pages/Main';
 import { Obfuscate } from './pages/Obfuscate';
 import { Encryption } from './pages/Encryption';
 import { Usages } from './pages/Usages';
@@ -10,9 +11,16 @@ import { Dashboard } from './pages/Dashboard';
 import { Workspace } from './components/orbit/Workspace';
 import { PageTitle } from './components/orbit/Panels';
 
-function LegacyVaultLink() {
+function Alias({ to }: { to: string }) {
   const { hash, search } = useLocation();
-  return <Navigate replace to={{ pathname: '/encrypt', hash, search }} />;
+  return <Navigate replace to={{ pathname: to, hash, search }} />;
+}
+
+function StartPage() {
+  // The source workbench used to be the index. Keep its bookmarked sections working.
+  const { hash } = useLocation();
+  if (['#source-file', '#build-settings', '#build-output'].includes(hash)) return <Alias to="/obfuscate" />;
+  return <Main />;
 }
 
 export default function App() {
@@ -23,10 +31,11 @@ export default function App() {
         <ToolSessions>
           <Routes>
             <Route element={<Workspace />}>
-              <Route index element={<Obfuscate />} />
+              <Route index element={<StartPage />} />
+              <Route path="main" element={<Alias to="/" />} />
               <Route path="obfuscate" element={<Obfuscate />} />
               <Route path="encrypt" element={<Encryption />} />
-              <Route path="vault" element={<LegacyVaultLink />} />
+              <Route path="vault" element={<Alias to="/encrypt" />} />
               <Route path="usages" element={<Usages />} />
               <Route path="dashboard" element={<Dashboard period={period} setPeriod={setPeriod} />} />
               <Route path="dashboard/overview" element={<Navigate replace to="/dashboard" />} />
@@ -39,7 +48,7 @@ export default function App() {
                     <section className="card">
                       <p>This tool does not exist.</p>
                       <Link className="pill paper" to="/">
-                        Return to Obfuscator
+                        Return to Main
                       </Link>
                     </section>
                   </>

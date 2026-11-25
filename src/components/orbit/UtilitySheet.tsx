@@ -18,7 +18,7 @@ export function UtilitySheet({ kind, close }: { kind: Utility; close: () => void
   const [query, setQuery] = useState(''),
     usage = useUsage(),
     navigate = useNavigate();
-  const encryption = useLocation().pathname.toLowerCase().replace(/\/$/, '') === '/encrypt';
+  const path = useLocation().pathname.toLowerCase().replace(/\/$/, '') || '/';
   const matches = tools.filter((t) => `${t.name} ${t.info}`.toLowerCase().includes(query.trim().toLowerCase()));
   return (
     <Dialog title={titles[kind]} close={close}>
@@ -65,7 +65,17 @@ export function UtilitySheet({ kind, close }: { kind: Utility; close: () => void
           {!matches.length && <p role="status">No matching tools.</p>}
         </>
       )}
-      {kind === 'guide' && encryption && (
+      {kind === 'guide' && path === '/' && (
+        <>
+          <p>
+            New to ZeoxFucator? Follow the illustrated guides to build a script or protect a file with a passphrase.
+          </p>
+          <Link className="pill paper" to="/#quick-start" onClick={close}>
+            Read the walkthroughs <ArrowUpRight aria-hidden="true" />
+          </Link>
+        </>
+      )}
+      {kind === 'guide' && path === '/encrypt' && (
         <>
           <p>Protect a single file without uploading it to a server.</p>
           <ol className="guide-steps">
@@ -87,7 +97,7 @@ export function UtilitySheet({ kind, close }: { kind: Utility; close: () => void
           </p>
         </>
       )}
-      {kind === 'guide' && !encryption && (
+      {kind === 'guide' && path !== '/encrypt' && path !== '/' && (
         <>
           <p>Build a separate copy without uploading your script.</p>
           <ol className="guide-steps">
