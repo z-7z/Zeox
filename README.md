@@ -4,13 +4,13 @@
 
 ## Start a script build
 
-1. Open **Main** (`/`). The before/after example uses the actual source pass on a bundled Luau snippet. The guide shows the real build settings and explains what obfuscation can and cannot do.
+1. Open **Main** (`/`). In **Live example**, toggle the three transforms on a bundled Luau snippet and compare both scripts, their names and byte sizes. The preview uses the real source pass but cannot accept a file or affect a workspace build. The illustrated guide shows the actual file chooser, settings and download in either theme.
 2. Choose **Obfuscate a script → Continue as guest**. The independent `/login` page opens the Dashboard without asking for an email or password.
 3. On **Dashboard**, choose **Obfuscate a script**. Attach one UTF-8 `.lua` or `.luau` file (up to 512 KiB), choose the transforms and select **Obfuscate file → Download file**. Your original is unchanged.
 
 | Route | Function |
 | --- | --- |
-| `/` (`/main` redirects here) | Public product introduction, illustrated obfuscation guide and FAQ. |
+| `/` (`/main` redirects here) | Public Lua Obfuscator introduction, interactive `#live-example`, three-step illustrated guide and FAQ. |
 | `/login` | Guest preview entry. No account or credentials. |
 | `/dashboard` | Start or resume a build. The current script, transform settings and completed script count come from this tab. A collapsed **Sample report** illustrates script builds for 7 or 30 days ending May 15, 2026 (UTC), separately from the guest session. `/dashboard/overview` and `/showcase` redirect here. |
 | `/obfuscate` | Attach, configure, build and download the script. |
@@ -76,6 +76,6 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. Tests cover the separation of public and workspace layouts, guest entry/exit, bookmarked routes, local-only session data, the before/after example, the end-to-end obfuscation journey, the file chooser, drag and drop, validation, offline builds, edge-to-edge layout, responsive navigation, card colors in both appearances, keyboard/touch selection and passphrase length, utility dialogs, stage-bound progress and download skeletons, archive options, chart controls, CSV export, independent archive verification, automatic cleanup and exact original downloads.
+`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. Tests cover the separation of public and workspace layouts, guest entry/exit, bookmarked routes, local-only session data, the offline, keyboard/touch live example, its isolation from guest builds, the end-to-end obfuscation journey, the file chooser, drag and drop, validation, offline builds, edge-to-edge layout, responsive navigation, card colors in both appearances, keyboard/touch selection and passphrase length, utility dialogs, stage-bound progress and download skeletons, archive options, chart controls, CSV export, independent archive verification, automatic cleanup and exact original downloads.
 
 Deploy `dist/` to a static HTTPS host. `vercel.json` routes direct page URLs to `index.html` and sets a same-origin content security policy.

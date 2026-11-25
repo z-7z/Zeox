@@ -15,9 +15,10 @@ function Wordmark() {
 
 export function PublicLayout() {
   const { theme, toggleTheme, guest } = useSite();
-  const login = useLocation().pathname.toLowerCase().replace(/\/$/, '') === '/login';
+  const path = useLocation().pathname.toLowerCase().replace(/\/$/, '') || '/';
+  const login = path === '/login';
   return (
-    <div className="public-site">
+    <div className="public-site" data-landing={path === '/' || undefined}>
       <a className="skip" href="#public-content">
         Skip to content
       </a>
@@ -26,6 +27,7 @@ export function PublicLayout() {
           <Wordmark />
           {!login && (
             <nav className="site-links" aria-label="Site">
+              {path === '/' && <Link to="/#live-example">Live example</Link>}
               <Link to="/#quick-start">How it works</Link>
               <Link to="/#questions">FAQ</Link>
             </nav>

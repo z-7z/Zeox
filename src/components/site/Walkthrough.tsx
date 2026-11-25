@@ -1,59 +1,83 @@
 import { useSite } from './SiteSession';
-import sourceDark from '../../assets/guide/source-dark.webp';
-import sourceLight from '../../assets/guide/source-light.webp';
+import attachDark from '../../assets/guide/attach-dark.webp';
+import attachLight from '../../assets/guide/attach-light.webp';
+import settingsDark from '../../assets/guide/source-dark.webp';
+import settingsLight from '../../assets/guide/source-light.webp';
+import saveDark from '../../assets/guide/save-dark.webp';
+import saveLight from '../../assets/guide/save-light.webp';
+
+const steps = [
+  {
+    title: 'Choose your script',
+    text: 'Enter as a guest. From Dashboard, select Obfuscate a script and choose or drop your file.',
+    picture: {
+      dark: attachDark,
+      light: attachLight,
+      height: 410,
+      alt: 'The workspace file chooser with the drop area and Choose file button.',
+    },
+  },
+  {
+    title: 'Set the transforms',
+    text: 'Choose which changes to apply in Build settings. Select Obfuscate file when you’re ready.',
+    picture: {
+      dark: settingsDark,
+      light: settingsLight,
+      height: 522,
+      alt: 'The workspace build settings with text encoding, comment removal and compact spacing enabled.',
+    },
+  },
+  {
+    title: 'Download the copy',
+    text: 'When the script is ready, select Download file. Your original stays exactly as you wrote it.',
+    picture: {
+      dark: saveDark,
+      light: saveLight,
+      height: 446,
+      alt: 'The ready download for greeting.obf.luau in the workspace.',
+    },
+  },
+] as const;
 
 export function Walkthrough() {
   const { theme } = useSite();
   return (
-    <section id="quick-start" tabIndex={-1} className="site-width tour-section" aria-labelledby="tour-title">
-      <header className="tour-heading">
-        <p className="site-label">
-          <i aria-hidden="true" /> 01 / Obfuscation guide
-        </p>
-        <h2 id="tour-title">
-          How it works<span>.</span>
-        </h2>
-      </header>
-      <div className="tour-spread">
-        <figure className="tour-figure">
-          <div className="tour-shot">
-            <img
-              src={theme === 'dark' ? sourceDark : sourceLight}
-              width="848"
-              height="522"
-              loading="lazy"
-              decoding="async"
-              alt="The Obfuscator’s build settings with text encoding, comment removal and compact spacing enabled."
-            />
+    <section id="quick-start" tabIndex={-1} className="build-manual" aria-labelledby="guide-title">
+      <div className="site-width">
+        <header className="manual-heading">
+          <div>
+            <span className="section-index" aria-hidden="true">
+              02
+            </span>
+            <h2 id="guide-title">How it works</h2>
           </div>
-          <figcaption>
-            <b>Build settings</b> Each transform can be switched on or off independently.
-          </figcaption>
-        </figure>
-        <div className="tour-text">
-          <p className="site-label">One script / 512 KiB max</p>
-          <h3>From source to download.</h3>
-          <ol>
-            <li>
-              <strong>Choose your script</strong>
-              <p>
-                From the Dashboard, select Obfuscate a script. Choose or drop one UTF-8 <code>.lua</code> or{' '}
-                <code>.luau</code> file.
-              </p>
+          <p>
+            One UTF-8 <code>.lua</code> or <code>.luau</code> file · 512 KiB max
+          </p>
+        </header>
+        <ol className="manual-steps">
+          {steps.map(({ title, text, picture }, i) => (
+            <li key={title}>
+              <div className="step-print">
+                <img
+                  src={picture[theme]}
+                  width="848"
+                  height={picture.height}
+                  loading="lazy"
+                  decoding="async"
+                  alt={picture.alt}
+                />
+              </div>
+              <div className="step-text">
+                <span aria-hidden="true">0{i + 1} /</span>
+                <div>
+                  <h3>{title}</h3>
+                  <p>{text}</p>
+                </div>
+              </div>
             </li>
-            <li>
-              <strong>Set the transforms</strong>
-              <p>
-                Choose whether to encode quoted strings, strip ordinary comments or compact whitespace. Select Obfuscate
-                file.
-              </p>
-            </li>
-            <li>
-              <strong>Download the copy</strong>
-              <p>Select Download file to save your new script. Your original file stays untouched.</p>
-            </li>
-          </ol>
-        </div>
+          ))}
+        </ol>
       </div>
     </section>
   );

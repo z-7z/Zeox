@@ -7,6 +7,7 @@ import './styles/responsive.css';
 import './styles/controls.css';
 import './styles/studio.css';
 import './styles/public-site.css';
+import './styles/landing.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

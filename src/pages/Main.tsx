@@ -1,22 +1,18 @@
 import { Link } from 'react-router-dom';
-import { ArrowDown, ArrowRight, Braces, Cpu, FileCode2, Plus } from 'lucide-react';
+import { ArrowDownRight, ArrowRight, Plus } from 'lucide-react';
+import { LiteralStudy } from '../components/site/LiteralStudy';
+import { LiveExample } from '../components/site/LiveExample';
 import { Walkthrough } from '../components/site/Walkthrough';
 import { useSite } from '../components/site/SiteSession';
-import { BuildIllustration } from '../components/site/BuildIllustration';
 
-const facts = [
-  ['Source formats', 'Lua + Luau', Braces],
-  ['Script limit', '512 KiB', FileCode2],
-  ['Processing', 'On your device', Cpu],
-] as const;
 const questions = [
   [
     'Is my script uploaded or executed?',
-    'No. ZeoxFucator reads your script as text in this browser tab. It never sends your source to a server or runs it.',
+    'No. ZeoxFucator reads your source as text in this browser tab. It never sends your source to a server or runs it.',
   ],
   [
     'Can the result still be read?',
-    'Yes. Encoding rewrites plain quoted strings as decimal byte escapes. Identifiers keep their names, and Luau interpolated strings are left as written. Obfuscation is not encryption; don’t put secrets in your script.',
+    'Yes. Plain quoted strings can become decimal byte escapes, but identifiers keep their names and Luau interpolated strings stay as written. Obfuscation is not encryption; don’t put secrets in your script.',
   ],
   [
     'What happens when I leave?',
@@ -29,74 +25,59 @@ export function Main() {
   const entry = guest ? '/dashboard' : '/login';
   return (
     <>
-      <section className="launch" aria-labelledby="launch-title">
-        <div className="site-width launch-inner">
-          <div className="launch-copy">
-            <p className="site-label">
-              <i aria-hidden="true" /> Local Lua &amp; Luau source processing
-            </p>
-            <h1 id="launch-title">
-              Lua <em>Obfuscator</em>
-            </h1>
-            <p className="launch-lead">
-              Make your Lua or Luau script harder to read without uploading it. Encode strings, remove comments and
-              compact spacing, then download the copy.
-            </p>
-            <div className="launch-actions">
-              <Link className="site-cta" to={entry}>
-                {guest ? 'Open dashboard' : 'Obfuscate a script'} <ArrowRight aria-hidden="true" />
-              </Link>
-              <Link className="site-text-link" to="#quick-start">
-                See how it works <ArrowDown aria-hidden="true" />
-              </Link>
-            </div>
+      <section className="site-width landing-intro" aria-labelledby="landing-title">
+        <div>
+          <p className="source-imprint">
+            <i aria-hidden="true" /> Source processing <span aria-hidden="true">/</span> Lua + Luau
+          </p>
+          <h1 id="landing-title">
+            Lua Obfuscator
+            <span aria-hidden="true" />
+          </h1>
+          <p className="landing-lead">
+            Encode strings, strip comments and compact spacing. Download a separate script without uploading your
+            source.
+          </p>
+          <div className="landing-actions">
+            <Link className="site-cta" to={entry}>
+              {guest ? 'Open dashboard' : 'Obfuscate a script'} <ArrowRight aria-hidden="true" />
+            </Link>
+            <Link className="site-text-link" to="#quick-start">
+              Read guide <ArrowDownRight aria-hidden="true" />
+            </Link>
           </div>
-          <BuildIllustration />
         </div>
+        <LiteralStudy />
       </section>
-      <div className="spec-band">
-        <dl className="site-width spec-row">
-          {facts.map(([label, value, Icon]) => (
-            <div key={label}>
-              <dt>
-                <Icon aria-hidden="true" />
-                {label}
-              </dt>
-              <dd>{value}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
+      <LiveExample />
       <Walkthrough />
-      <section id="questions" tabIndex={-1} className="faq-section" aria-labelledby="faq-title">
-        <div className="site-width faq-inner">
-          <div>
-            <p className="site-label">
-              <i aria-hidden="true" /> 02 / Notes
-            </p>
-            <h2 id="faq-title">
-              Questions<span>?</span>
-            </h2>
-          </div>
-          <div className="faq-list">
-            {questions.map(([question, answer]) => (
-              <details key={question}>
-                <summary>
-                  {question}
-                  <Plus aria-hidden="true" />
-                </summary>
-                <p>{answer}</p>
-              </details>
-            ))}
-          </div>
+      <section id="questions" tabIndex={-1} className="site-width source-notes" aria-labelledby="notes-title">
+        <div>
+          <header className="manual-heading">
+            <div>
+              <span className="section-index" aria-hidden="true">
+                03
+              </span>
+              <h2 id="notes-title">Questions?</h2>
+            </div>
+          </header>
+          <p>Ready to work on your own file?</p>
+          <Link className="site-text-link" to={entry}>
+            {guest ? 'Return to dashboard' : 'Continue to log in'} <ArrowRight aria-hidden="true" />
+          </Link>
+        </div>
+        <div className="notes-list">
+          {questions.map(([q, a]) => (
+            <details key={q}>
+              <summary>
+                {q}
+                <Plus aria-hidden="true" />
+              </summary>
+              <p>{a}</p>
+            </details>
+          ))}
         </div>
       </section>
-      <div className="site-width closing">
-        <p>Ready to obfuscate?</p>
-        <Link className="site-cta" to={entry}>
-          {guest ? 'Open dashboard' : 'Continue to log in'} <ArrowRight aria-hidden="true" />
-        </Link>
-      </div>
     </>
   );
 }
