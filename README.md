@@ -1,6 +1,6 @@
 # Zeox Obfuscator
 
-Choose a Lua or Luau file, set the transformations, and download a separate copy. Files are processed locally; no account, upload or editor is involved. The pages use plain HTML controls and the browser's default styling.
+Choose a Lua or Luau file, set the transformations, and download a separate copy. Files are processed locally; no account, upload or editor is involved.
 
 | Route | Function |
 | --- | --- |
@@ -8,6 +8,12 @@ Choose a Lua or Luau file, set the transformations, and download a separate copy
 | `/vault` | Encrypt or restore a file. An authenticated restore offers the exact original and, when available, a cleaned script or static reading. |
 | `/usages` | View, filter, export or clear the current tab's operation metadata. Totals cover all successes; the ledger and CSV cover the last 50. |
 | `/dashboard` | Read a separate dated sample report for 7 or 30 days ending May 15, 2026 (UTC). `/dashboard/overview` and `/showcase` redirect here. |
+
+## Workspace
+
+The four tools share a charcoal workspace with a vertical icon rail on the left on desktop. On phones the same links and Help form a single labeled row fixed to the bottom, including in landscape. Search tools with **Ctrl/⌘ K**; **Esc** closes a utility dialog. The appearance switch applies to this tab and resets to dark on reload. Fonts, icons and chart surfaces ship with the app; no external font or chart service is needed.
+
+On the start page, the source-size card is also the file drop target. The gradient strip shows the current build step, and the settings panel controls the three optional transforms. The striped chart explains the bytes of the **bundled reference string**, not your script. Select a column by touch, pointer or arrow keys, open the values as a table, or export the reference as CSV. Usages shows only successful operations in this tab; Dashboard labels its separate illustrative figures as a sample.
 
 ## Source files and local state
 
@@ -54,6 +60,6 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. Tests cover the file chooser, drag and drop, validation, offline builds, browser navigation, CSV export, independent archive verification, automatic cleanup and exact original downloads.
+`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. Tests cover the file chooser, drag and drop, validation, offline builds, responsive navigation, utility dialogs, chart controls, CSV export, independent archive verification, automatic cleanup and exact original downloads.
 
 Deploy `dist/` to a static HTTPS host. `vercel.json` routes direct tool URLs to `index.html` and sets a same-origin content security policy.

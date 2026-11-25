@@ -1,7 +1,7 @@
 import { expect, test, type Download } from '@playwright/test';
 
 import { attach, downloadOutput } from './attachments';
-import { destinations, go, toolNav } from './navigation';
+import { destinations, expectToolsAt, go, toolNav } from './navigation';
 
 async function text(download: Download) {
   const stream = await download.createReadStream(); if (!stream) throw new Error('Missing file');
@@ -9,14 +9,14 @@ async function text(download: Download) {
 }
 
 for (const width of [320, 1440]) {
-  test(`plain tool routes and browser history at ${width}px`, async ({ page }) => {
+  test(`responsive tool routes and browser history at ${width}px`, async ({ page }) => {
     await page.setViewportSize({width,height:844}); await page.goto('/');
     await expect(page.getByRole('heading', {level:1,name:'Lua Obfuscator'})).toBeVisible();
     for (const {label, path, heading} of destinations) {
       await go(page, label); await expect(page).toHaveURL(new RegExp(path+'$'));
       await expect(page.getByRole('heading', {level:1,name:heading,exact:true})).toBeVisible();
       await expect(toolNav(page).locator('[aria-current=page]')).toHaveText(label);
-      await expect(page.locator('link[rel=stylesheet], style, svg, canvas, [style]')).toHaveCount(0);
+      await expectToolsAt(page, width === 320 ? 'bottom' : 'left');
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
     }
     await page.goBack(); await expect(page).toHaveTitle('Usages — Zeox Obfuscator');
