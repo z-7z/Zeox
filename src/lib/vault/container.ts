@@ -2,7 +2,7 @@ import { cleanRestoredFile, partialListingName, type Cleanup } from './cleanup';
 
 /** The archive codec treats all source files as opaque bytes. */
 export type Mode = 'encrypt' | 'decrypt';
-export type Phase = 'reading' | 'deriving' | 'sealing' | 'restoring' | 'cleaning';
+export type Phase = 'reading' | 'deriving' | 'sealing' | 'restoring' | 'cleaning' | 'verifying';
 export interface OutputFile { blob: Blob; name: string }
 export interface VaultResult extends OutputFile { cleanup?: Cleanup }
 export const FORMATS = [
@@ -38,7 +38,7 @@ export function validateFile(file: File, mode: Mode): string | null {
   } else {
     if (!file.name.toLowerCase().endsWith('.zeox')) return 'Choose an encrypted .zeox archive to restore.';
     if (file.size > MAX_ARCHIVE) return 'This archive exceeds the 25 MB source file limit.';
-    if (file.size < HEADER_SIZE + TAG_SIZE + 3) return 'This file is not a complete Zeox archive.';
+    if (file.size < HEADER_SIZE + TAG_SIZE + 3) return 'This file is not a complete .zeox archive.';
   }
   return null;
 }
@@ -48,19 +48,19 @@ export function validatePassphrase(passphrase: string, mode: Mode): string | nul
   return null;
 }
 
-async function deriveKey(passphrase: string, salt: Uint8Array, usage: Mode) {
+async function deriveKey(passphrase: string, salt: Uint8Array, usages: Mode[]) {
   const bytes = encoder.encode(passphrase);
   try {
     const material = await crypto.subtle.importKey('raw', bytes, 'PBKDF2', false, ['deriveKey']);
     return await crypto.subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt: salt.slice(), iterations: 600_000 },
-      material, { name: 'AES-GCM', length: 256 }, false, [usage]);
+      material, { name: 'AES-GCM', length: 256 }, false, usages);
   } finally { bytes.fill(0); }
 }
 
 /** Only a successful, authenticated restore reaches the cleaning pass. Keep
  * the primary bytes exact for downloads, the session log and usage accounting. */
-export async function processFile(file: File, mode: Mode, passphrase: string, phase: (p: Phase) => void): Promise<VaultResult> {
-  const output = await processArchive(file, mode, passphrase, phase);
+export async function processFile(file: File, mode: Mode, passphrase: string, phase: (p: Phase) => void, verify = false): Promise<VaultResult> {
+  const output = await processArchive(file, mode, passphrase, phase, verify);
   if (mode === 'encrypt') return output;
   phase('cleaning');
   return { ...output, cleanup: await cleanRestoredFile(output) };
@@ -70,7 +70,7 @@ export async function processFile(file: File, mode: Mode, passphrase: string, ph
  * The sealed payload contains a two-byte UTF-8 filename length, filename and original bytes.
  * KDF parameters are fixed by the version; untrusted files cannot request expensive KDF settings.
  */
-async function processArchive(file: File, mode: Mode, passphrase: string, phase: (p: Phase) => void): Promise<OutputFile> {
+async function processArchive(file: File, mode: Mode, passphrase: string, phase: (p: Phase) => void, verify: boolean): Promise<OutputFile> {
   if (!cryptoAvailable()) throw new Error('Local encryption needs Web Crypto over HTTPS. Open this page in a supported browser.');
   const invalid = validateFile(file, mode) || validatePassphrase(passphrase, mode);
   if (invalid) throw new Error(invalid);
@@ -83,22 +83,32 @@ async function processArchive(file: File, mode: Mode, passphrase: string, phase:
       const iv = crypto.getRandomValues(new Uint8Array(IV_SIZE));
       const header = new Uint8Array([...MAGIC, ...salt, ...iv]);
       phase('deriving');
-      const key = await deriveKey(passphrase, salt, 'encrypt');
+      const key = await deriveKey(passphrase, salt, verify ? ['encrypt', 'decrypt'] : ['encrypt']);
       phase('sealing');
       const payload = new Uint8Array(2 + name.length + bytes.length);
       new DataView(payload.buffer).setUint16(0, name.length);
       payload.set(name, 2); payload.set(bytes, 2 + name.length);
       try {
-        const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: header, tagLength: 128 }, key, payload);
+        const algorithm = { name: 'AES-GCM', iv, additionalData: header, tagLength: 128 };
+        const ciphertext = await crypto.subtle.encrypt(algorithm, key, payload);
+        if (verify) {
+          phase('verifying');
+          try {
+            // Authenticate the newly produced ciphertext and header before releasing it.
+            // This is not a second user restore; it must not run cleanup or log a job.
+            const check = new Uint8Array(await crypto.subtle.decrypt(algorithm, key, ciphertext));
+            check.fill(0);
+          } catch { throw new Error('Archive verification failed. No download was created.'); }
+        }
         return { name: `${file.name}.zeox`, blob: new Blob([header, ciphertext], { type: 'application/octet-stream' }) };
       } finally { payload.fill(0); }
     }
-    if (!MAGIC.every((v, i) => bytes[i] === v)) throw new Error('Unrecognized archive or format version. Select a file created by Zeox Vault.');
+    if (!MAGIC.every((v, i) => bytes[i] === v)) throw new Error('Unrecognized archive or format version. Select a supported .zeox archive.');
     const header = bytes.subarray(0, HEADER_SIZE);
     const salt = header.subarray(MAGIC.length, MAGIC.length + SALT_SIZE);
     const iv = header.subarray(MAGIC.length + SALT_SIZE);
     phase('deriving');
-    const key = await deriveKey(passphrase, salt, 'decrypt');
+    const key = await deriveKey(passphrase, salt, ['decrypt']);
     phase('restoring');
     let decrypted: ArrayBuffer;
     try {

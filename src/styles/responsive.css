@@ -1,0 +1,137 @@
+/* Intermediate widths retain the rail. Reflow the card interiors rather than
+   shrinking the text to match the downsampled desktop reference. */
+@media (min-width: 720px) and (max-width: 1120px) {
+  .orbit-app { --rail: clamp(64px,7.15vw,80px); --gutter: 16px; --inset: clamp(13px,1.5vw,17px); }
+  .inspector { grid-template-columns: minmax(0,1fr); grid-template-rows: auto 1fr; }
+  .panel-side { padding: var(--inset) var(--inset) 0; border: none; }
+  .side-choices { flex-direction: row; gap: .2em; flex-wrap: wrap; }
+  .panel-side .side-note { display: none; }
+  .report-grid .panel-side .side-note { display: block; order: 2; margin: .65em 0 0; padding: 0; font-size: .85em; }
+  .report-grid .side-note > i { display: none; }
+  .report-grid .side-note p { display: inline; font-size: 1em; letter-spacing: normal; }
+  .report-grid .side-note .pill { margin-left: .4em; }
+  .inline-metrics { gap: .8em; }
+  .ribbon-card .card-head { flex-wrap: wrap; }
+  .panel-tools { margin-bottom: .65em; }
+}
+@media (min-width: 720px) and (max-width: 900px) {
+  .orbit-app { --rail: 57px; --gutter: 12px; --inset: 12px; }
+  .card-actions .small svg, .panel-tools > span > svg, .report-table .token { display: none; }
+  .ribbon-space { padding-top: 2.4em; }
+  .inline-metrics b { font-size: 1.3em; }
+  .theme-trigger > span { display: none; }
+}
+/* Phones, including short landscape viewports: one persistent bottom row,
+   not a collapsed desktop drawer. Safe-area space belongs to the dock. */
+@media (max-width: 719px), (max-width: 959px) and (max-height: 500px), (max-width: 959px) and (pointer: coarse) {
+  html:has(.orbit-app) { scroll-padding-bottom: calc(82px + env(safe-area-inset-bottom, 0px)); }
+  .orbit-app { --round: 38px; --top-h: 58px; --rail: 50px; --gutter: clamp(10px,3.4vw,20px); --gap: 8px; --radius: 19px; --inset: clamp(14px,3.8vw,21px); --intro: auto; --top-row: 138px; --bottom-row: 285px;
+    font-size: 14px; }
+  .topbar { gap: 8px; padding: calc(8px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px)); }
+  .brand { gap: .35em; margin-right: auto; font-size: 19px; }
+  .brand img { width: 26px; }
+  .search-trigger { width: 36px; height: 36px; padding: 0; justify-content: center; }
+  .search-trigger span, .guide-trigger, .theme-trigger > span { display: none; }
+  .top-end { gap: 6px; margin: 0; }
+  .topbar .round, .topbar .account { width: 36px; height: 36px; }
+  .workspace-layout { display: block; }
+  #workspace { padding: 0 max(var(--gutter),env(safe-area-inset-right,0px)) calc(85px + env(safe-area-inset-bottom,0px)) max(var(--gutter),env(safe-area-inset-left,0px)); }
+  .dock { border-right: 0; position: fixed; inset: auto 0 0; margin: 0; padding: 5px max(6px,env(safe-area-inset-right,0px)) calc(5px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-left,0px)); background: var(--base); border-top: 1px solid var(--edge); box-shadow: 0 -5px 24px #0003; }
+  .dock-items { position: static; padding: 0; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0,1fr); gap: 0; max-width: 600px; margin-inline: auto; }
+  .dock a, .dock button { width: 100%; flex-direction: column; gap: 2px; border-radius: 12px; padding: 3px 0; }
+  .dock i { width: 33px; height: 33px; }
+  .dock svg { width: 45%; height: 45%; }
+  .dock span { position: static; padding: 0; border: 0; opacity: 1; background: none; color: var(--muted); box-shadow: none; font-size: 11px; line-height: 1.4; }
+  .dock [aria-current] span { color: var(--ink); font-weight: 700; }
+  .page-title { min-height: 0; align-items: flex-start; gap: .7em; flex-direction: column; padding-block: 14px; }
+  h1 { font-size: 30px; }
+  .title-line { gap: .65em; }
+  .private-tag { font-size: 10px; }
+  .page-actions { align-self: flex-end; }
+  .greeting { font-size: 13px; }
+  .desk-grid { grid-template-columns: minmax(0,1fr); }
+  .desk-grid > .card { grid-column: 1; }
+  .card h2 { font-size: 18px; }
+  .ribbon-card .card-head { flex-wrap: wrap; row-gap: .45em; }
+  .inline-metrics { gap: 1em; }
+  .inline-metrics b { font-size: 19px; }
+  .ribbon-space { padding-top: 2.8em; }
+  .ribbon .band { gap: .35em; padding-inline: .45em; }
+  .band b { font-size: .8em; }
+  .band i { width: 1.3em; height: 1.3em; }
+  .bead { right: 8%; width: 41px; height: 41px; top: -2px; }
+  .ribbon small { font-size: .82em; }
+
+  .bars { gap: 9px; }
+  .reading { padding: 10px; }
+  .reading-head i { width: 26px; height: 26px; }
+  .reading dl div { font-size: .84em; }
+  .inspector { display: flex; flex-direction: column; min-height: 0; }
+  .panel-side { flex-direction: row; align-items: center; padding: var(--inset) var(--inset) 0; border: none; }
+  .side-choices { flex-direction: row; flex-wrap: wrap; gap: 3px; }
+  .panel-side .side-note { display: none; }
+  .report-grid .panel-side { flex-direction: column; align-items: flex-start; }
+  .report-grid .panel-side .side-note { display: flex; gap: .7em; align-items: center; padding: .65em 0 0; }
+  .report-grid .side-note i { display: none; }
+  .report-grid .side-note p { font-size: 12px; letter-spacing: normal; margin: 0; }
+  .report-grid .side-note .pill { font-size: 11px; }
+  .panel-body { padding: var(--inset); }
+  .panel-tools { margin-bottom: .55em; }
+  .plot-context { margin-top: .35em; }
+  .search-box input { font-size: 16px; }
+  .sheet { font-size: 14px; }
+  .ledger-card { min-height: 220px; }
+}
+@media (max-width: 374px) {
+  .topbar { gap: 5px; }
+  .search-trigger { padding: 0 .6em; font-size: 12px; }
+  .top-end { gap: 4px; }
+  .topbar .round, .topbar .account { width: 32px; height: 32px; }
+  .title-line { gap: .4em; }
+  .private-tag { font-size: 9px; padding: .4em .55em; }
+  .report-table .token { display: none; }
+  .reading-head i { display: none; }
+  .reading { font-size: 12px; }
+}
+@media (min-width: 500px) and (max-width: 959px) and (max-height: 500px), (min-width: 500px) and (max-width: 719px) {
+  .orbit-app { --top-h: 47px; --inset: 13px; --top-row: 138px; --bottom-row: 260px; }
+  .page-title { flex-direction: row; align-items: center; padding-block: 10px; }
+  .page-actions { align-self: center; }
+  .page-title h1 { font-size: 26px; }
+  .title-line { gap: 5px; }
+  .desk-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .desk-grid > .card { grid-column: auto; }
+  .ribbon-space { padding-top: 2.4em; }
+  .report-table .token { display: none; }
+  .dock { padding-top: 2px; padding-bottom: calc(2px + env(safe-area-inset-bottom,0px)); }
+  .dock i { width: 27px; height: 27px; }
+  .dock span { font-size: 10px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dock i, .search-trigger { transition: background-color .14s ease, border-color .14s ease; }
+  .bar-well i { transition: height .22s ease; }
+}
+
+@media (max-width: 499px) {
+  .page-title > div:first-child { display: grid; width: 100%; grid-template-columns: minmax(0,1fr) auto; align-items: center; row-gap: .22em; }
+  .title-line { display: contents; }
+  .title-line h1 { grid-column: 1/-1; grid-row: 2; }
+  .title-line .private-tag { grid-column: 2; grid-row: 1; }
+}
+@media (max-width: 374px) { .guide-trigger { display: none; } }
+/* Report ribbons adapt to the available track rather than a guessed device. */
+@container flow (max-width: 530px) {
+  .ribbon { grid-template-columns: minmax(0,var(--one,1.9fr)) minmax(4.9em,var(--two,1fr)) minmax(4.9em,var(--three,1fr)); }
+  .ribbon .band { justify-content: center; padding-inline: .35em; }
+  .ribbon .band b { font-size: .84em; }
+  .ribbon .band i { display: none; }
+  .ribbon li:first-child .band { justify-content: flex-start; padding-left: .7em; }
+  .ribbon li:first-child .bead { right: 6%; }
+  .ribbon li[aria-current]:not(:first-child) .band b { margin-left: 0; }
+  .ribbon li:not(:first-child) .bead { width: 1.7em; height: 1.7em; left: auto; right: .4em; top: -1.33em; }
+  .ribbon li:not(:first-child) .bead em { left: auto; right: calc(100% + 3px); bottom: .26em; transform: none; }
+}
+@container flow (max-width: 285px) {
+  .ribbon li:first-child .bead { width: 1.85em; height: 1.85em; top: -1.4em; right: .3em; }
+  .ribbon li:first-child .bead em { left: auto; right: calc(100% + 3px); bottom: .26em; transform: none; }
+}

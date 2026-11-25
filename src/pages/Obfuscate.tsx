@@ -1,110 +1,104 @@
 import { useRef } from 'react';
-import { ArrowRight, Check, CircleAlert, FileCheck2, Layers3 } from 'lucide-react';
-import { AttachmentField } from '../components/source/AttachmentField';
-import { BuildSettings } from '../components/source/BuildSettings';
-import { OutputFile } from '../components/source/OutputFile';
-import { SOURCE_LIMIT } from '../lib/source/compact';
-import { formatSize } from '../lib/vault/container';
+import { Link } from 'react-router-dom';
+import { ArrowRight, ArrowUpRight, Braces } from 'lucide-react';
+import { FilePicker } from '../components/FilePicker';
+import { EncodingReference } from '../components/source/EncodingReference';
+import { SourceDownload } from '../components/source/OutputFile';
+import { CardTitle, PageTitle } from '../components/orbit/Panels';
+import { Toggle } from '../components/ui/Toggle';
 import { useSourceTool } from '../components/workspace/ToolSessions';
-import { CapacityTile } from '../components/workspace/InstrumentTiles';
-import '../components/source/workshop.css';
+
+import { transforms } from '../components/source/transforms';
 
 export function Obfuscate() {
   const tool = useSourceTool(),
-    { file, reading, result, issue } = tool,
+    { file, reading, result, issue } = tool;
+  const browse = useRef<HTMLButtonElement>(null),
     builtHere = useRef(false);
-  const step = result ? 2 : file && !reading ? 1 : 0;
   return (
-    <div className="station-board source-board">
-      <section className="ws-panel station-work src-job" aria-labelledby="src-title">
-        <header className="station-head">
-          <div>
-            <small className="eyebrow">SOURCE STATION / 01</small>
-            <h2 id="src-title">Script intake</h2>
-          </div>
-          <span className="source-badge">
-            <Layers3 size={13} /> LUA + LUAU
-          </span>
-        </header>
-        <AttachmentField tool={tool} />
-        {issue?.field === 'build' && (
-          <p className="src-error" role="alert">
-            <CircleAlert size={15} />
-            {issue.message} Fix the file and attach it again.
-          </p>
-        )}
-        <footer className="src-foot">
-          {result ? (
-            <OutputFile file={result} focusDownload={builtHere.current} />
-          ) : (
-            <>
-              <span className="src-status" role="status">
-                <i />
-                {reading ? 'Reading file…' : file ? 'File attached' : 'Waiting for a file'}
-              </span>
-              <button
-                className="ws-button ws-primary src-action"
-                disabled={!file || reading}
-                onClick={() => {
-                  builtHere.current = true;
-                  tool.build();
-                }}
-              >
-                Obfuscate file <ArrowRight size={15} />
-              </button>
-            </>
+    <div className="task-page source-tool">
+      <PageTitle
+        kicker="Script workspace"
+        badge="On this device"
+        title="Lua Obfuscator"
+        description="Build a separate copy of your Lua or Luau script with the transforms you choose."
+      >
+        <button
+          className="pill paper run-action"
+          type="button"
+          disabled={!file || reading || !!result}
+          onClick={() => {
+            builtHere.current = true;
+            tool.build();
+          }}
+        >
+          <Braces aria-hidden="true" />
+          {result ? 'Built' : 'Obfuscate file'}
+          <ArrowRight aria-hidden="true" />
+        </button>
+      </PageTitle>
+      <div className="work-pair">
+        <FilePicker
+          title="Choose a script"
+          legend="Source file"
+          label="Attach Lua or Luau file"
+          accept=".lua,.luau"
+          hint="One UTF-8 .lua or .luau script"
+          limitLabel="512 KiB"
+          file={file}
+          select={tool.attach}
+          remove={tool.remove}
+          browse={browse}
+          reading={reading}
+          errorId={issue?.field === 'file' ? 'source-error' : undefined}
+          feedback={
+            issue?.field === 'file' && (
+              <p id="source-error" className="error" role="alert">
+                {issue.message}
+                {file ? ' Your previous file is still attached.' : ''}
+              </p>
+            )
+          }
+        />
+        <section id="build-settings" className="card settings-card" aria-label="Build configuration" tabIndex={-1}>
+          <CardTitle step="02" title="Build settings">
+            <span className="quiet-badge">{Object.values(tool.options).filter(Boolean).length} enabled</span>
+          </CardTitle>
+          <fieldset className="transform-options">
+            <legend className="sr-only">Build settings</legend>
+            {transforms.map(([key, label, hint, mark]) => (
+              <label className="transform-option" key={key}>
+                <i className={`token token-${key}`} aria-hidden="true">
+                  {mark}
+                </i>
+                <span>
+                  <b id={`opt-${key}`}>{label}</b>
+                  <small id={`hint-${key}`}>{hint}</small>
+                </span>
+                <Toggle
+                  checked={tool.options[key]}
+                  labelledBy={`opt-${key}`}
+                  describedBy={`hint-${key}`}
+                  change={(on) => tool.configure(key, on)}
+                />
+              </label>
+            ))}
+          </fieldset>
+          {issue?.field === 'build' && (
+            <p className="error" role="alert">
+              {issue.message}
+            </p>
           )}
-        </footer>
-      </section>
-      <section className="ws-panel station-info src-profile" aria-label="Build profile">
-        <small className="eyebrow">PROCESSOR</small>
-        <h2>Build profile</h2>
-        <div className="profile-value">
-          {String(Object.values(tool.options).filter(Boolean).length).padStart(2, '0')}
-          <small> / 03 transforms</small>
-        </div>
-        <BuildSettings tool={tool} />
-        <dl className="fact-list">
-          <div>
-            <dt>Input encoding</dt>
-            <dd>UTF-8</dd>
-          </div>
-          <div>
-            <dt>Runtime</dt>
-            <dd>On device</dd>
-          </div>
-          <div>
-            <dt>Output</dt>
-            <dd>Separate file</dd>
-          </div>
-        </dl>
-      </section>
-      <CapacityTile label="512 KiB" limit={SOURCE_LIMIT} size={file?.size ?? null} />
-      <section className="ws-panel station-flow src-flow" aria-label="Build pipeline">
-        <h2>Build pipeline</h2>
-        <ol aria-label="File workflow">
-          {['Attach', 'Build', 'Save'].map((s, i) => (
-            <li key={s} aria-current={i === step ? 'step' : undefined}>
-              <i>{i < step ? <Check size={13} /> : String(i + 1).padStart(2, '0')}</i>
-              {s}
-            </li>
-          ))}
-        </ol>
-      </section>
-      <section className="ws-panel station-note src-receipt" aria-label="Build receipt">
-        <div>
-          <FileCheck2 size={18} />
-          <h2>Build receipt</h2>
-        </div>
-        <strong>{result ? formatSize(result.blob.size) : 'No output yet'}</strong>
-        <p>
-          {result ? (
-            <bdi dir="ltr">{result.name}</bdi>
-          ) : (
-            'Attach a script and build a copy. Your original stays unchanged.'
-          )}
-        </p>
-      </section>
+        </section>
+      </div>
+      <SourceDownload file={result} focusDownload={builtHere.current} failed={issue?.field === 'build'} />
+      <EncodingReference />
+      <p className="archive-note">
+        Need a passphrase-protected archive instead?{' '}
+        <Link to="/encrypt">
+          File encryption <ArrowUpRight aria-hidden="true" />
+        </Link>
+      </p>
     </div>
   );
 }

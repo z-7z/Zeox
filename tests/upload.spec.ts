@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './guest-workspace';
 import { attach, downloadOutput } from './attachments';
 import { go } from './navigation';
 
@@ -7,16 +7,15 @@ const noCodePane = 'textarea, [contenteditable="true"], [role="textbox"], pre, .
 test('empty intake → native keyboard chooser → local build → downloadable file, never an editor', async ({ page, context }) => {
   await page.goto('/obfuscate', { waitUntil: 'networkidle' }); await context.setOffline(true);
   const build = page.getByRole('button', { name: 'Obfuscate file' }), choose = page.getByRole('button', { name: 'Choose file' });
-  const stage = page.getByRole('list', { name: 'File workflow' }).locator('[aria-current=step]');
-  await expect(stage).toContainText('Attach'); await expect(build).toBeDisabled();
+  await expect(build).toBeDisabled();
   await expect(page.locator(noCodePane)).toHaveCount(0); await expect(page.getByRole('button', { name: /example|sample/i })).toHaveCount(0);
-  await expect(page.locator('input[type=file]')).toHaveAttribute('accept', '.lua,.luau'); await expect(page.getByRole('checkbox')).toHaveCount(0);
+  await expect(page.locator('input[type=file]')).toHaveAttribute('accept', '.lua,.luau'); await expect(page.getByRole('switch')).toHaveCount(3);
   await choose.focus(); const [picker] = await Promise.all([page.waitForEvent('filechooser'), choose.press('Enter')]);
   expect(picker.isMultiple()).toBe(false);
   const input = '--!strict\r\n-- note\r\nreturn "hi"\r\n', output = '--!strict\nreturn "\\104\\105"\n';
   await picker.setFiles({ name: 'reward.LUAU', mimeType: '', buffer: Buffer.from(input) });
-  await expect(stage).toContainText('Build'); await expect(page.getByRole('group', { name: 'Source file' })).toContainText('reward.LUAU');
-  await build.click(); await expect(stage).toContainText('Save');
+  await expect(build).toBeEnabled(); await expect(page.getByRole('group', { name: 'Source file' })).toContainText('reward.LUAU');
+  await build.click();
   await expect(page.getByRole('link', { name: 'Download file' })).toBeFocused();
   expect(await downloadOutput(page)).toEqual({ name: 'reward.obf.LUAU', bytes: Buffer.from(output) });
   await expect(page.locator(noCodePane)).toHaveCount(0); await expect(page.locator('main')).not.toContainText('return "hi"'); await expect(page.locator('main')).not.toContainText('\\104\\105');
@@ -35,8 +34,7 @@ test('file drops share the same validation; multiple files and plain text are no
     return data;
   }, names);
   const drop = async (names: string[]) => {
-    const dataTransfer = await transfer(names); await zone.dispatchEvent('dragenter', { dataTransfer });
-    if (names.length) await expect(zone).toContainText('Drop to attach');
+    const dataTransfer = await transfer(names);
     await zone.dispatchEvent('drop', { dataTransfer }); await dataTransfer.dispose();
   };
   const build = page.getByRole('button', { name: 'Obfuscate file' }); await drop([]); await expect(build).toBeDisabled();
@@ -51,11 +49,11 @@ test('file drops share the same validation; multiple files and plain text are no
 test('turning off transformations preserves a 512 KiB attachment byte-for-byte, including BOM and CRLF', async ({ page, context }) => {
   const input = Buffer.alloc(512 * 1024, 32); Buffer.from('\ufeff-- header\r\nlocal  a = "ملف"\r\nreturn  a\r\n').copy(input);
   await page.goto('/obfuscate', { waitUntil: 'networkidle' }); await context.setOffline(true);
-  await attach(page, 'قطعة.lua', input); await page.locator('summary').focus(); await page.keyboard.press('Space');
-  for (const label of ['Encode text literals', 'Remove comments', 'Compact spacing']) await page.getByRole('checkbox', { name: label }).uncheck();
-  await expect(page.locator('summary')).toContainText('0 enabled'); await page.getByRole('button', { name: 'Obfuscate file' }).click();
+  await attach(page, 'قطعة.lua', input); const first = page.getByRole('switch', { name: 'Encode text literals' }); await first.focus(); await first.press('Space'); await expect(first).not.toBeChecked();
+  for (const label of ['Encode text literals', 'Remove comments', 'Compact spacing']) await page.getByRole('switch', { name: label }).uncheck();
+  await expect(page.getByRole('group', { name: 'Build settings' }).locator('input:checked')).toHaveCount(0); await page.getByRole('button', { name: 'Obfuscate file' }).click();
   const output = await downloadOutput(page); expect(output.name).toBe('قطعة.compact.lua'); expect(output.bytes.equals(input)).toBe(true);
-  await page.getByRole('checkbox', { name: 'Encode text literals' }).check(); await expect(page.getByRole('link', { name: 'Download file' })).toHaveCount(0);
+  await page.getByRole('switch', { name: 'Encode text literals' }).check(); await expect(page.getByRole('link', { name: 'Download file' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Obfuscate file' })).toBeEnabled();
 });
 
@@ -76,7 +74,7 @@ test('a slow read cannot overwrite a replacement or resurrect a removed attachme
   const zone = page.getByRole('group', { name: 'Source file' }), build = page.getByRole('button', { name: 'Obfuscate file' });
   async function hold(name: string) { await attach(page, name); await expect(page.locator('body')).toHaveAttribute('data-read-held', name); await expect(zone).toHaveAttribute('aria-busy', 'true'); await expect(build).toBeDisabled(); }
   async function resume() { await page.evaluate(() => window.dispatchEvent(new Event('resume-read'))); await expect(page.locator('body')).not.toHaveAttribute('data-read-held'); }
-  await hold('slow-first.lua'); await go(page, 'Usages'); await go(page, 'Obfuscate'); await expect(build).toBeDisabled();
+  await hold('slow-first.lua'); await go(page, 'Usages'); await go(page, 'Obfuscator'); await expect(build).toBeDisabled();
   await attach(page, 'latest.lua', 'return 2'); await expect(zone).toContainText('latest.lua'); await resume();
   await build.click(); expect(await downloadOutput(page)).toEqual({ name: 'latest.obf.lua', bytes: Buffer.from('return 2') });
   await hold('slow-next.luau'); await page.getByRole('button', { name: 'Remove file' }).click(); await resume();

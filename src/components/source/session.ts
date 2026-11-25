@@ -9,7 +9,7 @@ type Issue = { field: 'file' | 'build'; message: string };
 async function readScript(files: File[]): Promise<Attachment> {
   if (files.length !== 1) throw new Error('Attach one script at a time.');
   const [file] = files;
-  if (!/\.(lua|luau)$/i.test(file.name)) throw new Error('Choose a .lua or .luau file. For Roblox models and places, use Vault.');
+  if (!/\.(lua|luau)$/i.test(file.name)) throw new Error('Choose a .lua or .luau file. For Roblox models and places, use File encryption.');
   if (file.size > SOURCE_LIMIT) throw new Error('The file must be 512 KiB or smaller.');
   let text: string;
   try {

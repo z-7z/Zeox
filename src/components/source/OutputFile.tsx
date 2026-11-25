@@ -1,19 +1,60 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowDownToLine, FileCheck2 } from 'lucide-react';
+import { Download } from 'lucide-react';
+import { DownloadPanel } from '../studio/DownloadPanel';
 import { formatSize } from '../../lib/vault/container';
 import type { SourceArtifact } from './session';
 
-export function OutputFile({ file, focusDownload }: { file: SourceArtifact; focusDownload: boolean }) {
-  const [url, setUrl] = useState(''), link = useRef<HTMLAnchorElement>(null);
+export function SourceDownload({
+  file,
+  focusDownload,
+  failed,
+}: {
+  file: SourceArtifact | null;
+  focusDownload: boolean;
+  failed: boolean;
+}) {
+  const [link, setLink] = useState<{ file: SourceArtifact; url: string } | null>(null),
+    ref = useRef<HTMLAnchorElement>(null);
   useEffect(() => {
-    const next = URL.createObjectURL(file.blob); setUrl(next);
-    return () => URL.revokeObjectURL(next);
+    if (!file) {
+      setLink(null);
+      return;
+    }
+    const url = URL.createObjectURL(file.blob);
+    setLink({ file, url });
+    return () => URL.revokeObjectURL(url);
   }, [file]);
-  useEffect(() => { if (url && focusDownload) link.current?.focus({ preventScroll: true }); }, [url, focusDownload]);
-  return <>
-    <div className="src-result" role="status"><FileCheck2 size={20} aria-hidden="true" /><div>
-      <small>Output ready · {formatSize(file.blob.size)}</small><bdi dir="ltr" title={file.name}>{file.name}</bdi>
-    </div></div>
-    {url && <a ref={link} href={url} download={file.name} className="ws-button ws-primary src-action"><ArrowDownToLine size={15} aria-hidden="true" />Download file</a>}
-  </>;
+  const url = link?.file === file ? link?.url : undefined;
+  useEffect(() => {
+    if (url && focusDownload) ref.current?.focus();
+  }, [url, focusDownload]);
+  return (
+    <DownloadPanel
+      kind="script"
+      result={file && url ? { name: file.name, size: file.blob.size } : undefined}
+      failed={failed}
+      job={
+        file && !url ? { title: 'Preparing download', step: 'Preparing download', completed: 0, total: 1 } : undefined
+      }
+      note={
+        failed
+          ? 'Check the build error, then try again.'
+          : file
+            ? 'Your transformed script is ready to save.'
+            : 'Select Obfuscate file above to make a separate download. Your original stays unchanged.'
+      }
+    >
+      {file && url && (
+        <>
+          <span className="sr-only" role="status">
+            {file.name} ({formatSize(file.blob.size)})
+          </span>
+          <a className="pill paper" ref={ref} href={url} download={file.name}>
+            <Download aria-hidden="true" />
+            Download file
+          </a>
+        </>
+      )}
+    </DownloadPanel>
+  );
 }
