@@ -33,7 +33,11 @@ export function Workspace() {
     }
     previous.current = key;
     function shortcut(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k' && !document.querySelector('dialog[open]')) {
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        e.key.toLowerCase() === 'k' &&
+        !document.querySelector('dialog[open], [role="listbox"]')
+      ) {
         e.preventDefault();
         setOverlay({ kind: 'search', key });
       }

@@ -1,0 +1,86 @@
+/* Paper is a surface, not a page theme. The shell can change appearance;
+   every workspace card, dialog and portaled options list stays white. */
+.card, .sheet, .choice-menu {
+  color-scheme: light;
+  --panel: #fff; --ink: #26222b; --muted: #605b65; --soft: #6e6673;
+  --line: #e4e0e7; --edge: #c6c0ca; --raised: #f4f1f6;
+  --paper: #28232d; --on-paper: #fff; --focus: #69409b; --tint: #763e83;
+  --hatch: repeating-linear-gradient(51deg,#e9e5eb 0 6px,#d7d1db 6px 10px);
+  background: var(--panel); color: var(--ink);
+}
+.card { box-shadow: 0 3px 9px -7px #251d313b; }
+.card .card-head { align-items: center; }
+.card-heading { min-width: 0; }
+.step-number + .card-heading { margin-right: auto; }
+.card-head > .card-actions { margin-left: auto; }
+.step-number { display: inline-grid; place-items: center; width: 2.35em; height: 2.35em; border-radius: 50%; flex: none; margin-right: .27em; font: 650 .85em/1 ui-monospace,monospace; color: #513765; background: #efe8f4; }
+.card .quiet-badge, .card-actions .tag { color: #504957; background: #f6f4f7; border: 1px solid var(--line); font-size: .8em; font-weight: 620; }
+.card .error { background: #fff1f2; color: #842940; border-color: #d9a8b0; }
+.pill { line-height: 1.25; }
+.pill:active:not(:disabled), .choice-trigger:active:not(:disabled) { transform: translateY(1px); }
+.pill.paper:disabled { opacity: 1; color: #69626f; background: #e2dde6; border-color: #e2dde6; }
+.text-action { display: inline-flex; align-items: center; justify-content: center; gap: .36em; padding: .3em .65em; border: 1px solid var(--line); border-radius: 99px; color: #52366d; background: #f6f2fa; font-weight: 650; font-size: .88em; }
+.text-action:hover:not(:disabled) { background: #ede4f5; border-color: #c7b4d6; }
+.text-action:disabled { color: var(--muted); background: var(--raised); }
+/* A headless select; both the closed trigger and the open menu belong to the site. */
+.choice-trigger { display: inline-flex; align-items: center; justify-content: space-between; gap: .6em; max-width: 100%; min-height: 38px; padding: .52em .9em; border: 1px solid var(--edge); border-radius: 99px; color: var(--ink); background: var(--panel); font-weight: 570; font-size: .92em; line-height: 1.25; }
+.page-actions .choice-trigger { color: var(--on-paper); background: var(--paper); border-color: var(--paper); min-height: var(--round); }
+.choice-trigger:hover:not(:disabled), .choice-trigger[data-state="open"] { box-shadow: inset 0 0 0 1px currentColor; }
+.chevron { width: 1em; height: 1em; flex: none; }
+.choice-trigger[data-state="open"] .chevron, .disclosure[open] > summary .chevron { transform: rotate(180deg); }
+.choice-menu { z-index: 9; min-width: min(12rem,calc(100vw - 20px)); width: max-content; max-width: calc(100vw - 20px); max-height: var(--radix-select-content-available-height); overflow: hidden; padding: 5px; border: 1px solid var(--edge); border-radius: 14px; box-shadow: 0 12px 34px #251b3533, 0 2px 6px #251b3512; font: 550 14px/1.35 Manrope,system-ui,sans-serif; }
+.choice-option { display: flex; align-items: center; justify-content: space-between; gap: .55em; min-height: 38px; padding: .48em .65em; border-radius: 9px; cursor: pointer; user-select: none; }
+.choice-option[data-state="checked"] { color: #4e3167; }
+.choice-option[data-highlighted] { color: #452957; background: #eee6f4; outline: 0; }
+.choice-option svg { vertical-align: middle; }
+/* Visually custom, semantically native: toggles, range and segmented radios. */
+.zf-toggle { position: relative; display: inline-flex; align-items: center; min-height: 36px; flex: none; margin-left: auto; }
+.zf-toggle input, .mode-picker input { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; opacity: 0; margin: 0; cursor: pointer; }
+.toggle-track { width: 42px; height: 24px; border-radius: 99px; padding: 2px; background: #e6e2e9; border: 1px solid #8c8592; }
+.toggle-track i { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: #fff; color: #563465; box-shadow: 0 1px 4px #0d071d4d; }
+.toggle-track svg { width: 12px; height: 12px; opacity: 0; stroke-width: 3; }
+.zf-toggle input:checked + .toggle-track { background: #705285; border-color: #705285; }
+.zf-toggle input:checked + .toggle-track i { transform: translateX(18px); }
+.zf-toggle input:checked + .toggle-track svg { opacity: 1; }
+.zf-toggle input:focus-visible + .toggle-track, .mode-picker input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 3px; }
+.zf-toggle input:disabled, .mode-picker input:disabled { cursor: not-allowed; }
+.zf-toggle input:disabled + .toggle-track, .mode-picker:disabled { opacity: .66; }
+.mode-picker { display: inline-flex; padding: 4px; background: var(--raised); border: 1px solid var(--edge); border-radius: 99px; }
+.mode-picker label { position: relative; }
+.mode-picker label span { display: flex; align-items: center; gap: .45em; padding: .52em .95em; color: var(--muted); border-radius: 99px; font-weight: 580; }
+.mode-picker input:checked + span { background: var(--paper); color: var(--on-paper); box-shadow: 0 1px 4px #0002; }
+.range-field { margin: 1.25em 0; padding: 1.05em; background: #f7f4f9; border: 1px solid var(--line); border-radius: 16px; }
+.range-field > div { display: flex; align-items: center; justify-content: space-between; gap: .65em; }
+.range-field label { font-weight: 620; }
+.range-field strong { border-radius: 8px; padding: .25em .6em; color: #55336a; background: #eae0f0; font-variant-numeric: tabular-nums; }
+.range-field input { --track: linear-gradient(to right,#77558f var(--fill),#dcd5e2 var(--fill)); display: block; width: 100%; height: 36px; margin: .35em 0 0; padding: 0; background: transparent; cursor: pointer; border-radius: 8px; }
+.range-field input::-webkit-slider-runnable-track { height: 6px; border-radius: 99px; background: var(--track); }
+.range-field input::-moz-range-track { height: 6px; border-radius: 99px; background: var(--track); }
+.range-field input::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; margin-top: -8px; border: 5px solid #6c4b83; border-radius: 50%; background: white; box-shadow: 0 2px 4px #40275033; }
+.range-field input::-moz-range-thumb { box-sizing: border-box; width: 22px; height: 22px; border: 5px solid #6c4b83; border-radius: 50%; background: white; box-shadow: 0 2px 4px #40275033; }
+.range-ends { font: .8em ui-monospace,monospace; color: var(--muted); }
+.dialog-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: .5em; }
+.disclosure { padding: 0; margin-top: var(--gap); }
+.disclosure > summary { list-style: none; display: flex; align-items: center; gap: .7em; padding: 1em var(--inset); border-radius: inherit; font-weight: 600; }
+.disclosure > summary::-webkit-details-marker { display: none; }
+.disclosure > summary:hover { background: var(--raised); }
+.disclosure > summary small { padding: .12em .55em; border-radius: 99px; font-size: .8em; color: var(--muted); background: var(--raised); }
+.disclosure > summary .chevron { margin-left: auto; }
+.disclosure-body { padding: 0 var(--inset) var(--inset); }
+.disclosure-body > .card { border: 0; box-shadow: none; padding: 0; }
+.disclosure-body .event-list { max-height: 18em; overflow: auto; margin-bottom: 1em; }
+.disclosure.inset { border: 1px solid var(--line); background: #f8f7f9; border-radius: 13px; }
+.disclosure.inset > summary { padding: .65em .9em; font-size: .94em; }
+.disclosure.inset > summary small { background: #fff; border: 1px solid var(--line); font-weight: 500; }
+.disclosure.inset .disclosure-body { padding: 0 .9em .3em; }
+.search-box input::-webkit-search-cancel-button { appearance: none; }
+.zf-field::-ms-reveal, .zf-field::-ms-clear { display: none; }
+.sheet, .table-scroll, .log-scroll, .disclosure-body .event-list { scrollbar-width: thin; scrollbar-color: #b5a9bd #f5f1f7; }
+@media (prefers-reduced-motion:no-preference) {
+  .toggle-track i, .chevron { transition: transform .16s ease; }
+  .toggle-track { transition: background-color .16s ease; }
+}
+@media (forced-colors:active) {
+  .toggle-track i, .mode-picker input:checked + span, .choice-option[data-highlighted] { outline: 2px solid Highlight; }
+  .range-field input { appearance: auto; }
+}

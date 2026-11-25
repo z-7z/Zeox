@@ -1,142 +1,174 @@
 import { useEffect, useRef, useState } from 'react';
-import { Dices, KeyRound } from 'lucide-react';
+import { Dices, Eye, EyeOff, KeyRound, SlidersHorizontal } from 'lucide-react';
 import type { VaultSession } from './session';
-import { generatePassphrase } from './passphrase';
-import { SectionHead } from '../studio/Studio';
+import { PassphraseGenerator } from './PassphraseGenerator';
+import { CardTitle } from '../orbit/Panels';
+import { Choice } from '../ui/Choice';
+import { Disclosure } from '../ui/Disclosure';
+import { Toggle } from '../ui/Toggle';
 
+const filenames = [
+  { value: 'source', label: 'Use source name' },
+  { value: 'neutral', label: 'Use archive.zeox' },
+] as const;
 export function EncryptionOptions({ session: s, busy }: { session: VaultSession; busy: boolean }) {
   const encrypt = s.mode === 'encrypt',
     { problem } = s;
   const [visible, setVisible] = useState(false),
+    [generating, setGenerating] = useState(false),
     [generated, setGenerated] = useState(false);
   const pass = useRef<HTMLInputElement>(null),
     confirm = useRef<HTMLInputElement>(null);
+  const shown = visible && !busy,
+    EyeIcon = shown ? EyeOff : Eye;
   useEffect(() => {
     if (problem?.field === 'pass') pass.current?.focus();
     if (problem?.field === 'confirm') confirm.current?.focus();
   }, [problem]);
+  const passError = problem?.field === 'pass',
+    confirmError = problem?.field === 'confirm';
   return (
-    <fieldset disabled={busy} className="studio-section cipher-options">
+    <fieldset disabled={busy} className="cipher-options">
       <legend className="sr-only">{encrypt ? 'Encryption options' : 'Decryption options'}</legend>
-      <SectionHead index="02" title={encrypt ? 'Encryption options' : 'Decryption options'}>
-        <small className="cipher-badge">AES-256-GCM</small>
-      </SectionHead>
+      <CardTitle step="02" title={encrypt ? 'Set a passphrase' : 'Enter your passphrase'} />
+      <p className="section-help">
+        {encrypt
+          ? 'This is the password you’ll use to open the encrypted file.'
+          : 'Use the same passphrase that protected this archive.'}
+      </p>
       <div className="pass-grid">
         <div>
-          <div className="pass-label">
+          <div className="field-label">
             <label htmlFor="vault-pass">Passphrase</label>
             {encrypt && (
               <button
-                type="button"
                 className="text-action"
+                type="button"
                 aria-label="Generate passphrase"
-                title="Generate a random passphrase"
+                aria-haspopup="dialog"
                 disabled={!s.supported}
-                onClick={() => {
-                  s.editPass(generatePassphrase());
-                  s.editConfirm('');
-                  setVisible(true);
-                  setGenerated(true);
-                  requestAnimationFrame(() => {
-                    pass.current?.focus();
-                    pass.current?.select();
-                  });
-                }}
+                onClick={() => setGenerating(true)}
               >
                 <Dices aria-hidden="true" />
                 Generate
               </button>
             )}
           </div>
-          <input
-            className="studio-field"
-            id="vault-pass"
-            ref={pass}
-            type={visible && !busy ? 'text' : 'password'}
-            value={s.passphrase}
-            placeholder={encrypt ? 'At least 12 characters' : 'Enter the archive passphrase'}
-            onChange={(e) => {
-              s.editPass(e.target.value);
-              setGenerated(false);
-            }}
-            autoComplete={encrypt ? 'new-password' : 'current-password'}
-            maxLength={1024}
-            spellCheck={false}
-            autoCapitalize="none"
-            aria-invalid={problem?.field === 'pass'}
-            aria-describedby={problem?.field === 'pass' ? 'vault-error pass-help' : 'pass-help'}
-          />
+          <div className="secret-input">
+            <input
+              className="zf-field"
+              id="vault-pass"
+              ref={pass}
+              type={shown ? 'text' : 'password'}
+              value={s.passphrase}
+              placeholder={encrypt ? 'At least 12 characters' : 'Archive passphrase'}
+              onChange={(e) => {
+                s.editPass(e.target.value);
+                setGenerated(false);
+              }}
+              autoComplete={encrypt ? 'new-password' : 'current-password'}
+              maxLength={1024}
+              spellCheck={false}
+              autoCapitalize="none"
+              aria-invalid={passError}
+              aria-describedby={passError ? 'vault-error pass-help' : 'pass-help'}
+            />
+            <button
+              type="button"
+              className="visibility"
+              aria-label="Show passphrase"
+              title={shown ? 'Hide passphrase' : 'Show passphrase'}
+              aria-pressed={shown}
+              onClick={() => setVisible(!visible)}
+            >
+              <EyeIcon aria-hidden="true" />
+            </button>
+          </div>
         </div>
         {encrypt && (
-          <label className="pass-field">
-            Confirm passphrase
+          <div>
+            <div className="field-label">
+              <label htmlFor="vault-confirm">Confirm passphrase</label>
+            </div>
             <input
+              id="vault-confirm"
               ref={confirm}
-              className="studio-field"
-              type={visible && !busy ? 'text' : 'password'}
+              className="zf-field"
+              type={shown ? 'text' : 'password'}
               value={s.confirmation}
-              placeholder="Repeat your passphrase"
+              placeholder="Type it again"
               onChange={(e) => s.editConfirm(e.target.value)}
               maxLength={1024}
               autoComplete="new-password"
               spellCheck={false}
               autoCapitalize="none"
-              aria-invalid={problem?.field === 'confirm'}
-              aria-describedby={problem?.field === 'confirm' ? 'vault-error' : undefined}
+              aria-invalid={confirmError}
+              aria-describedby={confirmError ? 'vault-error' : undefined}
             />
-          </label>
+          </div>
         )}
       </div>
+      {(passError || confirmError) && (
+        <p role="alert" id="vault-error" className="error">
+          {problem.message}
+        </p>
+      )}
       {generated && !busy && (
-        <p className="field-hint" role="status">
+        <p className="generator-note" role="status">
           Save the generated passphrase, then enter it again to confirm.
         </p>
       )}
-      <label className="show-pass">
-        <input type="checkbox" checked={visible && !busy} onChange={(e) => setVisible(e.target.checked)} />
-        Show passphrase
-      </label>
-      {encrypt && (
-        <div className="archive-controls">
-          <label className="archive-naming">
-            <span>
-              <b id="name-label">Archive filename</b>
-              <small id="name-help">Only changes the outer .zeox name.</small>
-            </span>
-            <select
-              value={s.archiveName}
-              aria-labelledby="name-label"
-              aria-describedby="name-help"
-              onChange={(e) => s.editArchiveName(e.target.value === 'neutral' ? 'neutral' : 'source')}
-            >
-              <option value="source">Use source name</option>
-              <option value="neutral">Use archive.zeox</option>
-            </select>
-          </label>
-          <label className="verify-option">
-            <span>
-              <b id="verify-label">Verify archive</b>
-              <small id="verify-help">Check the authentication tag before download.</small>
-            </span>
-            <span className="studio-toggle">
-              <input
-                type="checkbox"
-                checked={s.verify}
-                aria-labelledby="verify-label"
-                aria-describedby="verify-help"
-                onChange={(e) => s.editVerify(e.target.checked)}
-              />
-              <i aria-hidden="true" />
-            </span>
-          </label>
-        </div>
-      )}
       <p className="field-hint" id="pass-help">
         <KeyRound aria-hidden="true" />
-        {encrypt
-          ? 'A lost passphrase cannot be recovered.'
-          : 'The same passphrase is required. No file is released before authentication.'}
+        {encrypt ? 'Keep it safe. There’s no password reset.' : 'A wrong passphrase won’t release a file.'}
       </p>
+      {encrypt && (
+        <Disclosure
+          title="Archive options"
+          detail={s.verify || s.archiveName !== 'source' ? 'Custom' : 'Optional'}
+          icon={SlidersHorizontal}
+          inset
+        >
+          <div className="option-row">
+            <div>
+              <label htmlFor="archive-naming">Archive filename</label>
+              <small id="name-help">Only changes the name of the .zeox copy.</small>
+            </div>
+            <Choice
+              id="archive-naming"
+              label="Archive filename"
+              describedBy="name-help"
+              options={filenames}
+              value={s.archiveName}
+              change={s.editArchiveName}
+              disabled={busy}
+            />
+          </div>
+          <label className="option-row">
+            <span>
+              <b id="verify-label">Verify archive</b>
+              <small id="verify-help">Check the encrypted copy before download.</small>
+            </span>
+            <Toggle checked={s.verify} change={s.editVerify} labelledBy="verify-label" describedBy="verify-help" />
+          </label>
+        </Disclosure>
+      )}
+      {generating && (
+        <PassphraseGenerator
+          close={() => setGenerating(false)}
+          apply={(value) => {
+            s.editPass(value);
+            s.editConfirm('');
+            setGenerated(true);
+            setVisible(true);
+            setGenerating(false);
+            requestAnimationFrame(() => {
+              pass.current?.focus();
+              pass.current?.select();
+            });
+          }}
+        />
+      )}
     </fieldset>
   );
 }

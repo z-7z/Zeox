@@ -193,7 +193,7 @@ test('reports unsupported, oversized, missing and mismatched inputs without over
 test('session log is metadata only, clearable and transient', async ({ page }) => {
   await page.goto('/vault');
   await useSample(page);
-  const log = page.locator('details'); await log.locator('summary').click();
+  const log = page.locator('details').filter({has:page.locator('summary',{hasText:'Session log'})}); await log.locator('summary').click();
   await expect(log).toContainText('game-config.luau'); await expect(log).not.toContainText(secret);
   await log.getByRole('button', {name:'Clear session log'}).click(); await expect(log).toContainText('No files processed yet');
   await page.reload(); await expect(page.getByLabel('Passphrase', {exact:true})).toHaveValue('');

@@ -15,11 +15,13 @@ export function PageTitle({
   title,
   badge = 'Private workspace',
   kicker = 'ZeoxFucator workspace',
+  description,
   children,
 }: {
   title: string;
   badge?: string;
   kicker?: string;
+  description?: string;
   children?: ReactNode;
 }) {
   return (
@@ -35,14 +37,30 @@ export function PageTitle({
             {badge}
           </span>
         </div>
+        {description && <p className="page-description">{description}</p>}
       </div>
       {children && <div className="page-actions">{children}</div>}
     </header>
   );
 }
-export function CardTitle({ title, context, children }: { title: string; context?: string; children?: ReactNode }) {
+export function CardTitle({
+  title,
+  context,
+  step,
+  children,
+}: {
+  title: string;
+  context?: string;
+  step?: string;
+  children?: ReactNode;
+}) {
   return (
     <header className="card-head">
+      {step && (
+        <span className="step-number" aria-hidden="true">
+          {step}
+        </span>
+      )}
       <div className="card-heading">
         <h2 className={context ? undefined : 'underlined'}>{title}</h2>
         {context && <p className="plot-context">{context}</p>}

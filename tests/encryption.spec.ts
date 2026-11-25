@@ -62,14 +62,17 @@ test('standalone encryption shows real phases and a pending-only skeleton, verif
   const original = Buffer.from('return "private sample"\r\n');
   await chooser.setFiles({ name: 'local.lua', mimeType: 'text/plain', buffer: original });
   await page.getByRole('button', { name: 'Generate passphrase' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Generate & use' }).click();
   const pass = page.getByLabel('Passphrase', { exact: true });
   const secret = await pass.inputValue();
   expect(secret).toMatch(/^[A-Za-z0-9_-]{24}$/);
   const confirmation = page.getByLabel('Confirm passphrase', { exact: true });
   await expect(confirmation).toHaveValue('');
   await confirmation.fill(secret);
-  await page.getByLabel('Archive filename').selectOption('neutral');
-  const verify = page.getByRole('checkbox', { name: 'Verify archive' });
+  await page.getByText('Archive options', { exact: true }).click();
+  await page.getByRole('combobox', { name: 'Archive filename' }).click();
+  await page.getByRole('option', { name: 'Use archive.zeox' }).click();
+  const verify = page.getByRole('switch', { name: 'Verify archive' });
   await verify.check();
   // Hold actual Web Crypto calls. Nothing in the UI advances based on a timer.
   await page.evaluate(() => {
@@ -140,7 +143,8 @@ test('failed verification clears pending UI, cannot be downloaded, and can be re
   await page.goto('/encrypt');
   await page.getByRole('button', { name: 'Use sample' }).click();
   await fillPass(page, 'a private testing passphrase');
-  await page.getByRole('checkbox', { name: 'Verify archive' }).check();
+  await page.getByText('Archive options', { exact: true }).click();
+  await page.getByRole('switch', { name: 'Verify archive' }).check();
   await page.evaluate(() => {
     const decrypt = SubtleCrypto.prototype.decrypt;
     SubtleCrypto.prototype.decrypt = async function () {

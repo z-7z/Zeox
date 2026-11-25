@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, CalendarDays, ChevronDown, Download } from 'lucide-react';
+import { ArrowUpRight, CalendarDays, Download, Table2 } from 'lucide-react';
 import { dateRange, dayLabel, type SamplePeriod } from '../components/dashboard/period';
 import { number, sampleReport } from '../components/dashboard/sample';
 import { useUsage } from '../components/workspace/UsageSession';
@@ -8,6 +8,13 @@ import { BarPanel, type BarDatum } from '../components/orbit/BarPanel';
 import { CardTitle, PageTitle, Ribbon, SideNote } from '../components/orbit/Panels';
 import { downloadText } from '../lib/download';
 
+import { Choice } from '../components/ui/Choice';
+import { Disclosure } from '../components/ui/Disclosure';
+
+const periods = [
+  { value: 7, label: 'Last 7 days' },
+  { value: 30, label: 'Last 30 days' },
+] as const;
 const views = ['Overview', 'Formats', 'Operations'] as const;
 const measures = [
   ['Input (MB)', 'mb'],
@@ -64,18 +71,13 @@ export function Dashboard({ period, setPeriod }: { period: SamplePeriod; setPeri
         >
           <Download aria-hidden="true" />
         </button>
-        <label className="period-picker">
-          <CalendarDays aria-hidden="true" />
-          <select
-            aria-label="Sample period"
-            value={period}
-            onChange={(e) => setPeriod(e.target.value === '7' ? 7 : 30)}
-          >
-            <option value="7">Last 7 days</option>
-            <option value="30">Last 30 days</option>
-          </select>
-          <ChevronDown aria-hidden="true" />
-        </label>
+        <Choice<SamplePeriod>
+          label="Sample period"
+          value={period}
+          options={periods}
+          change={setPeriod}
+          icon={CalendarDays}
+        />
       </PageTitle>
       <div className="desk-grid report-grid">
         <section className="card metric-card">
@@ -199,8 +201,7 @@ export function Dashboard({ period, setPeriod }: { period: SamplePeriod; setPeri
           </div>
         </section>
       </div>
-      <details className="disclosure">
-        <summary>Daily totals</summary>
+      <Disclosure title="Daily totals" icon={Table2}>
         <div className="table-scroll">
           <table>
             <caption>Daily sample totals</caption>
@@ -225,7 +226,7 @@ export function Dashboard({ period, setPeriod }: { period: SamplePeriod; setPeri
             </tbody>
           </table>
         </div>
-      </details>
+      </Disclosure>
     </>
   );
 }

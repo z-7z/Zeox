@@ -17,7 +17,7 @@ test('dock stays in one row while scrolling and rotating, then becomes the left 
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     await expectToolsAt(page, 'bottom');
     // Even the last control can be scrolled completely above the dock.
-    const box = await page.getByRole('checkbox', { name: 'Compact spacing' }).boundingBox();
+    const box = await page.getByRole('switch', { name: 'Compact spacing' }).boundingBox();
     expect(box!.y + box!.height).toBeLessThan((await toolNav(page).boundingBox())!.y);
     const help = toolNav(page).getByRole('button', { name: 'Help' });
     await help.click();
@@ -114,7 +114,7 @@ test('the source workbench exposes its controls directly, preserves the file and
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/#build-settings');
   await expect(page.getByRole('region', { name: 'Build configuration' })).toBeFocused();
-  const comments = page.getByRole('checkbox', { name: 'Remove comments' });
+  const comments = page.getByRole('switch', { name: 'Remove comments' });
   await attach(page, 'pipeline.lua');
   await comments.uncheck();
   await page.getByRole('button', { name: 'Obfuscate file' }).click();
@@ -134,7 +134,8 @@ test('sample breakdown views and their exported days use the selected period', a
   await expect(page.getByRole('table', { name: 'Sample formats' }).getByRole('row', { name: /Luau/ })).toContainText(
     '698',
   );
-  await page.getByLabel('Sample period').selectOption('7');
+  await page.getByRole('combobox', { name: 'Sample period' }).click();
+  await page.getByRole('option', { name: 'Last 7 days' }).click();
   await expect(page.getByRole('row', { name: /Luau/ })).toContainText('192');
   await page.getByRole('button', { name: 'Operations', exact: true }).click();
   await expect(page.getByRole('row', { name: /Encrypt/ })).toContainText('167');

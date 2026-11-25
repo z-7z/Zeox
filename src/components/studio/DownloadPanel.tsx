@@ -1,5 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react';
-import { Check, Code2, Download, FileCheck2, LockKeyhole, UnlockKeyhole } from 'lucide-react';
+import { Check, Code2, LockKeyhole, UnlockKeyhole } from 'lucide-react';
+import { CardTitle } from '../orbit/Panels';
 import { FileName } from '../FilePicker';
 import { formatSize } from '../../lib/vault/container';
 
@@ -14,6 +15,7 @@ interface Props {
   note: string;
   job?: JobProgress;
   result?: { name: string; size: number };
+  suggestedName?: string;
   failed?: boolean;
   followJob?: boolean;
   children?: ReactNode;
@@ -47,7 +49,7 @@ function Progress({ job }: { job: JobProgress }) {
   );
 }
 
-export function DownloadPanel({ kind, note, job, result, failed, followJob, children }: Props) {
+export function DownloadPanel({ kind, note, job, result, suggestedName, failed, followJob, children }: Props) {
   const pending = !!job,
     body = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -57,77 +59,82 @@ export function DownloadPanel({ kind, note, job, result, failed, followJob, chil
     }
   }, [pending, followJob]);
   const Icon = kind === 'script' ? Code2 : kind === 'encrypt' ? LockKeyhole : UnlockKeyhole;
-  const extension = kind === 'script' ? 'LUA' : kind === 'encrypt' ? 'ZEOX' : 'ORIGINAL';
-  const state = pending ? 'Working' : result ? 'Ready' : failed ? 'Not created' : 'Standby';
+  const extension = kind === 'script' ? 'LUA' : kind === 'encrypt' ? 'ZEOX' : 'FILE';
+  const state = pending ? 'Working' : result ? 'Ready' : failed ? 'Not created' : 'Waiting';
   return (
     <section
       id="build-output"
-      className="download-panel"
+      className="card download-panel"
       tabIndex={-1}
       aria-label={kind !== 'script' && result ? 'Archive result' : 'File download'}
       data-state={state}
     >
-      <header className="output-head">
-        <span>
-          <Download aria-hidden="true" /> Download
-        </span>
-        <small className="output-state">
-          <i />
+      <CardTitle
+        step="03"
+        title={
+          kind === 'encrypt'
+            ? 'Download your archive'
+            : kind === 'decrypt'
+              ? 'Download your restored file'
+              : 'Download your script'
+        }
+      >
+        <span className="output-state">
+          <i aria-hidden="true" />
           {state}
-        </small>
-      </header>
-      <div className="artifact-stage" aria-hidden="true">
-        <span className="cross c1" />
-        <span className="cross c2" />
-        <div className="artifact">
-          <i className="paper-back" />
-          <div className="file-sheet">
-            <span className="paper-mark">ZF / 01</span>
-            <Icon />
-            <b>{extension}</b>
-          </div>
-        </div>
-        <small>
-          {kind === 'encrypt' ? 'ENCRYPTED ARCHIVE' : kind === 'script' ? 'SOURCE SCRIPT' : 'RESTORED FILE'}
-        </small>
-      </div>
+        </span>
+      </CardTitle>
       <div className="output-body" ref={body} tabIndex={-1}>
+        <div className="file-stamp" aria-hidden="true">
+          <Icon />
+          <b>{extension}</b>
+        </div>
         {job ? (
-          <>
+          <div className="pending-body">
             <Progress job={job} />
             <div className="download-skeleton" role="group" aria-busy="true" aria-label="Preparing download">
-              <div aria-hidden="true">
-                <i />
-                <i />
-                <i />
-              </div>
+              <i />
+              <i />
+              <i />
             </div>
-          </>
-        ) : result ? (
-          <>
-            <div className="ready-line">
-              <FileCheck2 aria-hidden="true" />
-              <span>
-                File ready <i>·</i> {formatSize(result.size)}
-              </span>
-            </div>
-            <h2 className="output-name">
-              <FileName name={result.name} />
-            </h2>
-            <p>{note}</p>
-            <div className="result-actions">{children}</div>
-          </>
+          </div>
         ) : (
           <>
-            <p className="output-label">{failed ? 'Job stopped' : 'Output tray'}</p>
-            <h2>{failed ? 'No download created' : 'Waiting for output'}</h2>
-            <p>{note}</p>
+            <div className="output-copy">
+              {result ? (
+                <>
+                  <small className="ready-line">
+                    <Check aria-hidden="true" />
+                    File ready · {formatSize(result.size)}
+                  </small>
+                  <h3>
+                    <FileName name={result.name} />
+                  </h3>
+                </>
+              ) : failed ? (
+                <h3>No download created</h3>
+              ) : suggestedName ? (
+                <>
+                  <small>Suggested filename</small>
+                  <h3>
+                    <FileName name={suggestedName} />
+                  </h3>
+                </>
+              ) : (
+                <h3>
+                  {kind === 'encrypt'
+                    ? 'Encrypted copy (.zeox)'
+                    : kind === 'decrypt'
+                      ? 'Original file'
+                      : 'Transformed copy'}
+                </h3>
+              )}
+              <p>{note}</p>
+            </div>
+            {result && <div className="result-actions">{children}</div>}
           </>
         )}
       </div>
-      <footer className="output-footer">
-        <Check aria-hidden="true" /> Your original file is never overwritten.
-      </footer>
     </section>
   );
 }

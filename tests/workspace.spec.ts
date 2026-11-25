@@ -40,7 +40,7 @@ test('local source file builds offline, downloads under a distinct name, and sur
   await expect(page.getByRole('table').getByRole('row').nth(1)).toContainText('Source build');
   await expect(page.getByRole('table')).not.toContainText('ملف');
   await go(page, 'Obfuscator'); await expect(page.getByRole('status')).toContainText('ملف.obf.lua');
-  for (const name of ['Encode text literals', 'Remove comments', 'Compact spacing']) await page.getByRole('checkbox', { name }).uncheck();
+  for (const name of ['Encode text literals', 'Remove comments', 'Compact spacing']) await page.getByRole('switch', { name }).uncheck();
   await expect(page.getByRole('link', { name: 'Download file' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Obfuscate file' }).click();
   expect(await downloadOutput(page)).toEqual({ name: 'ملف.compact.lua', bytes: Buffer.from(original) });
@@ -58,7 +58,7 @@ test('usage counts successes only, filters and exports metadata, resets without 
   // Navigation need not wait for the in-flight job.
   await go(page, 'Usages');
   await expect(page.getByRole('region', { name: 'Completed runs' }).locator('strong')).toHaveText('2');
-  const filter = page.getByLabel('Filter usage log'); await filter.selectOption('vault');
+  const filter = page.getByLabel('Filter usage log'); await filter.click(); await page.getByRole('option',{name:'Encryption',exact:true}).click();
   await expect(page.getByRole('table').getByRole('row')).toHaveCount(2);
   const waiting = page.waitForEvent('download'); await page.getByRole('button', { name: 'Export log' }).click();
   const csv = await text(await waiting); expect(csv).toMatch(/Z,Encryption,\d+,\d+\r\n$/); expect(csv).not.toMatch(/game-config|Source build|not stored/);

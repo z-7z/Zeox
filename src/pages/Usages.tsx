@@ -7,6 +7,13 @@ import { CardTitle, PageTitle, Ribbon, SplitFace } from '../components/orbit/Pan
 import { downloadText } from '../lib/download';
 import { formatSize } from '../lib/vault/container';
 
+import { Choice } from '../components/ui/Choice';
+
+const tools = [
+  { value: 'all', label: 'All tools' },
+  { value: 'compact', label: 'Obfuscator' },
+  { value: 'vault', label: 'Encryption' },
+] as const;
 const localTime = (time: number) => new Date(time).toLocaleTimeString('en-GB');
 export function Usages() {
   const usage = useUsage();
@@ -94,14 +101,7 @@ export function Usages() {
         />
         <section className="card ledger-card" aria-label="Usage ledger">
           <CardTitle title="Activity ledger">
-            <label className="filter-control">
-              <ListFilter aria-hidden="true" />
-              <select aria-label="Filter usage log" value={filter} onChange={(e) => setFilter(e.target.value)}>
-                <option value="all">All tools</option>
-                <option value="compact">Obfuscator</option>
-                <option value="vault">Encryption</option>
-              </select>
-            </label>
+            <Choice label="Filter usage log" value={filter} options={tools} change={setFilter} icon={ListFilter} />
           </CardTitle>
           {rows.length ? (
             <div className="log-scroll" role="region" aria-label="Recent runs" tabIndex={0}>

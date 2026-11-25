@@ -2,6 +2,8 @@ import { BookOpen } from 'lucide-react';
 import { BarPanel, type BarDatum } from '../orbit/BarPanel';
 import { downloadText } from '../../lib/download';
 
+import { Disclosure } from '../ui/Disclosure';
+
 const specimen = 'Zeox.luau';
 const bytes: BarDatum[] = Array.from(specimen, (c, i) => {
   const n = c.charCodeAt(0);
@@ -19,11 +21,7 @@ const bytes: BarDatum[] = Array.from(specimen, (c, i) => {
 });
 export function EncodingReference() {
   return (
-    <details className="job-log byte-reference">
-      <summary>
-        <BookOpen aria-hidden="true" />
-        Encoding reference
-      </summary>
+    <Disclosure title="Encoding reference" icon={BookOpen}>
       <BarPanel
         title="Literal encoding breakdown"
         context={`Reference bytes · “${specimen}”`}
@@ -38,6 +36,6 @@ export function EncodingReference() {
           )
         }
       />
-    </details>
+    </Disclosure>
   );
 }

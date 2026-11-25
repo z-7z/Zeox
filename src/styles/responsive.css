@@ -78,7 +78,7 @@
   .panel-body { padding: var(--inset); }
   .panel-tools { margin-bottom: .55em; }
   .plot-context { margin-top: .35em; }
-  .pass-field input, .search-box input { font-size: 16px; }
+  .search-box input { font-size: 16px; }
   .sheet { font-size: 14px; }
   .ledger-card { min-height: 220px; }
 }

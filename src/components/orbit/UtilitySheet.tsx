@@ -69,14 +69,17 @@ export function UtilitySheet({ kind, close }: { kind: Utility; close: () => void
         <>
           <p>Protect a single file without uploading it to a server.</p>
           <ol className="guide-steps">
-            <li>Choose Encrypt and attach a supported file up to 25 MB.</li>
             <li>
-              Set and confirm a passphrase. You can generate one locally, choose the outer archive name and verify the
-              archive before download.
+              Choose Encrypt, then Upload file or drop a Lua/Luau script, Roblox place/model or supported partial
+              listing (25 MB max).
             </li>
             <li>
-              Select Encrypt file and save the .zeox archive. To restore the original, choose Decrypt and enter the same
-              passphrase.
+              Set and confirm a passphrase, or use Generate to make one locally. For a different filename or an extra
+              verification check, expand Archive options.
+            </li>
+            <li>
+              Select Encrypt file. When the download card says Ready, save the .zeox archive. To restore the original,
+              choose Decrypt and enter the same passphrase.
             </li>
           </ol>
           <p className="hint">

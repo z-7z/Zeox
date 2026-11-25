@@ -41,7 +41,7 @@ export function SourceDownload({
           ? 'Check the build error, then try again.'
           : file
             ? 'Your transformed script is ready to save.'
-            : 'Build your script to get a downloadable Lua or Luau file.'
+            : 'Select Obfuscate file above to make a separate download. Your original stays unchanged.'
       }
     >
       {file && url && (
@@ -49,7 +49,7 @@ export function SourceDownload({
           <span className="sr-only" role="status">
             {file.name} ({formatSize(file.blob.size)})
           </span>
-          <a className="run-action" ref={ref} href={url} download={file.name}>
+          <a className="pill paper" ref={ref} href={url} download={file.name}>
             <Download aria-hidden="true" />
             Download file
           </a>

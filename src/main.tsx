@@ -4,6 +4,7 @@ import App from './App';
 import './styles/workspace.css';
 import './styles/panels.css';
 import './styles/responsive.css';
+import './styles/controls.css';
 import './styles/studio.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

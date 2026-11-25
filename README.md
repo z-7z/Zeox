@@ -11,7 +11,9 @@ A local file studio: build a separate Lua/Luau script or protect a file in a pas
 
 ## Workspace
 
-ZeoxFucator extends edge to edge on every route, without an outer window, letterboxing or a browser fullscreen request. Desktop navigation is a vertical rail on the left. On phones the same links and Help form a single labeled row fixed to the bottom, including in landscape. Search tools with **Ctrl/⌘ K**; **Esc** closes a utility dialog. The appearance switch applies to this tab and resets to dark on reload. Fonts, icons and chart surfaces ship with the app; no external font or chart service is needed.
+ZeoxFucator extends edge to edge on every route, without an outer window, letterboxing or a browser fullscreen request. Desktop navigation is a vertical rail on the left. On phones the same links and Help form a single labeled row fixed to the bottom, including in landscape. Search tools with **Ctrl/⌘ K**; **Esc** closes a utility dialog. The appearance switch changes the surrounding workspace and resets to dark on reload. All four tools use the Dashboard’s white cards, dark card text, underlined headings and pill buttons in either appearance. Fonts, icons and chart surfaces ship with the app; no external font or chart service is needed.
+
+The archive-name, report-period and usage-filter menus are site-styled listboxes with keyboard, touch and focus support. Switches, segmented controls, the passphrase length slider and disclosures share site styles; the upload button still opens the real operating-system file chooser.
 
 The start page puts a single file chooser, the three source transforms and the download together. Its **File encryption** link opens a separate tool, not a dashboard widget. A collapsible encoding reference illustrates a bundled string, never the attached script. Usages is the real session ledger; Dashboard is a separate dated sample report.
 
@@ -25,12 +27,13 @@ Navigating between tools preserves attachments and results in tab memory. Leavin
 
 ## File encryption, download and restore
 
-1. In **Encrypt**, select one `.luau`, `.lua`, `.rbxl`, `.rbxlx`, `.rbxm` or `.rbxmx` file up to 25 MB (or choose **Use sample**). The tool also accepts partial listing exports named `*.partial.lua.txt` / `*.partial.luau.txt`, including numbered copies such as `level.partial.lua (2).txt`. Other `.txt` files are not accepted.
-2. Set and confirm a passphrase of at least 12 characters, or use **Generate** to create a random 24-character passphrase locally. Save it and enter it again to confirm. Choose the suggested **Archive filename** (source name or `archive.zeox`). **Verify archive** optionally authenticates the just-produced ciphertext and its header before it can be downloaded. This does not change the v1 format or count as a second operation. Press **Encrypt file**.
+**Encrypt** uses three numbered cards, in the same order on desktop and phone:
 
-   The progress bar follows actual processing stages (read, derive key, encrypt, optional verification, prepare download). Web Crypto does not expose within-stage percentages. An inert download skeleton is shown only while working, respects reduced motion, and becomes a real link once the blob URL exists. An error never produces a download. Keep your passphrase and original safe; there is no recovery mechanism.
+1. **Choose a file.** Upload or drop one `.luau`, `.lua`, `.rbxl`, `.rbxlx`, `.rbxm` or `.rbxmx` file up to 25 MB (or choose **Use sample**). The tool also accepts partial listings named `*.partial.lua.txt` / `*.partial.luau.txt`, including numbered copies such as `level.partial.lua (2).txt`. Other `.txt` files are not accepted.
+2. **Set a passphrase.** Enter at least 12 characters and confirm them. Alternatively, **Generate** opens a local generator: set the length (16–64 characters, default 24), then **Generate & use**, save the passphrase and confirm it. Optional **Archive options** let you choose the outer filename or verify the new archive before download. Press **Encrypt file**.
+3. **Download your archive.** The card shows actual processing stages (read, derive key, encrypt, optional verification, prepare download), with a reduced-motion-aware skeleton only while working. Web Crypto does not expose within-stage percentages. **Download .zeox** appears only when the blob URL exists. Failed jobs have no download. Keep the passphrase; there is no password reset.
 
-3. In **Decrypt**, open a `.zeox` archive, enter the same passphrase and press **Decrypt file**. After authentication and filename validation, the tool **automatically** cleans supported text in this tab. No second upload, command or settings change is needed. **Download original** always returns the stored name and bytes. Roblox assets must be restored before use in Studio.
+To restore a file, choose **Decrypt**, attach a `.zeox` archive, enter its passphrase and press **Decrypt file**. After authentication and filename validation, the tool **automatically** cleans supported text in this tab. No second upload, command or settings change is needed. **Download original** always returns the stored name and bytes. Roblox assets must be restored before use in Studio.
 
 | Restored file | Result in addition to the original |
 | --- | --- |
@@ -63,6 +66,6 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. Tests cover the file chooser, drag and drop, validation, offline builds, edge-to-edge layout, responsive navigation, utility dialogs, stage-bound progress and download skeletons, archive options, chart controls, CSV export, independent archive verification, automatic cleanup and exact original downloads.
+`CHROMIUM_PATH` can point Playwright at a compatible local Chromium. Tests cover the file chooser, drag and drop, validation, offline builds, edge-to-edge layout, responsive navigation, white cards in both appearances, keyboard/touch selection and passphrase length, utility dialogs, stage-bound progress and download skeletons, archive options, chart controls, CSV export, independent archive verification, automatic cleanup and exact original downloads.
 
 Deploy `dist/` to a static HTTPS host. `vercel.json` routes direct tool URLs to `index.html` and sets a same-origin content security policy.

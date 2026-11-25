@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { ArrowRight, CheckCheck, Download, History, LockKeyhole, Plus, UnlockKeyhole } from 'lucide-react';
+import { ArrowRight, Download, History, LockKeyhole, Plus, ShieldCheck, UnlockKeyhole } from 'lucide-react';
 import { FileName, FilePicker } from '../components/FilePicker';
 import { DownloadPanel, type JobProgress } from '../components/studio/DownloadPanel';
-import { LocalNote, StudioHeader } from '../components/studio/Studio';
+import { PageTitle } from '../components/orbit/Panels';
+import { Disclosure } from '../components/ui/Disclosure';
 import { EncryptionOptions } from '../components/vault/EncryptionOptions';
 import { phaseLabel, type VaultSession } from '../components/vault/session';
 import { useVaultTool } from '../components/workspace/ToolSessions';
@@ -15,10 +16,7 @@ const phases: Record<'encrypt' | 'decrypt', (Phase | 'preparing')[]> = {
 
 function SessionLog({ events, clearLog }: Pick<VaultSession, 'events' | 'clearLog'>) {
   return (
-    <details className="job-log">
-      <summary>
-        <History aria-hidden="true" /> Session log <small>{events.length}</small>
-      </summary>
+    <Disclosure title="Session log" icon={History} detail={events.length}>
       {events.length ? (
         <>
           <ul className="event-list">
@@ -39,7 +37,7 @@ function SessionLog({ events, clearLog }: Pick<VaultSession, 'events' | 'clearLo
       ) : (
         <p>No files processed yet</p>
       )}
-    </details>
+    </Disclosure>
   );
 }
 
@@ -83,14 +81,20 @@ export function Encryption() {
         ? 'Download cleaned file'
         : 'Download original';
   const ModeIcon = encrypt ? LockKeyhole : UnlockKeyhole;
+  const suggestedName =
+    encrypt && s.file ? (s.archiveName === 'neutral' ? 'archive.zeox' : `${s.file.name}.zeox`) : undefined;
   return (
-    <div className="file-studio">
-      <StudioHeader
+    <div className="task-page">
+      <PageTitle
         title={encrypt ? 'File encryption' : 'File decryption'}
+        kicker="File tools"
+        badge="On this device"
         description={
-          encrypt
-            ? 'Protect a local file with a passphrase. Download the encrypted archive when it’s ready.'
-            : 'Unlock a .zeox archive and download the authenticated original.'
+          ready
+            ? 'Your file is ready. Save it below or start another file.'
+            : encrypt
+              ? 'Choose one file, set a passphrase, then save the encrypted copy.'
+              : 'Choose a .zeox archive, enter its passphrase, then save the original file.'
         }
       >
         <fieldset className="mode-picker" disabled={busy}>
@@ -105,125 +109,118 @@ export function Encryption() {
             </label>
           ))}
         </fieldset>
-      </StudioHeader>
+      </PageTitle>
       {!s.supported && (
         <p className="error" role="alert">
           Local encryption requires HTTPS and a browser with Web Crypto.
         </p>
       )}
-      <div className="studio-grid">
-        <div className="studio-input">
-          {ready ? (
-            <section className="finished-note">
-              <i>
-                <CheckCheck aria-hidden="true" />
-              </i>
-              <p className="output-label">Operation complete</p>
-              <h2>{encrypt ? 'File encrypted' : 'File restored'}</h2>
-              <p>
-                {encrypt
-                  ? 'Keep your passphrase safe. You’ll need it to open this archive.'
-                  : 'Your original bytes are ready to save. If a cleaned copy is available, you can download it separately.'}
-              </p>
-              <button
-                type="button"
-                className="pill"
-                onClick={() => {
-                  startedHere.current = false;
-                  s.reset();
-                  requestAnimationFrame(() => browse.current?.focus());
-                }}
-              >
-                <Plus aria-hidden="true" />
-                Process another file
-              </button>
-            </section>
-          ) : (
-            <form
-              noValidate
-              aria-busy={busy}
-              onSubmit={(e) => {
-                e.preventDefault();
-                startedHere.current = true;
-                void s.run();
-              }}
-            >
-              <FilePicker
-                legend={encrypt ? 'Source file' : 'Encrypted archive'}
-                label={encrypt ? 'Choose a source file' : 'Choose a .zeox archive'}
-                hint={
-                  encrypt
-                    ? 'Lua, Luau, Roblox files or a partial listing'
-                    : '.zeox archive created on this device or another'
-                }
-                limitLabel="25 MB"
-                choose="Upload file"
-                accept={encrypt ? SOURCE_ACCEPT : '.zeox'}
-                file={s.file}
-                select={s.selectFile}
-                remove={s.removeFile}
-                browse={browse}
-                disabled={busy}
-                errorId={problem?.field === 'file' ? 'vault-error' : undefined}
-                extra={
-                  encrypt ? (
-                    <button type="button" className="text-action" disabled={busy} onClick={s.sample}>
-                      Use sample <ArrowRight aria-hidden="true" />
-                    </button>
-                  ) : undefined
-                }
-              />
-              <EncryptionOptions key={mode} session={s} busy={busy} />
-              {problem && (
-                <p role="alert" id="vault-error" className="error">
+      {!ready && (
+        <form
+          noValidate
+          className="work-pair"
+          aria-busy={busy}
+          onSubmit={(e) => {
+            e.preventDefault();
+            startedHere.current = true;
+            void s.run();
+          }}
+        >
+          <FilePicker
+            legend={encrypt ? 'Source file' : 'Encrypted archive'}
+            title={encrypt ? 'Choose a file' : 'Choose an archive'}
+            label={encrypt ? 'Choose a source file' : 'Choose a .zeox archive'}
+            hint={encrypt ? 'Lua, Luau, Roblox files or a partial listing' : 'A .zeox archive made with ZeoxFucator'}
+            limitLabel="25 MB"
+            choose="Upload file"
+            accept={encrypt ? SOURCE_ACCEPT : '.zeox'}
+            file={s.file}
+            select={s.selectFile}
+            remove={s.removeFile}
+            browse={browse}
+            disabled={busy}
+            errorId={problem?.field === 'file' ? 'vault-error' : undefined}
+            feedback={
+              problem?.field === 'file' && (
+                <p className="error" role="alert" id="vault-error">
                   {problem.message}
                 </p>
-              )}
-              <div className="run-row">
-                <button className="run-action" type="submit" disabled={busy || !s.supported}>
-                  <ModeIcon aria-hidden="true" />
-                  {busy ? (encrypt ? 'Encrypting…' : 'Decrypting…') : encrypt ? 'Encrypt file' : 'Decrypt file'}
-                  <ArrowRight aria-hidden="true" />
-                </button>
-                <LocalNote />
-              </div>
-            </form>
-          )}
-        </div>
-        <div className="studio-output">
-          <DownloadPanel
-            kind={mode}
-            job={job}
-            result={ready}
-            failed={problem?.field === 'operation'}
-            followJob={startedHere.current}
-            note={
-              ready
-                ? (result?.cleanup?.message ?? 'Your passphrase-protected archive is ready to save.')
-                : problem?.field === 'operation'
-                  ? problem.message
-                  : encrypt
-                    ? 'Your .zeox archive will appear here after encryption.'
-                    : 'Your restored file will appear here after decryption.'
+              )
             }
-          >
-            {urls && primary && (
-              <>
-                <a ref={download} className="run-action" href={urls.cleaned ?? urls.original} download={primary.name}>
-                  <Download aria-hidden="true" />
-                  {action}
-                </a>
-                {cleaned && result && (
-                  <a className="pill" href={urls.original} download={result.name}>
-                    Download original
-                  </a>
-                )}
-              </>
+            extra={
+              encrypt &&
+              !s.file && (
+                <button type="button" className="text-action" disabled={busy} onClick={s.sample}>
+                  Use sample <ArrowRight aria-hidden="true" />
+                </button>
+              )
+            }
+          />
+          <div className="card settings-card">
+            <EncryptionOptions key={mode} session={s} busy={busy} />
+            {problem?.field === 'operation' && (
+              <p role="alert" id="vault-error" className="error">
+                {problem.message}
+              </p>
             )}
-          </DownloadPanel>
-          <SessionLog events={s.events} clearLog={s.clearLog} />
-        </div>
-      </div>
+            <div className="card-footer">
+              <button className="pill paper run-action" type="submit" disabled={busy || !s.supported}>
+                <ModeIcon aria-hidden="true" />
+                {busy ? (encrypt ? 'Encrypting…' : 'Decrypting…') : encrypt ? 'Encrypt file' : 'Decrypt file'}
+                <ArrowRight aria-hidden="true" />
+              </button>
+              <span className="local-note">
+                <ShieldCheck aria-hidden="true" />
+                AES-256-GCM
+              </span>
+            </div>
+          </div>
+        </form>
+      )}
+      <DownloadPanel
+        kind={mode}
+        job={job}
+        result={ready}
+        suggestedName={suggestedName}
+        failed={problem?.field === 'operation'}
+        followJob={startedHere.current}
+        note={
+          ready
+            ? (result?.cleanup?.message ?? 'Keep your passphrase. You’ll need it to open this archive.')
+            : problem?.field === 'operation'
+              ? problem.message
+              : encrypt
+                ? 'Select Encrypt file above to make your .zeox download. Your original stays unchanged.'
+                : 'Select Decrypt file above to recover the original name and contents.'
+        }
+      >
+        {urls && primary && (
+          <>
+            <a ref={download} className="pill paper" href={urls.cleaned ?? urls.original} download={primary.name}>
+              <Download aria-hidden="true" />
+              {action}
+            </a>
+            {cleaned && result && (
+              <a className="pill" href={urls.original} download={result.name}>
+                Download original
+              </a>
+            )}
+            <button
+              type="button"
+              className="pill"
+              onClick={() => {
+                startedHere.current = false;
+                s.reset();
+                requestAnimationFrame(() => browse.current?.focus());
+              }}
+            >
+              <Plus aria-hidden="true" />
+              Process another file
+            </button>
+          </>
+        )}
+      </DownloadPanel>
+      <SessionLog events={s.events} clearLog={s.clearLog} />
     </div>
   );
 }

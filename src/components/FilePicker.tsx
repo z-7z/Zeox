@@ -1,7 +1,7 @@
 import { useId, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { FileCheck2, FileUp, Upload, X } from 'lucide-react';
 import { formatSize } from '../lib/vault/container';
-import { SectionHead } from './studio/Studio';
+import { CardTitle } from './orbit/Panels';
 
 export function FileName({ name }: { name: string }) {
   return (
@@ -12,6 +12,8 @@ export function FileName({ name }: { name: string }) {
 }
 interface Props {
   legend: string;
+  title: string;
+  feedback?: ReactNode;
   label: string;
   accept: string;
   hint: string;
@@ -28,6 +30,8 @@ interface Props {
 }
 export function FilePicker({
   legend,
+  title,
+  feedback,
   label,
   accept,
   hint,
@@ -49,7 +53,7 @@ export function FilePicker({
   return (
     <fieldset
       id="source-file"
-      className="studio-section intake"
+      className="card intake"
       tabIndex={-1}
       disabled={disabled}
       aria-busy={!!reading}
@@ -77,12 +81,9 @@ export function FilePicker({
       }}
     >
       <legend className="sr-only">{legend}</legend>
-      <SectionHead index="01" title={legend}>
-        <span className="intake-meta">
-          {extra}
-          <small>{limitLabel} max</small>
-        </span>
-      </SectionHead>
+      <CardTitle step="01" title={title}>
+        <span className="quiet-badge">{limitLabel} max</span>
+      </CardTitle>
       <input
         ref={input}
         type="file"
@@ -108,7 +109,7 @@ export function FilePicker({
             ) : file ? (
               <FileName name={file.name} />
             ) : (
-              'Drop a file here'
+              'Drop your file here'
             )}
           </b>
           <p id={hintId}>{file ? `${formatSize(file.size)} · Attached locally` : hint}</p>
@@ -140,6 +141,13 @@ export function FilePicker({
           )}
         </div>
       </div>
+      {extra && (
+        <div className="intake-extra">
+          <span>No file handy?</span>
+          {extra}
+        </div>
+      )}
+      {feedback}
     </fieldset>
   );
 }

@@ -9,7 +9,7 @@ test('empty intake → native keyboard chooser → local build → downloadable 
   const build = page.getByRole('button', { name: 'Obfuscate file' }), choose = page.getByRole('button', { name: 'Choose file' });
   await expect(build).toBeDisabled();
   await expect(page.locator(noCodePane)).toHaveCount(0); await expect(page.getByRole('button', { name: /example|sample/i })).toHaveCount(0);
-  await expect(page.locator('input[type=file]')).toHaveAttribute('accept', '.lua,.luau'); await expect(page.getByRole('checkbox')).toHaveCount(3);
+  await expect(page.locator('input[type=file]')).toHaveAttribute('accept', '.lua,.luau'); await expect(page.getByRole('switch')).toHaveCount(3);
   await choose.focus(); const [picker] = await Promise.all([page.waitForEvent('filechooser'), choose.press('Enter')]);
   expect(picker.isMultiple()).toBe(false);
   const input = '--!strict\r\n-- note\r\nreturn "hi"\r\n', output = '--!strict\nreturn "\\104\\105"\n';
@@ -49,11 +49,11 @@ test('file drops share the same validation; multiple files and plain text are no
 test('turning off transformations preserves a 512 KiB attachment byte-for-byte, including BOM and CRLF', async ({ page, context }) => {
   const input = Buffer.alloc(512 * 1024, 32); Buffer.from('\ufeff-- header\r\nlocal  a = "ملف"\r\nreturn  a\r\n').copy(input);
   await page.goto('/obfuscate', { waitUntil: 'networkidle' }); await context.setOffline(true);
-  await attach(page, 'قطعة.lua', input); const first = page.getByRole('checkbox', { name: 'Encode text literals' }); await first.focus(); await first.press('Space'); await expect(first).not.toBeChecked();
-  for (const label of ['Encode text literals', 'Remove comments', 'Compact spacing']) await page.getByRole('checkbox', { name: label }).uncheck();
+  await attach(page, 'قطعة.lua', input); const first = page.getByRole('switch', { name: 'Encode text literals' }); await first.focus(); await first.press('Space'); await expect(first).not.toBeChecked();
+  for (const label of ['Encode text literals', 'Remove comments', 'Compact spacing']) await page.getByRole('switch', { name: label }).uncheck();
   await expect(page.getByRole('group', { name: 'Build settings' }).locator('input:checked')).toHaveCount(0); await page.getByRole('button', { name: 'Obfuscate file' }).click();
   const output = await downloadOutput(page); expect(output.name).toBe('قطعة.compact.lua'); expect(output.bytes.equals(input)).toBe(true);
-  await page.getByRole('checkbox', { name: 'Encode text literals' }).check(); await expect(page.getByRole('link', { name: 'Download file' })).toHaveCount(0);
+  await page.getByRole('switch', { name: 'Encode text literals' }).check(); await expect(page.getByRole('link', { name: 'Download file' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Obfuscate file' })).toBeEnabled();
 });
 
