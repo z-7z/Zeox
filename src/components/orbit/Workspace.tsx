@@ -1,49 +1,27 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Bell, CircleHelp, Moon, Search, Sparkles, Sun } from 'lucide-react';
 import { useUsage } from '../workspace/UsageSession';
-import { tabs, tools } from './tools';
+import { tabs } from './tools';
+import { useSite } from '../site/SiteSession';
 import { UtilitySheet, type Utility } from './UtilitySheet';
 import orb from '../../assets/orb.svg';
 
-export type WorkspaceTheme = 'light' | 'dark';
-
 export function Workspace() {
-  const { pathname, hash, key } = useLocation(),
+  const { pathname, key } = useLocation(),
     { count } = useUsage();
-  const previous = useRef(key),
-    main = useRef<HTMLElement>(null);
-  const [theme, setTheme] = useState<WorkspaceTheme>('dark');
+  const { theme, toggleTheme } = useSite();
   const light = theme === 'light';
   const [overlay, setOverlay] = useState<{ kind: Utility; key: string } | null>(null);
   const utility = overlay?.key === key ? overlay.kind : null;
   const path = pathname.toLowerCase().replace(/\/$/, '') || '/';
-  const label = tools.find((t) => t.url === path)?.name ?? 'Page not found';
-  const guide = path === '/' ? 'Getting started' : path === '/encrypt' ? 'Encryption guide' : 'Build guide';
-  // Menus portal to document.body, outside .orbit-app. Give all surfaces the same theme.
-  useLayoutEffect(() => {
-    const root = document.documentElement;
-    root.dataset.theme = theme;
-    return () => {
-      delete root.dataset.theme;
-    };
-  }, [theme]);
+  const guide = path === '/encrypt' ? 'Encryption guide' : 'Build guide';
 
   function open(kind: Utility) {
     setOverlay({ kind, key });
   }
   useEffect(() => {
     setOverlay(null);
-    document.title = `${label === 'Obfuscator' ? 'Lua Obfuscator' : label} — ZeoxFucator`;
-    const anchor = hash && document.getElementById(hash.slice(1));
-    if (anchor) {
-      anchor.focus({ preventScroll: true });
-      anchor.scrollIntoView();
-    } else if (previous.current !== key) {
-      main.current?.focus({ preventScroll: true });
-      window.scrollTo(0, 0);
-    }
-    previous.current = key;
     function shortcut(e: KeyboardEvent) {
       if (
         (e.metaKey || e.ctrlKey) &&
@@ -56,7 +34,7 @@ export function Workspace() {
     }
     window.addEventListener('keydown', shortcut);
     return () => window.removeEventListener('keydown', shortcut);
-  }, [label, key, hash]);
+  }, [key]);
   return (
     <div className="orbit-app">
       <a className="skip" href="#workspace">
@@ -97,7 +75,7 @@ export function Workspace() {
           <button
             type="button"
             className="theme-trigger"
-            onClick={() => setTheme(light ? 'dark' : 'light')}
+            onClick={toggleTheme}
             aria-label={light ? 'Light mode: switch to dark' : 'Dark mode: switch to light'}
           >
             <span>{light ? 'Light mode' : 'Dark mode'}</span>
@@ -149,8 +127,8 @@ export function Workspace() {
             </button>
           </div>
         </nav>
-        <main id="workspace" ref={main} tabIndex={-1}>
-          <Outlet context={theme} />
+        <main id="workspace" tabIndex={-1}>
+          <Outlet />
         </main>
       </div>
       {utility && <UtilitySheet key={utility} kind={utility} close={() => setOverlay(null)} />}

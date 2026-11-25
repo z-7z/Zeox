@@ -24,7 +24,7 @@
 /* Phones, including short landscape viewports: one persistent bottom row,
    not a collapsed desktop drawer. Safe-area space belongs to the dock. */
 @media (max-width: 719px), (max-width: 959px) and (max-height: 500px), (max-width: 959px) and (pointer: coarse) {
-  html { scroll-padding-bottom: calc(82px + env(safe-area-inset-bottom, 0px)); }
+  html:has(.orbit-app) { scroll-padding-bottom: calc(82px + env(safe-area-inset-bottom, 0px)); }
   .orbit-app { --round: 38px; --top-h: 58px; --rail: 50px; --gutter: clamp(10px,3.4vw,20px); --gap: 8px; --radius: 19px; --inset: clamp(14px,3.8vw,21px); --intro: auto; --top-row: 138px; --bottom-row: 285px;
     font-size: 14px; }
   .topbar { gap: 8px; padding: calc(8px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px)); }

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expectOnlyGuestMarker, expect, test } from './guest-workspace';
 import { attach } from './attachments';
 import { expectToolsAt, go, toolNav } from './navigation';
 
@@ -33,7 +33,7 @@ test('dock stays in one row while scrolling and rotating, then becomes the left 
 });
 
 test('finder, appearance, activity and privacy controls work without leaving tab memory', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/dashboard');
   const finder = page.getByRole('button', { name: 'Search tools' });
   await finder.focus();
   await page.keyboard.press('Control+k');
@@ -69,7 +69,7 @@ test('finder, appearance, activity and privacy controls work without leaving tab
   await dialog.getByRole('button', { name: 'Close dialog' }).click();
   await page.reload();
   await expect(page.getByRole('button', { name: 'Dark mode: switch to light' })).toBeVisible();
-  expect(await page.evaluate(() => [localStorage.length, sessionStorage.length])).toEqual([0, 0]);
+  await expectOnlyGuestMarker(page);
 });
 
 test('striped plot offers keyboard readings, an accessible data table and an actual reference CSV', async ({

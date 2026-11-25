@@ -1,7 +1,6 @@
 import { expect, type Page } from '@playwright/test';
 
 export const destinations = [
-  { label: 'Main', path: '/', heading: 'Main' },
   { label: 'Obfuscator', path: '/obfuscate', heading: 'Lua Obfuscator' },
   { label: 'Usages', path: '/usages', heading: 'Usages' },
   { label: 'Dashboard', path: '/dashboard', heading: 'Dashboard' },
@@ -23,7 +22,7 @@ export async function go(page: Page, section: (typeof destinations)[number]['lab
 // Assert geometry and hit targets, not just the class or media query names.
 export async function expectToolsAt(page: Page, placement: 'left' | 'bottom') {
   const nav = toolNav(page);
-  await expect(nav.locator('a[href="/encrypt"]')).toHaveCount(0);
+  await expect(nav.locator('a[href="/encrypt"], a[href="/"], a[href="/login"]')).toHaveCount(0);
   const geometry = await nav.evaluate((el) => {
     const row = el.querySelector('.dock-items')!.getBoundingClientRect();
     const buttons = Array.from(el.querySelectorAll('a, button')).map((item) => {

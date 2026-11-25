@@ -1,4 +1,4 @@
-import { expect, test, type Download } from '@playwright/test';
+import { expectOnlyGuestMarker, expect, test, type Download } from './guest-workspace';
 
 import { attach, downloadOutput } from './attachments';
 import { destinations, expectToolsAt, go, toolNav } from './navigation';
@@ -10,8 +10,8 @@ async function text(download: Download) {
 
 for (const width of [320, 1440]) {
   test(`responsive tool routes and browser history at ${width}px`, async ({ page }) => {
-    await page.setViewportSize({width,height:844}); await page.goto('/');
-    await expect(page.getByRole('heading', {level:1,name:'Main',exact:true})).toBeVisible();
+    await page.setViewportSize({width,height:844}); await page.goto('/dashboard');
+    await expect(page.getByRole('heading', {level:1,name:'Dashboard',exact:true})).toBeVisible();
     for (const {label, path, heading} of destinations) {
       await go(page, label); await expect(page).toHaveURL(new RegExp(path+'$'));
       await expect(page.getByRole('heading', {level:1,name:heading,exact:true})).toBeVisible();
@@ -34,7 +34,7 @@ test('local source file builds offline, downloads under a distinct name, and sur
   await attach(page, 'ملف.lua', original); await expect(page.getByRole('group', { name: 'Source file' })).toContainText('ملف.lua');
   await page.getByRole('button', { name: 'Obfuscate file' }).click();
   const file = await downloadOutput(page); expect(file.name).toBe('ملف.obf.lua'); expect(file.bytes.toString()).toBe(expected);
-  expect(await page.evaluate(() => [localStorage.length, sessionStorage.length])).toEqual([0, 0]);
+  await expectOnlyGuestMarker(page);
   await context.setOffline(false); await go(page, 'Usages');
   await expect(page.getByRole('region', { name: 'Completed runs' })).toContainText('1');
   await expect(page.getByRole('table').getByRole('row').nth(1)).toContainText('Source build');

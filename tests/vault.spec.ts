@@ -1,4 +1,4 @@
-import { test, expect, type Download, type Page } from '@playwright/test';
+import { expectOnlyGuestMarker, test, expect, type Download, type Page } from './guest-workspace';
 import { createCipheriv, createDecipheriv, pbkdf2Sync, randomBytes } from 'node:crypto';
 import { go } from './navigation';
 
@@ -68,7 +68,7 @@ for (const suffix of ['luau', 'lua', 'rbxl', 'rbxlx', 'rbxm', 'rbxmx']) {
       expect(cleaned.name).toBe(`ملف-game.clean.${suffix}`);
       expect(cleaned.bytes).toEqual(Buffer.from('return { name = "Orbit" }\r\n'));
     }
-    expect(await page.evaluate(() => [localStorage.length, sessionStorage.length])).toEqual([0, 0]);
+    await expectOnlyGuestMarker(page);
   });
 }
 

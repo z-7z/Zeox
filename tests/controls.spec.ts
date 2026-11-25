@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './guest-workspace';
 import { go } from './navigation';
 
 for (const width of [320, 1440]) {
@@ -8,7 +8,7 @@ for (const width of [320, 1440]) {
     for (const appearance of ['dark', 'light']) {
       const surface = appearance === 'dark' ? 'rgb(0, 0, 0)' : 'rgb(255, 255, 255)';
       if (appearance === 'light') await page.getByRole('button', { name: 'Dark mode: switch to light' }).click();
-      for (const tool of ['Main', 'Dashboard', 'Usages', 'Obfuscator', 'Encryption'] as const) {
+      for (const tool of ['Dashboard', 'Usages', 'Obfuscator', 'Encryption'] as const) {
         await go(page, tool);
         const cards = page.locator('main .card:visible');
         expect(await cards.count()).toBeGreaterThanOrEqual(3);

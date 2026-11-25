@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './guest-workspace';
 import { attach } from './attachments';
 import { go } from './navigation';
 

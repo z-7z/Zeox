@@ -5,6 +5,7 @@ import { operationLabels, useUsage } from '../workspace/UsageSession';
 import { formatSize } from '../../lib/vault/container';
 import { Dialog } from './Dialog';
 import { tools } from './tools';
+import { useSite } from '../site/SiteSession';
 
 export type Utility = 'search' | 'guide' | 'inbox' | 'local';
 const titles: Record<Utility, string> = {
@@ -18,6 +19,7 @@ export function UtilitySheet({ kind, close }: { kind: Utility; close: () => void
   const [query, setQuery] = useState(''),
     usage = useUsage(),
     navigate = useNavigate();
+  const { endGuest } = useSite();
   const path = useLocation().pathname.toLowerCase().replace(/\/$/, '') || '/';
   const matches = tools.filter((t) => `${t.name} ${t.info}`.toLowerCase().includes(query.trim().toLowerCase()));
   return (
@@ -65,16 +67,6 @@ export function UtilitySheet({ kind, close }: { kind: Utility; close: () => void
           {!matches.length && <p role="status">No matching tools.</p>}
         </>
       )}
-      {kind === 'guide' && path === '/' && (
-        <>
-          <p>
-            New to ZeoxFucator? Follow the illustrated guides to build a script or protect a file with a passphrase.
-          </p>
-          <Link className="pill paper" to="/#quick-start" onClick={close}>
-            Read the walkthroughs <ArrowUpRight aria-hidden="true" />
-          </Link>
-        </>
-      )}
       {kind === 'guide' && path === '/encrypt' && (
         <>
           <p>Protect a single file without uploading it to a server.</p>
@@ -97,7 +89,7 @@ export function UtilitySheet({ kind, close }: { kind: Utility; close: () => void
           </p>
         </>
       )}
-      {kind === 'guide' && path !== '/encrypt' && path !== '/' && (
+      {kind === 'guide' && path !== '/encrypt' && (
         <>
           <p>Build a separate copy without uploading your script.</p>
           <ol className="guide-steps">
@@ -141,10 +133,24 @@ export function UtilitySheet({ kind, close }: { kind: Utility; close: () => void
           <p className="hint">
             <ShieldCheck aria-hidden="true" /> On-device processing
           </p>
-          <p>No account is connected or required. Source files, passphrases and downloads stay in this browser tab.</p>
-          <p className="muted">
-            <LockKeyhole aria-hidden="true" size={14} /> Refreshing clears this workspace.
+          <p>
+            Guest preview · No account is connected. Source files, passphrases and downloads stay in this browser tab.
           </p>
+          <p className="muted">
+            <LockKeyhole aria-hidden="true" size={14} /> Save your downloads first. Refreshing or ending the session
+            clears your work.
+          </p>
+          <button
+            className="pill"
+            type="button"
+            onClick={() => {
+              close();
+              endGuest();
+              navigate('/', { replace: true });
+            }}
+          >
+            End guest session
+          </button>
         </>
       )}
     </Dialog>

@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './guest-workspace';
 import { expectToolsAt, go } from './navigation';
 
 for (const [width, height, edge] of [
@@ -9,8 +9,8 @@ for (const [width, height, edge] of [
 ] as const) {
   test(`site uses the entire ${width}×${height} viewport without a fullscreen control`, async ({ page }) => {
     await page.setViewportSize({ width, height });
-    await page.goto('/');
-    for (const tool of ['Main', 'Obfuscator', 'Encryption', 'Usages', 'Dashboard'] as const) {
+    await page.goto('/dashboard');
+    for (const tool of ['Obfuscator', 'Encryption', 'Usages', 'Dashboard'] as const) {
       await go(page, tool);
       await expectToolsAt(page, edge);
       const brand = page.getByRole('link', { name: 'ZeoxFucator home' });
